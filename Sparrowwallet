@@ -1,0 +1,35 @@
+#!/usr/bin/env python3
+import os
+import wget
+import tarfile
+import subprocess
+import requests
+import shutil
+import sys
+
+
+def download_file(url, filename):
+    """Downloads a file from the specified URL to the specified filename."""
+    downloads_directory = os.path.join(os.path.expanduser('~'), 'Downloads')
+    filepath = os.path.join(downloads_directory, filename)
+
+    print('Downloading file...')
+    response = requests.get(url)
+    with open(filepath, 'wb') as file:
+        file.write(response.content)
+    print('Download complete.')
+
+def install_application(filename):
+    """Installs the application from the specified filename using a sudo command."""
+    filepath = os.path.join(os.path.expanduser('~'), 'Downloads', filename)
+
+    print('Installing application...')
+    install_command = ['sudo', 'dpkg', '-i', filepath]
+    subprocess.run(install_command, check=True)
+    print('Installation complete.')
+
+# Usage example
+url = 'https://github.com/sparrowwallet/sparrow/releases/download/1.7.7/sparrow_1.7.7-1_amd64.deb'
+filename = 'sparrow_1.7.7-1_amd64.deb'
+download_file(url, filename)
+install_application(filename)
