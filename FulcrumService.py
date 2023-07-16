@@ -1,0 +1,183 @@
+#!/usr/bin/env python3
+import os
+import wget
+import shutil
+import subprocess
+import tarfile
+
+def download_file(url, filename):
+    """Downloads a file from the specified URL to the specified filename."""
+    downloads_directory = os.path.join(os.path.expanduser('~'), 'Downloads')
+    filepath = os.path.join(downloads_directory, filename)
+
+    print('Downloading file...')
+    wget.download(url, filepath)
+
+def extract_file(filename):
+    """Extracts a file from a tar archive."""
+    filepath = os.path.join(os.path.expanduser('~'), 'Downloads', filename)
+    if not os.path.exists(filepath):
+        print('File does not exist.')
+        return
+
+    with open(filepath, 'rb') as f:
+        tar = tarfile.open(fileobj=f)
+        tar.extractall(os.path.join(os.path.expanduser('~'), 'Downloads'))
+
+if __name__ == '__main__':
+    url = 'https://github.com/cculianu/Fulcrum/releases/download/v1.9.1/Fulcrum-1.9.1-x86_64-linux.tar.gz'
+    filename = 'Fulcrum-1.9.1-x86_64-linux.tar.gz'
+
+    download_file(url, filename)
+    print('The file has been downloaded.')
+    extract_file(filename)
+
+def create_directories():
+    """Creates two directories: ~/fulcrum and ~/fulcrum_db."""
+    home_directory = os.path.expanduser('~')
+    fulcrum_directory = os.path.join(home_directory, 'fulcrum')
+    fulcrum_db_directory = os.path.join(home_directory, 'fulcrum_db')
+
+    if not os.path.exists(fulcrum_directory):
+        os.makedirs(fulcrum_directory)
+
+    if not os.path.exists(fulcrum_db_directory):
+        os.makedirs(fulcrum_db_directory)
+
+if __name__ == '__main__':
+    create_directories()
+
+def move_files():
+    """Moves the contents of Fulcrum-1.9.1-x86_64-linux directory from ~/Downloads to ~/fulcrum."""
+    home_directory = os.path.expanduser('~')
+    source_directory = os.path.join(home_directory, 'Downloads', 'Fulcrum-1.9.1-x86_64-linux')
+    destination_directory = os.path.join(home_directory, 'fulcrum')
+
+    if not os.path.exists(source_directory):
+        print(f"The source directory '{source_directory}' does not exist.")
+        return
+
+    if not os.path.exists(destination_directory):
+        print(f"The destination directory '{destination_directory}' does not exist.")
+        return
+
+    print('Moving files...')
+    for file in os.listdir(source_directory):
+        file_path = os.path.join(source_directory, file)
+        destination_path = os.path.join(destination_directory, file)
+
+        # Change ownership of the file to root
+        chown_command = ["sudo", "chown", "root:root", file_path]
+        subprocess.run(chown_command, check=True)
+
+        # Change file permissions to 644
+        chmod_command = ["sudo", "chmod", "644", file_path]
+        subprocess.run(chmod_command, check=True)
+
+        # Move the file to the destination directory using sudo
+        move_command = ["sudo", "mv", file_path, destination_directory]
+        subprocess.run(move_command, check=True)
+
+    print("File move complete.")
+
+if __name__ == '__main__':
+    move_files()
+
+def generate_key_and_certificate():
+    """Generates a key and certificate using the openssl command."""
+    openssl_command = ["openssl", "req", "-newkey", "rsa:2048", "-new", "-nodes", "-x509", "-days", "3650", "-keyout", "key.pem", "-out", "cert.pem"]
+    subprocess.run(openssl_command, check=True)
+    print("OpenSSL Complete")
+
+if __name__ == '__main__':
+    fulcrum_directory = os.path.expanduser('~/fulcrum')
+    os.chdir(fulcrum_directory)
+    generate_key_and_certificate()
+
+def rename_file():
+    """Renames the fulcrum-example-config.conf file to fulcrum.conf."""
+    home_directory = os.path.expanduser('~')
+    source_file_path = os.path.join(home_directory, 'fulcrum', 'fulcrum-example-config.conf')
+    destination_file_path = os.path.join(home_directory, 'fulcrum', 'fulcrum.conf')
+
+    print('Renaming file...')
+    os.rename(source_file_path, destination_file_path)
+
+def delete_file():
+    """Deletes the fulcrum.conf file."""
+    home_directory = os.path.expanduser('~')
+    file_path = os.path.join(home_directory, 'fulcrum', 'fulcrum.conf')
+
+    print('Deleting file...')
+    os.remove(file_path)
+
+def create_fulcrum_conf(file_path, rpcusername, rpcpassword):
+    """Creates the fulcrum.conf file with the specified contents."""
+    config_contents = f"""datadir = /home/humble/fulcrum_db  # Windows: datadir = D:\\FulcrumData\\mainnet
+bitcoind = 127.0.0.1:8332
+rpcuser = {rpcusername}
+rpcpassword = {rpcpassword}
+ssl = 0.0.0.0:50002
+cert = /home/humble/fulcrum/cert.pem
+key = /home/humble/fulcrum/key.pem
+peering = false
+fast-sync = 5000
+"""
+
+    with open(file_path, 'w') as file:
+        file.write(config_contents)
+
+if __name__ == '__main__':
+    file_path = os.path.join(os.path.expanduser('~'), 'fulcrum', 'fulcrum.conf')
+    rpcusername = input('Enter RPC username:king')
+    rpcpassword = input('Enter RPC password:bong')
+    create_fulcrum_conf(file_path, rpcusername, rpcpassword)
+
+    print('fulcrum.conf file has been created.')
+
+def create_fulcrum_service(system_username):
+    file_path = "/etc/systemd/system/fulcrum.service"
+    content = '''\
+[Unit]
+Description=Fulcrum
+After=network.target
+
+[Service]
+ExecStart=/home/humble/fulcrum/Fulcrum /home/humble/fulcrum/fulcrum.conf
+User=humble
+LimitNOFILE=8192
+TimeoutStopSec=30min
+
+[Install]
+WantedBy=multi-user.target
+'''
+
+    # Write the content to a temporary file
+    temp_file_path = "/tmp/fulcrum.service"
+    with open(temp_file_path, 'w') as file:
+        file.write(content)
+
+    # Use sudo to move the temporary file to the target directory
+    move_command = ["sudo", "mv", temp_file_path, file_path]
+    subprocess.run(move_command, check=True)
+
+    # Set the correct ownership and permissions for the service file
+    chown_command = ["sudo", "chown", "root:root", file_path]
+    subprocess.run(chown_command, check=True)
+    chmod_command = ["sudo", "chmod", "644", file_path]
+    subprocess.run(chmod_command, check=True)
+
+    # Reload systemd configuration
+    reload_command = ["sudo", "systemctl", "daemon-reload"]
+    subprocess.run(reload_command, check=True)
+
+    # Enable the fulcrum service
+    enable_command = ["sudo", "systemctl", "enable", "fulcrum.service"]
+    subprocess.run(enable_command, check=True)
+
+    # Start the fulcrum service
+    start_command = ["sudo", "systemctl", "start", "fulcrum.service"]
+    subprocess.run(start_command, check=True)
+
+# Call the function with the desired system username
+create_fulcrum_service("humble")

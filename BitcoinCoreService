@@ -1,0 +1,352 @@
+#!/usr/bin/env python3
+import os
+import wget
+import tarfile
+import subprocess
+
+def create_downloads_directory():
+  """Creates a Downloads directory in the home directory."""
+  downloads_directory = os.path.join(os.path.expanduser('~'), 'Downloads')
+  if not os.path.exists(downloads_directory):
+    os.makedirs(downloads_directory)
+
+def download_file(url, filename):
+  """Downloads a file from the specified URL to the specified filename."""
+  downloads_directory = os.path.join(os.path.expanduser('~'), 'Downloads')
+  filepath = os.path.join(downloads_directory, filename)
+
+  print('Downloading file...')
+
+  if not os.path.exists(downloads_directory):
+    os.makedirs(downloads_directory)
+
+  wget.download(url, filepath)
+
+def main():
+  url = 'https://bitcoincore.org/bin/bitcoin-core-25.0/bitcoin-25.0-x86_64-linux-gnu.tar.gz'
+  filename = 'bitcoin-25.0-x86_64-linux-gnu.tar.gz'
+
+  download_file(url, filename)
+
+if __name__ == '__main__':
+  main()
+def extract_file(filename):
+  """Extracts a file from a tar archive."""
+  filepath = os.path.join(os.path.expanduser('~'), 'Downloads', filename)
+  if not os.path.exists(filepath):
+    print('File does not exist.')
+    return
+
+  with open(filepath, 'rb') as f:
+    tar = tarfile.open(fileobj=f)
+    tar.extractall(os.path.join(os.path.expanduser('~'), 'Downloads'))
+
+if __name__ == '__main__':
+  create_downloads_directory()
+  url = 'https://bitcoincore.org/bin/bitcoin-core-25.0/bitcoin-25.0-x86_64-linux-gnu.tar.gz'
+  filename = 'bitcoin-25.0-x86_64-linux-gnu.tar.gz'
+
+  print('The file has been downloaded.')
+  extract_file(filename)
+
+def main():
+  # Prompt the user to go to cd Downloads
+  print("Please go to cd Downloads")
+
+  # Prompt the user to type "sudo install -m 0755 -o root -t /usr/local/bin bitcoin-25.0/bin/*"
+  print("Please type 'sudo install -m 0755 -o root -t /usr/local/bin bitcoin-25.0/bin/*'")
+
+  # Prompt the user for input
+  input_command = input("Enter 'done' when you are ready to continue: ")
+
+if __name__ == "__main__":
+  main()
+
+ # Run bitcoind as a daemon
+  bitcoind_command = 'bitcoind -daemon'
+  os.system(bitcoind_command)
+
+if __name__ == '__main__':
+  main()
+
+def create_bitcoin_conf_file():
+  """Creates a bitcoin.conf file in the ~/.bitcoin directory."""
+  bitcoin_conf_filepath = os.path.join(os.path.expanduser('~'), '.bitcoin', 'bitcoin.conf')
+
+  if not os.path.exists(bitcoin_conf_filepath):
+   with open(bitcoin_conf_filepath, 'w') as f:
+      f.write('server=1\n')
+      f.write('txindex=1\n')
+      f.write('daemon=1\n')
+      f.write('rpcport=8332\n')
+      f.write('rpcbind=0.0.0.0\n')
+      f.write('rpcallowip=127.0.0.1\n')
+      f.write('rpcallowip=10.0.0.0/8\n')
+      f.write('rpcallowip=172.0.0.0/8\n')
+      f.write('rpcallowip=192.0.0.0/8\n')
+      f.write('zmqpubrawblock=tcp://0.0.0.0:28332\n')
+      f.write('zmqpubrawtx=tcp://0.0.0.0:28333\n')
+      f.write('zmqpubhashblock=tcp://0.0.0.0:28334\n')
+      f.write('whitelist=127.0.0.1\n')
+
+if __name__ == '__main__':
+  create_bitcoin_conf_file()
+def stop_bitcoincore():
+  """Stops Bitcoin Core."""
+  command = "bitcoin-cli stop"
+  process = subprocess.Popen(command, shell=True)
+  process.wait()
+
+if __name__ == "__main__":
+  stop_bitcoincore()
+def download_file(url, filename):
+    """Downloads a file from the specified URL to the specified filename."""
+    downloads_directory = os.path.join(os.path.expanduser('~'), 'Downloads')
+    filepath = os.path.join(downloads_directory, filename)
+
+    print('Downloading file...')
+
+    if not os.path.exists(downloads_directory):
+        os.makedirs(downloads_directory)
+
+    wget.download(url, filepath)
+# Set executable permission
+    os.chmod(filepath, 0o755)  # Equivalent to chmod +x
+
+# Example usage
+url = "https://raw.githubusercontent.com/bitcoin/bitcoin/master/share/rpcauth/rpcauth.py"
+filename = "rpcauth.py"
+download_file(url, filename)
+def run_rpcauth(username, password):
+    downloads_directory = os.path.join(os.path.expanduser('~'), 'Downloads')
+    script_path = os.path.join(downloads_directory, 'rpcauth.py')
+
+    command = [script_path, username, password]
+    result = subprocess.run(command, capture_output=True, text=True, check=True)
+
+    output = result.stdout
+    rpcauth_part = output.splitlines()[1]
+
+    return rpcauth_part[12:]
+
+def append_rpcauth_to_bitcoin_conf(rpcauth):
+    bitcoin_conf_path = os.path.join(os.path.expanduser('~'), '.bitcoin', 'bitcoin.conf')
+
+    with open(bitcoin_conf_path, 'a') as bitcoin_conf_file:
+        bitcoin_conf_file.write(f'rpcauth={rpcauth}\n')
+
+# Example usage
+username = "king"
+password = "bong"
+rpcauth = run_rpcauth(username, password)
+append_rpcauth_to_bitcoin_conf(rpcauth)
+
+import sys
+
+def main():
+    # Print the instructions
+    print("Type: sudo systemctl status bitcoind.service")
+    print("Check for active and if active type done.")
+
+    # Check the status of the bitcoind service
+    status = os.system("sudo systemctl status bitcoind.service")
+
+    # If the service is active, print "done"
+    if status == 0:
+        print("done")
+        sys.exit()
+
+    # If the service is not active or there is an error, prompt the user to check and input "done"
+    else:
+        user_input = input("Please check the bitcoin.conf file location, make sure 'rpcusername' is typed after 'rpcauth=' and before the colon. Then type 'done' to continue: ")
+        if user_input.lower() != "done":
+            print("Invalid input. Exiting...")
+            sys.exit()
+
+    # Continue with creating and starting the bitcoind service
+    system_username = "humble"
+    create_bitcoind_service(system_username)
+
+def create_bitcoind_service(system_username):
+    file_path = "/etc/systemd/system/bitcoind.service"
+    content = '''\
+    # It is not recommended to modify this file in-place, because it will
+    # be overwritten during package upgrades. If you want to add further
+    # options or overwrite existing ones then use
+    # $ systemctl edit bitcoind.service
+    # See "man systemd.service" for details.
+
+    # Note that almost all daemon options could be specified in
+    # /etc/bitcoin/bitcoin.conf, but keep in mind those explicitly
+    # specified as arguments in ExecStart= will override those in the
+    # config file.
+
+    [Unit]
+    Description=Bitcoin daemon
+    Documentation=https://github.com/bitcoin/bitcoin/blob/master/doc/init.md
+
+    # https://www.freedesktop.org/wiki/Software/systemd/NetworkTarget/
+    After=network-online.target
+    Wants=network-online.target
+
+    [Service]
+    ExecStart=/usr/local/bin/bitcoind -pid=/run/bitcoind/bitcoind.pid \\
+                                -conf=/home/{system_username}/.bitcoin/bitcoin.conf \\
+                                -datadir=/home/{system_username}/.bitcoin \\
+                                -startupnotify='systemd-notify --ready' \\
+                                -shutdownnotify='systemd-notify --stopping'
+
+    # Make sure the config directory is readable by the service user
+    PermissionsStartOnly=true
+    #ExecStartPre=/bin/chgrp bitcoin /etc/bitcoin
+
+    # Process management
+    ####################
+
+    Type=notify
+    NotifyAccess=all
+    PIDFile=/run/bitcoind/bitcoind.pid
+
+    Restart=on-failure
+    TimeoutStartSec=infinity
+    TimeoutStopSec=600
+
+    # Directory creation and permissions
+    ####################################
+
+    # Run as bitcoin:bitcoin
+    User={system_username}
+    Group={system_username}
+    # /run/bitcoind
+    RuntimeDirectory=bitcoind
+    RuntimeDirectoryMode=0710
+
+    # /etc/bitcoin
+    ConfigurationDirectory=bitcoin
+    ConfigurationDirectoryMode=0710
+
+    # /var/lib/bitcoind
+    StateDirectory=bitcoind
+    StateDirectoryMode=0710
+
+    # Hardening measures
+    ####################
+
+    # Provide a private /tmp and /var/tmp.
+    PrivateTmp=true
+
+    # Mount /usr, /boot/ and /etc read-only for the process.
+    ProtectSystem=full
+
+    # Deny access to /home, /root and /run/user
+    #ProtectHome=true
+
+    # Disallow the process and all of its children to gain
+    # new privileges through execve().
+    NoNewPrivileges=true
+
+    # Use a new /dev namespace only populated with API pseudo devices
+    # such as /dev/null, /dev/zero and /dev/random.
+    PrivateDevices=true
+
+    # Deny the creation of writable and executable memory mappings.
+    MemoryDenyWriteExecute=true
+
+    [Install]
+    WantedBy=multi-user.target
+    '''
+
+    # Write the content to a temporary file
+    temp_file_path = "/tmp/bitcoind.service"
+    with open(temp_file_path, 'w') as file:
+        file.write(content.format(system_username=system_username))
+
+    # Use sudo to move the temporary file to the target directory
+    move_command = ["sudo", "mv", temp_file_path, file_path]
+    subprocess.run(move_command, check=True)
+
+    # Set the correct ownership and permissions for the service file
+    chown_command = ["sudo", "chown", "root:root", file_path]
+    subprocess.run(chown_command, check=True)
+    chmod_command = ["sudo", "chmod", "644", file_path]
+    subprocess.run(chmod_command, check=True)
+
+    # Reload systemd configuration
+    reload_command = ["sudo", "systemctl", "daemon-reload"]
+    subprocess.run(reload_command, check=True)
+
+    # Enable the bitcoind service
+    enable_command = ["sudo", "systemctl", "enable", "bitcoind.service"]
+    subprocess.run(enable_command, check=True)
+
+    # Start the bitcoind service
+    start_command = ["sudo", "systemctl", "start", "bitcoind.service"]
+    subprocess.run(start_command, check=True)
+
+if __name__ == "__main__":
+    main()
+
+def main():
+    # Get the username from the user
+    username = input("Enter your username: ")
+
+    # Install Tor if not already installed
+    install_command = "sudo apt install tor"
+    subprocess.run(install_command, shell=True, check=True)
+
+    # Remove the existing torrc file with sudo permissions
+    remove_command = ["sudo", "rm", "/etc/tor/torrc"]
+    subprocess.run(remove_command, check=True)
+
+    # Create the new torrc file with the specified content
+    content = "\nControlPort 9051\nCookieAuthentication 1\nCookieAuthFileGroupReadable 1"
+    create_command = ["sudo", "bash", "-c", f'echo "{content}" > /etc/tor/torrc']
+    subprocess.run(create_command, check=True)
+
+    # Set the correct ownership and permissions for the file
+    chown_command = ["sudo", "chown", "root:root", "/etc/tor/torrc"]
+    subprocess.run(chown_command, check=True)
+    chmod_command = ["sudo", "chmod", "644", "/etc/tor/torrc"]
+    subprocess.run(chmod_command, check=True)
+
+    # Restart Tor with sudo permissions
+    restart_command = ["sudo", "systemctl", "restart", "tor"]
+    subprocess.run(restart_command, check=True)
+
+if __name__ == "__main__":
+    main()
+
+def main():
+    # Get the home directory path
+    home_dir = os.path.expanduser("~")
+
+    # Set the path to the bitcoin.conf file
+    bitcoin_conf_path = os.path.join(home_dir, ".bitcoin", "bitcoin.conf")
+
+    # Define the lines to be added
+    lines_to_add = [
+        "proxy=127.0.0.1:9050",
+        "listen=1",
+        "bind=127.0.0.1",
+        "onlynet=onion",
+        "addnode=g5bom63jg2brev2qzfrgazl4g6tnj6pb34noexewfge2vcqhcxl3t4yd.onion:8333"
+    ]
+
+    # Open the bitcoin.conf file in append mode
+    with open(bitcoin_conf_path, "a") as conf_file:
+        # Add the lines to the file
+        for line in lines_to_add:
+            conf_file.write(line + "\n")
+
+    print("Lines added to bitcoin.conf successfully.")
+
+if __name__ == "__main__":
+    main()
+
+def restart_bitcoind():
+    # Restart bitcoind with sudo permissions
+    restart_command = ["sudo", "systemctl", "restart", "bitcoind"]
+    subprocess.run(restart_command, check=True)
+
+if __name__ == "__main__":
+    restart_bitcoind()
