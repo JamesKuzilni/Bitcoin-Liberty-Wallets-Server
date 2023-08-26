@@ -1,0 +1,308 @@
+#!/usr/bin/env python3
+import os
+import wget
+import tarfile
+import subprocess
+import requests
+import shutil
+
+def download_and_install_tor_browser():
+    url = "https://www.torproject.org/dist/torbrowser/12.5/tor-browser-linux64-12.5_ALL.tar.xz"
+    download_dir = os.path.expanduser('~/Downloads')
+
+    # Use wget to download the Tor Browser
+    subprocess.run(["wget", url], cwd=download_dir)
+
+    # Extract the downloaded tar.xz file
+    tar_file = os.path.join(download_dir, "tor-browser-linux64-12.5_ALL.tar.xz")
+    subprocess.run(["tar", "-xf", tar_file], cwd=download_dir)
+
+    # Get the extracted folder name
+    extracted_folder = "tor-browser"
+
+    # Change to the extracted folder
+    os.chdir(os.path.join(download_dir, extracted_folder))
+
+    # Run the Tor Browser installation script
+    subprocess.run(["./start-tor-browser.desktop", "--register-app"])
+
+# Call the function to download and install Tor Browser
+download_and_install_tor_browser()
+
+def run_dojo_onion():
+    directory = os.path.expanduser('~/dojo-app/samourai-dojo-v1.20.0/docker/my-dojo')
+    command = './dojo.sh onion'
+
+    # Use sudo to execute the command with elevated privileges
+    process = subprocess.Popen(['sudo', '-E', 'bash', '-c', command], cwd=directory, stdout=subprocess.PIPE)
+    output, _ = process.communicate()
+
+    # Get the onion address from the command output
+    onion_address = output.decode().strip()
+
+    print("Onion address:", onion_address)
+
+run_dojo_onion()
+
+
+def download_and_install_package():
+    url = "https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb"
+    download_dir = os.path.expanduser('~/Downloads')
+
+    # Use wget to download the package
+    subprocess.run(["wget", url, "-O", "packages-microsoft-prod.deb"], cwd=download_dir)
+
+    # Install the package using dpkg
+    subprocess.run(["sudo", "dpkg", "-i", "packages-microsoft-prod.deb"], cwd=download_dir)
+
+    # Remove the downloaded package file
+    os.remove(os.path.join(download_dir, "packages-microsoft-prod.deb"))
+
+# Call the function to download and install the package
+download_and_install_package()
+
+def update_and_install_packages():
+    # Update package lists
+    subprocess.run(["sudo", "apt-get", "update"])
+
+    # Install apt-transport-https package
+    subprocess.run(["sudo", "apt-get", "install", "-y", "apt-transport-https"])
+
+    # Update package lists again
+    subprocess.run(["sudo", "apt-get", "update"])
+
+    # Install dotnet-sdk-6.0 package
+    subprocess.run(["sudo", "apt-get", "install", "-y", "dotnet-sdk-6.0"])
+
+# Call the function to update and install the packages
+update_and_install_packages()
+
+
+def create_postgres_user():
+    # Print the command to create a new user interactively
+    print('createuser --pwprompt --interactive')
+
+    # Ask for additional options
+    superuser = input("Superuser? (n): ")
+    databases = input("Can create databases? (y): ")
+    more_roles = input("Can add more roles? (n): ")
+
+    # Construct the command with additional options
+    command = f'createuser --interactive --superuser={superuser} --createdb={databases} --no-createrole={more_roles}'
+
+    # Run the createuser command with additional options
+    subprocess.run(["sudo", "-i", "-u", "postgres", command])
+
+def create_btcpayserver_database():
+    # Get the chosen username
+    chosen_username = input("Enter the chosen username: ")
+
+    # Print the command to create the btcpayserver database
+    print(f'createdb -O "{chosen_username}" btcpayserver')
+
+def create_nbxplorer_database():
+    # Get the chosen username
+    chosen_username = input("Enter the chosen username: ")
+
+    # Print the command to create the nbxplorer database
+    print(f'createdb -O "{chosen_username}" nbxplorer')
+
+# Call the functions to perform the actions
+create_postgres_user()
+create_btcpayserver_database()
+create_nbxplorer_database()
+
+def install_postgresql():
+    # Install PostgreSQL and PostgreSQL-contrib packages
+    subprocess.run(["sudo", "apt", "install", "-y", "postgresql", "postgresql-contrib"])
+
+    # Switch to the postgres user with a new shell session
+    subprocess.run(["sudo", "-i", "-u", "postgres"])
+
+# Call the function to install PostgreSQL and switch to the postgres user
+install_postgresql()
+
+
+def create_source_directory():
+    source_dir = os.path.expanduser('~/source')
+    os.makedirs(source_dir, exist_ok=True)
+
+def clone_nbxplorer_repository():
+    source_dir = os.path.expanduser('~/source')
+    os.chdir(source_dir)
+    subprocess.run(["git", "clone", "https://github.com/dgarage/NBXplorer"])
+
+# Call the function to create the "source" directory
+create_source_directory()
+
+# Call the function to clone the NBXplorer repository
+clone_nbxplorer_repository()
+
+def remove_dotnet():
+    subprocess.run(["sudo", "apt", "remove", "dotnet*"])
+
+# Call the function to remove the dotnet package
+remove_dotnet()
+
+import subprocess
+
+def remove_netstandard_package():
+    subprocess.run(["sudo", "apt", "remove", "netstandard*"])
+
+# Call the function to remove the netstandard package
+remove_netstandard_package()
+
+def remove_aspnetcore_packages():
+    subprocess.run(["sudo", "apt", "remove", "aspnetcore*"])
+
+# Call the function to remove the aspnetcore* packages
+remove_aspnetcore_packages()
+
+
+
+def create_preferences_file():
+    preferences_dir = '/etc/apt/preferences.d'
+    preferences_file = os.path.join(preferences_dir, '99microsoft-dotnet.pref')
+    contents = '''Package: *
+Pin: origin "packages.microsoft.com"
+Pin-Priority: 1001
+'''
+    subprocess.run(["sudo", "sh", "-c", f'echo "{contents}" > {preferences_file}'])
+
+# Call the function to create the preferences file
+create_preferences_file()
+
+
+def install_dotnet_sdk():
+    subprocess.run(["sudo", "apt", "install", "dotnet-sdk-6.0"])
+
+# Call the function to install the dotnet-sdk-6.0 package
+install_dotnet_sdk()
+
+def build_nbxplorer():
+    nbxplorer_dir = os.path.expanduser('~/source/NBXplorer')
+    os.chdir(nbxplorer_dir)
+    subprocess.run(["./build.sh"])
+
+# Call the function to build NBXplorer
+build_nbxplorer()
+
+def create_nbxplorer_directory():
+    nbxplorer_dir = os.path.expanduser('~/.nbxplorer/Main')
+    os.makedirs(nbxplorer_dir, exist_ok=True)
+
+# Call the function to create the ~/.nbxplorer/Main directory
+create_nbxplorer_directory()
+import os
+
+def create_settings_file():
+    nbxplorer_dir = os.path.expanduser('~/.nbxplorer/Main')
+    settings_file = os.path.join(nbxplorer_dir, 'settings.config')
+    with open(settings_file, 'w') as file:
+        file.write('# Add your settings here\n')
+
+# Call the function to create the settings.config file
+create_settings_file()
+def create_nbxplorer_directory():
+    nbxplorer_dir = os.path.expanduser('~/.nbxplorer/Main')
+    os.makedirs(nbxplorer_dir, exist_ok=True)
+
+# Call the function to create the ~/.nbxplorer/Main directory
+create_nbxplorer_directory()
+
+
+def create_settings_file():
+    nbxplorer_dir = os.path.expanduser('~/.nbxplorer/Main')
+    settings_file = os.path.join(nbxplorer_dir, 'settings.config')
+    
+    rpc_username = "king"
+    rpc_password = "bong"
+    database_username = "Ramos"
+    database_password = "Ramos1234"
+    
+    btc_rpc_auth = f"btc.rpc.auth={rpc_username}:{rpc_password}"
+    port = 24445
+    mainnet = 1
+    postgres = f"User ID={database_username};Password={database_password};Host=localhost;Port=5432;Database=nbxplorer"
+    
+    with open(settings_file, 'w') as file:
+        file.write(f'{btc_rpc_auth}\n')
+        file.write(f'port={port}\n')
+        file.write(f'mainnet={mainnet}\n')
+        file.write(f'{postgres}\n')
+
+# Call the function to create the settings.config file
+create_settings_file()
+ef install_postgresql():
+    # Install PostgreSQL and PostgreSQL-contrib packages
+    subprocess.run(["sudo", "apt", "install", "-y", "postgresql", "postgresql-contrib"])
+
+   # Switch to the postgres user with a new shell session
+    subprocess.run(["sudo", "-i", "-u", "postgres"])
+
+# Call the function to install PostgreSQL and switch to the postgres user
+install_postgresql()
+import subprocess
+
+def run_command_as_postgres(command):
+    sudo_command = f'sudo -i -u postgres {command}'
+    subprocess.run(sudo_command, shell=True)
+
+# Example usage:
+command_to_run = 'psql -c "SELECT * FROM my_table;"'
+run_command_as_postgres(command_to_run)
+
+
+def run_nbxplorer():
+    nbxplorer_dir = os.path.expanduser('~/source/NBXplorer')
+    os.chdir(nbxplorer_dir)
+    subprocess.run(["./run.sh"])
+
+# Call the function to run the NBXplorer
+run_nbxplorer()
+
+
+def create_nbxplorer_service():
+    ubuntu_username = "humble"
+
+    service_config = f'''[Unit]
+Description=NBXplorer daemon
+Requires=bitcoind.service
+After=bitcoind.service
+
+[Service]
+ExecStart=/usr/bin/dotnet "/home/{ubuntu_username}/source/NBXplorer/NBXplorer/bin/Release/net6.0/NBXplorer.dll" -c /home/{ubuntu_username}/.nbxplorer/Main/settings.config
+User={ubuntu_username}
+Group={ubuntu_username}
+Type=simple
+PIDFile=/run/nbxplorer/nbxplorer.pid
+Restart=on-failure
+
+PrivateTmp=true
+ProtectSystem=full
+NoNewPrivileges=true
+PrivateDevices=true
+
+[Install]
+WantedBy=multi-user.target
+'''
+    service_file_path = '/etc/systemd/system/nbxplorer.service'
+
+    # Use sudo to create the nbxplorer.service file
+    subprocess.run(["sudo", "sh", "-c", f'echo "{service_config}" > {service_file_path}'])
+
+# Call the function to create the nbxplorer.service file
+create_nbxplorer_service()
+
+def enable_nbxplorer_service():
+    subprocess.run(["sudo", "systemctl", "enable", "nbxplorer.service"])
+
+# Call the function to enable the nbxplorer.service
+enable_nbxplorer_service()
+
+def start_nbxplorer_service():
+    subprocess.run(["sudo", "systemctl", "start", "nbxplorer.service"])
+
+# Call the function to start the nbxplorer.service
+start_nbxplorer_service()
+
