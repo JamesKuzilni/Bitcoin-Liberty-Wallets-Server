@@ -117,6 +117,7 @@ def download_file(url, filename):
 url = "https://raw.githubusercontent.com/bitcoin/bitcoin/master/share/rpcauth/rpcauth.py"
 filename = "rpcauth.py"
 download_file(url, filename)
+
 def run_rpcauth(username, password):
     downloads_directory = os.path.join(os.path.expanduser('~'), 'Downloads')
     script_path = os.path.join(downloads_directory, 'rpcauth.py')
@@ -127,6 +128,8 @@ def run_rpcauth(username, password):
     output = result.stdout
     rpcauth_part = output.splitlines()[1]
 
+    print("Script execution result:", output)  # Added print statement to display the result
+
     return rpcauth_part[12:]
 
 def append_rpcauth_to_bitcoin_conf(rpcauth):
@@ -136,8 +139,8 @@ def append_rpcauth_to_bitcoin_conf(rpcauth):
         bitcoin_conf_file.write(f'rpcauth={rpcauth}\n')
 
 # Example usage
-username = "king"
-password = "bong"
+username = "BitcoinLibertyWallets"
+password = "6hn3kmdak2n1m"
 rpcauth = run_rpcauth(username, password)
 append_rpcauth_to_bitcoin_conf(rpcauth)
 
