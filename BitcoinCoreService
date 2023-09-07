@@ -59,14 +59,13 @@ def main():
   # Prompt the user for input
   input_command = input("Enter 'done' when you are ready to continue: ")
 
+  # Check if the user entered 'done'
+  if input_command == "done":
+    # Run bitcoind as a daemon
+    bitcoind_command = 'bitcoind -daemon'
+    os.system(bitcoind_command)
+
 if __name__ == "__main__":
-  main()
-
- # Run bitcoind as a daemon
-  bitcoind_command = 'bitcoind -daemon'
-  os.system(bitcoind_command)
-
-if __name__ == '__main__':
   main()
 
 def create_bitcoin_conf_file():
