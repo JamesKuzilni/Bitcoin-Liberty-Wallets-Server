@@ -297,6 +297,24 @@ BITCOIND_RPC_PORT=8332
 
 # Port exposing ZMQ notifications for raw transactions
 # Set the value to 9501 if BITCOIND_INSTALL is set to 'on'
+# Type: integer
+BITCOIND_ZMQ_RAWTXS=28333
+
+# Port exposing ZMQ notifications for block hashes
+# Set value to 9502 if BITCOIND_INSTALL is set to 'on'
+# Type: integer
+BITCOIND_ZMQ_BLK_HASH=28334
+
+
+#
+# SHUTDOWN
+#
+
+# Max delay for bitcoind shutdown (expressed in seconds)
+# Defines how long Dojo waits for a clean shutdown of bitcoind before shutting >
+# This parameter is inactive if BITCOIND_INSTALL is set to 'off'
+# Type: integer
+BITCOIND_SHUTDOWN_DELAY=180
 '''
 
     # Use sudo to write the file with elevated privileges
