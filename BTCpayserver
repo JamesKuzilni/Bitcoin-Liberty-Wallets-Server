@@ -215,10 +215,10 @@ def create_settings_file():
     nbxplorer_dir = os.path.expanduser('~/.nbxplorer/Main')
     settings_file = os.path.join(nbxplorer_dir, 'settings.config')
     
-    rpc_username = "king"
-    rpc_password = "bong"
-    database_username = "Ramos"
-    database_password = "Ramos1234"
+    rpc_username = "rpcusername"
+    rpc_password = "rpcpassword"
+    database_username = "BTCpayusername"
+    database_password = "BTCpaypassword"
     
     btc_rpc_auth = f"btc.rpc.auth={rpc_username}:{rpc_password}"
     port = 24445
