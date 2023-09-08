@@ -105,8 +105,6 @@ def remove_dotnet():
 # Call the function to remove the dotnet package
 remove_dotnet()
 
-import subprocess
-
 def remove_netstandard_package():
     subprocess.run(["sudo", "apt", "remove", "netstandard*"])
 
@@ -119,8 +117,6 @@ def remove_aspnetcore_packages():
 # Call the function to remove the aspnetcore* packages
 remove_aspnetcore_packages()
 
-
-
 def create_preferences_file():
     preferences_dir = '/etc/apt/preferences.d'
     preferences_file = os.path.join(preferences_dir, '99microsoft-dotnet.pref')
@@ -132,7 +128,6 @@ Pin-Priority: 1001
 
 # Call the function to create the preferences file
 create_preferences_file()
-
 
 def install_dotnet_sdk():
     subprocess.run(["sudo", "apt", "install", "dotnet-sdk-6.0"])
@@ -170,7 +165,6 @@ def create_nbxplorer_directory():
 
 # Call the function to create the ~/.nbxplorer/Main directory
 create_nbxplorer_directory()
-
 
 def create_settings_file():
     nbxplorer_dir = os.path.expanduser('~/.nbxplorer/Main')
@@ -213,7 +207,6 @@ def run_command_as_postgres(command):
 command_to_run = 'psql -c "SELECT * FROM my_table;"'
 run_command_as_postgres(command_to_run)
 
-
 def run_nbxplorer():
     nbxplorer_dir = os.path.expanduser('~/source/NBXplorer')
     os.chdir(nbxplorer_dir)
@@ -221,7 +214,6 @@ def run_nbxplorer():
 
 # Call the function to run the NBXplorer
 run_nbxplorer()
-
 
 def create_nbxplorer_service():
     ubuntu_username = "humble"
