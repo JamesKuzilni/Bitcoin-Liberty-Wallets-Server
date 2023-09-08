@@ -1,0 +1,132 @@
+#!/usr/bin/env python3
+import os
+import wget
+import tarfile
+import subprocess
+import requests
+import shutil
+
+# Install Docker
+docker_install_command = ["sudo", "apt", "install", "docker"]
+subprocess.run(docker_install_command, check=True)
+
+# Install Docker Compose
+docker_compose_install_command = ["sudo", "apt", "install", "docker-compose"]
+subprocess.run(docker_compose_install_command, check=True)
+
+# Add current user to the docker group
+current_user = os.getlogin()
+add_user_to_docker_command = ["sudo", "usermod", "-aG", "docker", current_user]
+subprocess.run(add_user_to_docker_command, check=True)
+
+# Make docker-compose executable
+docker_compose_chmod_command = ["sudo", "chmod", "+x", "/usr/bin/docker-compose"]
+subprocess.run(docker_compose_chmod_command, check=True)
+
+docker_compose_path = "/usr/bin/docker-compose"
+
+if os.access(docker_compose_path, os.X_OK):
+    print("Docker Compose is executable.")
+else:
+    print("Docker Compose is not executable.")
+
+# Define the Git repository URL
+repository_url = "https://github.com/mempool/mempool.git"
+
+# Directory where you want to clone the repository
+clone_directory = "/home/humble/"
+
+def clone_repository(url, directory):
+    try:
+        # Run the git clone command
+        subprocess.run(["git", "clone", url, directory], check=True)
+        print(f"Repository cloned successfully to {directory}")
+    except subprocess.CalledProcessError as e:
+        print(f"Error cloning the repository: {e}")
+
+if __name__ == "__main__":
+    clone_repository(repository_url, clone_directory)
+
+# Define file path, IP address, RPC username, and RPC password
+file_path = "/home/humble/mempool/docker/docker-compose.yml"
+ipaddress = "your_ip_address"
+rpcusername = "your_rpc_username"
+rpcpassword = "your_rpc_password"
+
+# Delete the file with sudo privileges
+delete_command = ["sudo", "rm", "-f", file_path]
+
+try:
+    subprocess.run(delete_command, check=True)
+    print(f"File {file_path} deleted successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Error deleting file {file_path}: {e}")
+
+# Write the file content to the specified path with sudo privileges
+file_content = f'''\
+version: "3.7"
+
+services:
+  web:
+    environment:
+      FRONTEND_HTTP_PORT: "8080"
+      BACKEND_MAINNET_HTTP_HOST: "api"
+    image: mempool/frontend:latest
+    user: "1000:1000"
+    restart: always
+    stop_grace_period: 1m
+    command: "./wait-for db:3306 --timeout=720 -- nginx -g 'daemon off;'"
+    ports:
+      - 4080:8080
+  api:
+    environment:
+      MEMPOOL_BACKEND: "fulcrum"
+      CORE_RPC_HOST: "{ipaddress}"
+      CORE_RPC_PORT: "8332"
+      CORE_RPC_USERNAME: "{rpcusername}"
+     CORE_RPC_PASSWORD: "{rpcpassword}"
+      DATABASE_ENABLED: "true"
+      DATABASE_HOST: "db"
+      DATABASE_DATABASE: "mempool"
+      DATABASE_USERNAME: "mempool"
+      DATABASE_PASSWORD: "mempool"
+      STATISTICS_ENABLED: "true"
+    image: mempool/backend:latest
+    user: "1000:1000"
+    restart: always
+    stop_grace_period: 1m
+    command: "./wait-for-it.sh db:3306 --timeout=720 --strict -- ./start.sh"
+    volumes:
+      - ./data:/backend/cache
+  db:
+    environment:
+      MYSQL_DATABASE: "mempool"
+      MYSQL_USER: "mempool"
+      MYSQL_PASSWORD: "mempool"
+      MYSQL_ROOT_PASSWORD: "admin"
+    image: mariadb:10.5.8
+    user: "1000:1000"
+    restart: always
+    stop_grace_period: 1m
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+'''
+
+# Write the file content to the specified path with sudo privileges
+write_command = ["sudo", "tee", file_path]
+subprocess.run(write_command, input=file_content.encode(), check=True)
+
+print(f"docker-compose.yml file created at: {file_path}")
+
+# Change current working directory
+docker_directory = "/home/humble/mempool/docker/"
+os.chdir(docker_directory)
+
+# Command to execute
+docker_compose_up_command = ["sudo", "docker-compose", "up"]
+
+try:
+    subprocess.run(docker_compose_up_command, check=True)
+except subprocess.CalledProcessError as e:
+    print(f"Error running 'docker-compose up': {e}")
+
