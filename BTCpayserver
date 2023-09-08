@@ -6,22 +6,6 @@ import subprocess
 import requests
 import shutil
 
-def run_dojo_onion():
-    directory = os.path.expanduser('~/dojo-app/samourai-dojo-v1.20.0/docker/my-dojo')
-    command = './dojo.sh onion'
-
-    # Use sudo to execute the command with elevated privileges
-    process = subprocess.Popen(['sudo', '-E', 'bash', '-c', command], cwd=directory, stdout=subprocess.PIPE)
-    output, _ = process.communicate()
-
-    # Get the onion address from the command output
-    onion_address = output.decode().strip()
-
-    print("Onion address:", onion_address)
-
-run_dojo_onion()
-
-
 def download_and_install_package():
     url = "https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb"
     download_dir = os.path.expanduser('~/Downloads')
