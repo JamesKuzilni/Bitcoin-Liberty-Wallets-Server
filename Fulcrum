@@ -129,8 +129,8 @@ fast-sync = 5000
 
 if __name__ == '__main__':
     file_path = os.path.join(os.path.expanduser('~'), 'fulcrum', 'fulcrum.conf')
-    rpcusername = input('Enter RPC username:king')
-    rpcpassword = input('Enter RPC password:bong')
+    rpcusername = input('Enter RPC username')
+    rpcpassword = input('Enter RPC password')
     create_fulcrum_conf(file_path, rpcusername, rpcpassword)
 
     print('fulcrum.conf file has been created.')
@@ -174,6 +174,9 @@ WantedBy=multi-user.target
     # Enable the fulcrum service
     enable_command = ["sudo", "systemctl", "enable", "fulcrum.service"]
     subprocess.run(enable_command, check=True)
+
+
+
 
     # Start the fulcrum service
     start_command = ["sudo", "systemctl", "start", "fulcrum.service"]
