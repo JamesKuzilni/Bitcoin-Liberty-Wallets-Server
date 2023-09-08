@@ -75,9 +75,9 @@ import subprocess
 import random
 import string
 
-ipaddress = "10.0.2.15"
-rpcusername = "king"
-rpcpassword = "bong"
+ipaddress = "ipaddress"
+rpcusername = "rpcusername"
+rpcpassword = "rpcpassword"
 
 def create_docker_bitcoind_conf():
     conf_directory = os.path.expanduser('~/dojo-app/samourai-dojo-v1.20.0/docker/my-dojo/conf')
