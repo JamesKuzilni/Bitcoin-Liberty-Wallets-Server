@@ -6,10 +6,6 @@ import subprocess
 import requests
 import shutil
 
-#!/usr/bin/env python3
-import os
-import subprocess
-
 # Install Docker
 docker_install_command = ["sudo", "apt", "install", "docker"]
 subprocess.run(docker_install_command, check=True)
