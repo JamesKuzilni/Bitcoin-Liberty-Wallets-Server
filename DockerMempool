@@ -34,7 +34,7 @@ else:
 repository_url = "https://github.com/mempool/mempool.git"
 
 # Directory where you want to clone the repository
-clone_directory = "/home/humble/"
+clone_directory = "~"
 
 def clone_repository(url, directory):
     try:
