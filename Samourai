@@ -550,21 +550,6 @@ def run_dojo_install():
 # Run the dojo.sh install command
 run_dojo_install()
 
-def run_dojo_onion():
-    directory = os.path.expanduser('~/dojo-app/samourai-dojo-v1.20.0/docker/my-dojo')
-    command = './dojo.sh onion'
-
-    # Use sudo to execute the command with elevated privileges
-    process = subprocess.Popen(['sudo', '-E', 'bash', '-c', command], cwd=directory, stdout=subprocess.PIPE)
-    output, _ = process.communicate()
-
-    # Get the onion address from the command output
-    onion_address = output.decode().strip()
-
-    print("Onion address:", onion_address)
-
-run_dojo_onion()
-
 def get_node_api_key_from_conf():
     conf_directory = os.path.expanduser('~/dojo-app/samourai-dojo-v1.20.0/docker/my-dojo/conf')
     filename = 'docker-node.conf.tpl'
