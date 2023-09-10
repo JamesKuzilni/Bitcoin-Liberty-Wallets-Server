@@ -72,11 +72,6 @@ if __name__ == '__main__':
     create_directory(conf_directory)
 
     print('The conf directory has been created with sudo privileges.')
-#!/usr/bin/env python3
-import os
-import subprocess
-import random
-import string
 
 ipaddress = "ipaddress"
 rpcusername = "rpcusername"
