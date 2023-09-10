@@ -555,7 +555,15 @@ run_dojo_install()
 print("Waiting for 15 minutes...")
 time.sleep(900)  # 900 seconds = 15 minutes
 
-# Add your next steps here
+def run_dojo_onion():
+    directory = os.path.expanduser('~/dojo-app/samourai-dojo-v1.20.0/docker/my-dojo')
+    command = './dojo.sh onion'
+
+    # Use sudo to execute the command with elevated privileges
+    subprocess.run(['sudo', '-E', 'bash', '-c', command], cwd=directory)
+
+# Run the dojo.sh onion command
+run_dojo_onion()
 
 def get_node_api_key_from_conf():
     conf_directory = os.path.expanduser('~/dojo-app/samourai-dojo-v1.20.0/docker/my-dojo/conf')
