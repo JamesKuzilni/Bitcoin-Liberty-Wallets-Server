@@ -5,6 +5,7 @@ import tarfile
 import subprocess
 import requests
 import shutil
+import time
 
 def download_file(url, filename):
     """Downloads a file from the specified URL to the specified filename."""
