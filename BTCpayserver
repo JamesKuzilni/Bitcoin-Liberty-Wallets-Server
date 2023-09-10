@@ -197,7 +197,6 @@ ef install_postgresql():
 
 # Call the function to install PostgreSQL and switch to the postgres user
 install_postgresql()
-import subprocess
 
 def run_command_as_postgres(command):
     sudo_command = f'sudo -i -u postgres {command}'
