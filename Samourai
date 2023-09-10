@@ -551,6 +551,12 @@ def run_dojo_install():
 # Run the dojo.sh install command
 run_dojo_install()
 
+# Wait for 15 minutes before proceeding
+print("Waiting for 15 minutes...")
+time.sleep(900)  # 900 seconds = 15 minutes
+
+# Add your next steps here
+
 def get_node_api_key_from_conf():
     conf_directory = os.path.expanduser('~/dojo-app/samourai-dojo-v1.20.0/docker/my-dojo/conf')
     filename = 'docker-node.conf.tpl'
