@@ -541,7 +541,7 @@ WHIRLPOOL_DEBUG_CLIENT=off
 create_docker_whirlpool_conf()
 
 def run_dojo_install():
-    directory = os.path.expanduser('~/dojo-app/samourai-dojo-v1.20.0/docker/my->
+    directory = os.path.expanduser('~/dojo-app/samourai-dojo-v1.20.0/docker/my-dojo')
     command = './dojo.sh install'
 
     # Use sudo to execute the command with elevated privileges
