@@ -84,7 +84,7 @@ services:
       CORE_RPC_HOST: "{ipaddress}"
       CORE_RPC_PORT: "8332"
       CORE_RPC_USERNAME: "{rpcusername}"
-     CORE_RPC_PASSWORD: "{rpcpassword}"
+      CORE_RPC_PASSWORD: "{rpcpassword}"
       DATABASE_ENABLED: "true"
       DATABASE_HOST: "db"
       DATABASE_DATABASE: "mempool"
