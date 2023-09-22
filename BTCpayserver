@@ -321,8 +321,6 @@ try:
 except Exception as e:
     print(f"Error creating settings.conf file: {e}")
 
-import subprocess
-import os
 
 # Define the path to the BTCPayServer directory
 btcpayserver_directory = os.path.expanduser("~/source/btcpayserver")
