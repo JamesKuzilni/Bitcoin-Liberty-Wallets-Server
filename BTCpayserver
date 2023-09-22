@@ -262,7 +262,7 @@ start_nbxplorer_service()
 github_repo_url = "https://github.com/btcpayserver/btcpayserver.git"
 
 # Define the target directory where you want to clone the repository
-source_directory = os.path.expanduser("~/source/")
+source_directory = os.path.expanduser("~/source/btcpayserver/")
 
 # Check if the source directory exists, and create it if it doesn't
 if not os.path.exists(source_directory):
@@ -275,5 +275,18 @@ os.chdir(source_directory)
 try:
     subprocess.run(["git", "clone", github_repo_url], check=True)
     print("BTCPayServer repository cloned successfully.")
+
+    # Change the current working directory to the cloned repository
+    os.chdir("btcpayserver")
+
+    # Run the './build.sh' script
+    try:
+        subprocess.run(["./build.sh"], check=True)
+        print("Build script executed successfully.")
+    except subprocess.CalledProcessError as e:
+        print(f"Error executing build script: {e}")
+
 except subprocess.CalledProcessError as e:
     print(f"Error: {e}")
+
+
