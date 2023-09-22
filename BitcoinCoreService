@@ -5,68 +5,53 @@ import tarfile
 import subprocess
 
 def create_downloads_directory():
-  """Creates a Downloads directory in the home directory."""
-  downloads_directory = os.path.join(os.path.expanduser('~'), 'Downloads')
-  if not os.path.exists(downloads_directory):
-    os.makedirs(downloads_directory)
+    """Creates a Downloads directory in the home directory."""
+    downloads_directory = os.path.join(os.path.expanduser('~'), 'Downloads')
+    if not os.path.exists(downloads_directory):
+        os.makedirs(downloads_directory)
 
 def download_file(url, filename):
-  """Downloads a file from the specified URL to the specified filename."""
-  downloads_directory = os.path.join(os.path.expanduser('~'), 'Downloads')
-  filepath = os.path.join(downloads_directory, filename)
+    """Downloads a file from the specified URL to the specified filename."""
+    create_downloads_directory()  # Create Downloads directory if it doesn't exist
+    downloads_directory = os.path.join(os.path.expanduser('~'), 'Downloads')
+    filepath = os.path.join(downloads_directory, filename)
 
-  print('Downloading file...')
+    print('Downloading file...')
+    wget.download(url, filepath)
 
-  if not os.path.exists(downloads_directory):
-    os.makedirs(downloads_directory)
+def extract_and_install(filename, target_directory):
+    """Extracts a file from a tar archive and installs it to the target directory."""
+    create_downloads_directory()  # Create Downloads directory if it doesn't exist
+    filepath = os.path.join(os.path.expanduser('~'), 'Downloads', filename)
+    if not os.path.exists(filepath):
+        print('File does not exist.')
+        return
 
-  wget.download(url, filepath)
+    with open(filepath, 'rb') as f:
+        tar = tarfile.open(fileobj=f)
+        tar.extractall(os.path.join(os.path.expanduser('~'), 'Downloads'))
 
-def main():
-  url = 'https://bitcoincore.org/bin/bitcoin-core-25.0/bitcoin-25.0-x86_64-linux-gnu.tar.gz'
-  filename = 'bitcoin-25.0-x86_64-linux-gnu.tar.gz'
+    # Get the correct extracted directory name
+    extracted_dir_name = os.path.splitext(os.path.basename(filename))[0]
 
-  download_file(url, filename)
-
-if __name__ == '__main__':
-  main()
-def extract_file(filename):
-  """Extracts a file from a tar archive."""
-  filepath = os.path.join(os.path.expanduser('~'), 'Downloads', filename)
-  if not os.path.exists(filepath):
-    print('File does not exist.')
-    return
-
-  with open(filepath, 'rb') as f:
-    tar = tarfile.open(fileobj=f)
-    tar.extractall(os.path.join(os.path.expanduser('~'), 'Downloads'))
-
-if __name__ == '__main__':
-  create_downloads_directory()
-  url = 'https://bitcoincore.org/bin/bitcoin-core-25.0/bitcoin-25.0-x86_64-linux-gnu.tar.gz'
-  filename = 'bitcoin-25.0-x86_64-linux-gnu.tar.gz'
-
-  print('The file has been downloaded.')
-  extract_file(filename)
-
-def main():
-  # Prompt the user to go to cd Downloads
-  print("Please go to cd Downloads")
-
-  # Prompt the user to type "sudo install -m 0755 -o root -t /usr/local/bin bitcoin-25.0/bin/*"
-  print("Please type 'sudo install -m 0755 -o root -t /usr/local/bin bitcoin-25.0/bin/*'")
-
-  # Prompt the user for input
-  input_command = input("Enter 'done' when you are ready to continue: ")
-
-  # Check if the user entered 'done'
-  if input_command == "done":
-    # Run bitcoind as a daemon
-    bitcoind_command = 'bitcoind -daemon'
-    os.system(bitcoind_command)
+    # Install the extracted files to the target directory
+    try:
+        extracted_dir_path = os.path.join(os.path.expanduser('~'), 'Downloads', extracted_dir_name)
+        for root, dirs, files in os.walk(extracted_dir_path):
+            for file in files:
+                source_path = os.path.join(root, file)
+                subprocess.run(['sudo', 'install', '-m', '0755', '-o', 'root', '-g', 'root', source_path, target_directory], check=True)
+        print(f'Successfully installed to {target_directory}')
+    except subprocess.CalledProcessError as e:
+        print(f'Installation failed: {e}')
 
 if __name__ == "__main__":
-  main()
+    url = "https://bitcoincore.org/bin/bitcoin-core-25.0/bitcoin-25.0-x86_64-linux-gnu.tar.gz"
+    filename = "bitcoin-25.0-x86_64-linux-gnu.tar.gz"
+    target_directory = "/usr/local/bin"
+
+    download_file(url, filename)
+    extract_and_install(filename, target_directory)
 
 def create_bitcoin_conf_file():
   """Creates a bitcoin.conf file in the ~/.bitcoin directory."""
