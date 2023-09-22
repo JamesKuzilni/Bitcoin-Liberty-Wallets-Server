@@ -1,0 +1,176 @@
+#!/usr/bin/env python3
+import subprocess
+import os
+
+# Define the command to create the directory
+command = "sudo mkdir -p --mode=0755 /usr/share/keyrings"
+
+# Run the command
+try:
+    subprocess.run(command, shell=True, check=True)
+    print("Directory created successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Error creating directory: {e}")
+
+# Define the command to download and save the GPG key
+command = "curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | sudo tee>
+
+# Run the command
+try:
+    subprocess.run(command, shell=True, check=True)
+    print("GPG key downloaded and saved successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Error downloading and saving GPG key: {e}")
+
+# Define the line to append to the file
+line_to_append = "deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared jammy main"
+
+# Define the file path
+file_path = "/etc/apt/sources.list.d/cloudflared.list"
+
+# Construct the echo command
+echo_command = f'echo "{line_to_append}"'
+
+# Combine the echo command with sudo and tee to append to the file
+command = f'{echo_command} | sudo tee -a {file_path}'
+
+# Run the command
+try:
+    subprocess.run(command, shell=True, check=True)
+    print(f"Line appended to {file_path} successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Error appending line to {file_path}: {e}")
+
+# Define the update command
+update_command = "sudo apt-get update"
+
+# Define the install command
+install_command = "sudo apt-get install cloudflared"
+
+# Run the update command
+try:
+    subprocess.run(update_command, shell=True, check=True)
+    print("Apt update completed successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Error running apt-get update: {e}")
+
+# Run the install command
+try:
+    subprocess.run(install_command, shell=True, check=True)
+    print("Cloudflared installation completed successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Error running apt-get install cloudflared: {e}")
+
+# Define the install command
+install_command = "sudo apt install cloudflared"
+
+# Run the install command
+try:
+    subprocess.run(install_command, shell=True, check=True)
+    print("Cloudflared installation completed successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Error running apt install cloudflared: {e}")
+
+# Define the login command
+login_command = "cloudflared tunnel login"
+
+# Run the login command
+try:
+    subprocess.run(login_command, shell=True, check=True)
+    print("Cloudflared tunnel login completed successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Error running 'cloudflared tunnel login': {e}")
+
+
+
+
+# Define the tunnel create command
+create_tunnel_command = "cloudflared tunnel create btcpayserver"
+
+# Run the tunnel create command
+try:
+    tunnel_creation_result = subprocess.run(create_tunnel_command, shell=True, capture_output=True, text=True, check=True)
+    print("Cloudflared tunnel 'btcpayserver' created successfully.")
+    
+    # Extract the tunnel id from the command output
+    tunnel_id = tunnel_creation_result.stdout.strip()
+except subprocess.CalledProcessError as e:
+    print(f"Error running 'cloudflared tunnel create btcpayserver': {e}")
+    tunnel_id = None
+
+if tunnel_id:
+    # Define the content of the config.yml file
+    config_content = f'''url: "http://localhost:23001"
+tunnel: {tunnel_id}
+credentials-file: /home/humble/.cloudflared/{tunnel_id}.json
+'''
+
+    # Define the path to the config.yml file
+    config_file_path = os.path.expanduser("~/.cloudflared/config.yml")
+
+    # Create the ~/.cloudflared directory if it doesn't exist
+    os.makedirs(os.path.dirname(config_file_path), exist_ok=True)
+
+    # Write the content to the config.yml file
+    try:
+        with open(config_file_path, "w") as config_file:
+            config_file.write(config_content)
+        print(f"config.yml file created successfully at {config_file_path}")
+    except Exception as e:
+        print(f"Error creating config.yml file: {e}")
+
+# Define the website domain
+user_website = "websitedomain"  # Replace with your desired website domain
+
+# Define the tunnel route command
+route_command = f"cloudflared tunnel route dns btcpayserver btcpay.{user_websit>
+
+# Run the tunnel route command
+try:
+    subprocess.run(route_command, shell=True, check=True)
+    print(f"DNS route 'btcpay.{user_website}' added successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Error running 'cloudflared tunnel route dns': {e}")
+
+# Define the tunnel run command
+run_command = "cloudflared tunnel run btcpayserver"
+
+# Run the tunnel run command
+try:
+    subprocess.run(run_command, shell=True, check=True)
+    print("Cloudflared tunnel 'btcpayserver' is now running.")
+except subprocess.CalledProcessError as e:
+    print(f"Error running 'cloudflared tunnel run btcpayserver': {e}")
+
+# Define the source and destination paths
+source_path = "~/.cloudflared/config.yml"
+destination_path = "/etc/cloudflared/"
+
+# Expand the user's home directory in the source path
+source_path = os.path.expanduser(source_path)
+
+# Define the copy command
+copy_command = f"sudo cp {source_path} {destination_path}"
+
+# Run the copy command
+try:
+    subprocess.run(copy_command, shell=True, check=True)
+    print(f"Config.yml copied to {destination_path} successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Error copying config.yml: {e}")
+
+# Define the directory path
+cloudflared_directory = os.path.expanduser("~/.cloudflared/")
+
+# Change the current working directory to the Cloudflared directory
+os.chdir(cloudflared_directory)
+
+# Define the service install command
+service_install_command = "sudo cloudflared service install"
+
+# Run the service install command
+try:
+    subprocess.run(service_install_command, shell=True, check=True)
+    print("Cloudflared service installed successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Error running 'sudo cloudflared service install': {e}")
