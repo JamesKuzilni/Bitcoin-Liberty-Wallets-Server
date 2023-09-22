@@ -289,4 +289,36 @@ try:
 except subprocess.CalledProcessError as e:
     print(f"Error: {e}")
 
+# Define the target directory
+btcpayserver_directory = os.path.expanduser("~/.btcpayserver/Main")
+
+# Define the BTCpayusername and BTCpaypassword
+btc_pay_username = "your_username_here"
+btc_pay_password = "your_password_here"
+
+# Define the content of the settings.conf file with the predefined variables
+settings_content = f"""network=mainnet
+port=23001
+bind=0.0.0.0
+chains=btc
+BTC.explorer.url=http://127.0.0.1:24445
+#BTC.lightning=type=lnd-rest;server=https://127.0.0.1:8080/;macaroonfilepath=/home/humble/.lnd/data/chain/bitcoin/mainnet/admin.macaroon;certthumbprint=BC5BDE3FEF35EECDA838C4DAFA01FC>
+postgres=User ID="{btc_pay_username}";Password="{btc_pay_password}";Host=localhost;Port=5432;Database=btcpayserver;
+"""
+
+# Create the directory if it doesn't exist
+if not os.path.exists(btcpayserver_directory):
+    os.makedirs(btcpayserver_directory)
+
+# Define the path to the settings.conf file
+settings_file_path = os.path.join(btcpayserver_directory, "settings.conf")
+
+# Write the content to the settings.conf file
+try:
+    with open(settings_file_path, "w") as settings_file:
+        settings_file.write(settings_content)
+    print(f"settings.conf file created successfully at {settings_file_path}")
+except Exception as e:
+    print(f"Error creating settings.conf file: {e}")
+
 
