@@ -341,4 +341,42 @@ else:
         print("Execution of 'run.sh' script completed successfully.")
     except subprocess.CalledProcessError as e:
         print(f"Error executing 'run.sh' script: {e}")
+def create_btcpayserver_service():
+    ubuntu_username = "humble"  # Replace with your Ubuntu username
+
+    service_config = f'''[Unit]
+Description=BtcPayServer daemon
+Requires=btcpayserver.service
+After=nbxplorer.service
+
+[Service]
+ExecStart=/usr/bin/dotnet run --no-launch-profile --no-build -c Release -p "/home/{ubuntu_username}/source/btcpayserver/BTCPayServer/BTCPayServer.csproj" -- $@
+User="{ubuntu_username}"
+Group="{ubuntu_username}"
+Type=simple
+PIDFile=/run/btcpayserver/btcpayserver.pid
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+'''
+    service_file_path = '/etc/systemd/system/btcpayserver.service'
+
+    # Use sudo to create the btcpayserver.service file
+    subprocess.run(["sudo", "sh", "-c", f'echo "{service_config}" > {service_file_path}'])
+
+# Call the function to create the btcpayserver.service file
+create_btcpayserver_service()
+
+def enable_btcpayserver_service():
+    subprocess.run(["sudo", "systemctl", "enable", "btcpayserver.service"])
+
+# Call the function to enable the btcpayserver.service
+enable_btcpayserver_service()
+
+def start_btcpayserver_service():
+    subprocess.run(["sudo", "systemctl", "start", "btcpayserver.service"])
+
+# Call the function to start the btcpayserver.service
+start_btcpayserver_service()
 
