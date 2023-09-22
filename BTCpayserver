@@ -311,13 +311,13 @@ if not os.path.exists(btcpayserver_directory):
     os.makedirs(btcpayserver_directory)
 
 # Define the path to the settings.conf file
-settings_file_path = os.path.join(btcpayserver_directory, "settings.conf")
+settings_file_path = os.path.join(btcpayserver_directory, "settings.config")
 
-# Write the content to the settings.conf file
+# Write the content to the settings.config file
 try:
     with open(settings_file_path, "w") as settings_file:
         settings_file.write(settings_content)
-    print(f"settings.conf file created successfully at {settings_file_path}")
+    print(f"settings.config file created successfully at {settings_file_path}")
 except Exception as e:
     print(f"Error creating settings.conf file: {e}")
 
