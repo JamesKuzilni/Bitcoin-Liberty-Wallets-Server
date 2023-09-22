@@ -188,7 +188,7 @@ def create_settings_file():
 
 # Call the function to create the settings.config file
 create_settings_file()
-ef install_postgresql():
+def install_postgresql():
     # Install PostgreSQL and PostgreSQL-contrib packages
     subprocess.run(["sudo", "apt", "install", "-y", "postgresql", "postgresql-contrib"])
 
