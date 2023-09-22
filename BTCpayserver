@@ -262,7 +262,7 @@ start_nbxplorer_service()
 github_repo_url = "https://github.com/btcpayserver/btcpayserver.git"
 
 # Define the target directory where you want to clone the repository
-source_directory = os.path.expanduser("~/source/btcpayserver/")
+source_directory = os.path.expanduser("~/source/")
 
 # Check if the source directory exists, and create it if it doesn't
 if not os.path.exists(source_directory):
