@@ -321,4 +321,24 @@ try:
 except Exception as e:
     print(f"Error creating settings.conf file: {e}")
 
+import subprocess
+import os
+
+# Define the path to the BTCPayServer directory
+btcpayserver_directory = os.path.expanduser("~/source/btcpayserver")
+
+# Change the current working directory to the BTCPayServer directory
+os.chdir(btcpayserver_directory)
+
+# Check if the 'run.sh' script exists in the directory
+run_script_path = os.path.join(btcpayserver_directory, "run.sh")
+if not os.path.exists(run_script_path):
+    print(f"'run.sh' script does not exist in the directory: {btcpayserver_directory}")
+else:
+    # Execute the 'run.sh' script
+    try:
+        subprocess.run(["./run.sh"], check=True, shell=True)
+        print("Execution of 'run.sh' script completed successfully.")
+    except subprocess.CalledProcessError as e:
+        print(f"Error executing 'run.sh' script: {e}")
 
