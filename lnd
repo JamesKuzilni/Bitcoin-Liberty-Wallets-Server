@@ -1,0 +1,131 @@
+#!/usr/bin/env python3
+import os
+import subprocess
+import wget
+import tarfile
+
+
+def create_downloads_directory():
+    """Creates a Downloads directory in the home directory."""
+    downloads_directory = os.path.join(os.path.expanduser('~'), 'Downloads')
+    if not os.path.exists(downloads_directory):
+        os.makedirs(downloads_directory)
+
+def download_file(url, filename):
+    """Downloads a file from the specified URL to the specified filename."""
+    create_downloads_directory()  # Create Downloads directory if it doesn't exist
+    downloads_directory = os.path.join(os.path.expanduser('~'), 'Downloads')
+    filepath = os.path.join(downloads_directory, filename)
+
+    print('Downloading file...')
+    wget.download(url, filepath)
+
+def extract_and_install(filename, target_directory):
+    """Extracts a file from a tar archive and installs it to the target directory."""
+    create_downloads_directory()  # Create Downloads directory if it doesn't exist
+    filepath = os.path.join(os.path.expanduser('~'), 'Downloads', filename)
+    if not os.path.exists(filepath):
+        print('File does not exist.')
+        return
+
+    with open(filepath, 'rb') as f:
+        tar = tarfile.open(fileobj=f)
+        tar.extractall(os.path.join(os.path.expanduser('~'), 'Downloads'))
+
+    # Get the correct extracted directory name
+    extracted_dir_name = os.path.splitext(os.path.basename(filename))[0]
+
+    # Install the extracted files to the target directory
+    try:
+        extracted_dir_path = os.path.join(os.path.expanduser('~'), 'Downloads', extracted_dir_name)
+        for root, dirs, files in os.walk(extracted_dir_path):
+            for file in files:
+                source_path = os.path.join(root, file)
+                subprocess.run(['sudo', 'install', '-m', '0755', '-o', 'root', '-g', 'root', source_path, target_directory], check=True)
+        print(f'Successfully installed to {target_directory}')
+    except subprocess.CalledProcessError as e:
+        print(f'Installation failed: {e}')
+
+if __name__ == "__main__":
+    url = "https://github.com/lightningnetwork/lnd/releases/download/v0.16.4-beta/lnd-linux-amd64-v0.16.4-beta.tar.gz"
+    filename = "lnd-linux-amd64-v0.16.4-beta.tar.gz"
+    target_directory = "/usr/local/bin"
+
+    download_file(url, filename)
+    extract_and_install(filename, target_directory)
+
+def main():
+  # Prompt the user to go to cd Downloads
+  print("Please go to cd Downloads")
+
+  # Prompt the user to type "sudo install -m 0755 -o root -t /usr/local/bin bitcoin-25.0/bin/*"
+  print("Please type 'sudo install -m 0755 -o root -g root -t /usr/local/bin lnd-linux-amd64-v0.16.4-beta/*'")
+
+  # Prompt the user for input
+  input_command = input("Enter 'done' when you are ready to continue: ")
+
+if __name__ == "__main__":
+  main()
+
+
+def create_lnd_directory():
+    """Creates the ~/.lnd directory if it does not exist."""
+    lnd_directory = os.path.join(os.path.expanduser('~'), '.lnd')
+    if not os.path.exists(lnd_directory):
+        os.makedirs(lnd_directory)
+        print(f'Created directory {lnd_directory}')
+    else:
+        print(f'Directory {lnd_directory} already exists.')
+
+if __name__ == "__main__":
+    create_lnd_directory()
+
+def create_lnd_config_file():
+    # Predefined values
+    rpcusername = "BitcoinLibertyWallets"
+    rpcpassword = "6hn3kmdak2n1m"
+    ubuntuusername = "humble"
+    nameoflightningnode = "DonkeyKong"
+
+    # Define the configuration text
+    config_text = f"""\
+listen=0.0.0.0:9735
+tlsextraip=0.0.0.0
+tlsextradomain=0.0.0.0
+; wallet-unlock-password-file=/home/{ubuntuusername}/.lnd/password.txt
+; wallet-unlock-allow-create=true
+alias={nameoflightningnode}
+rpclisten=localhost:10009
+restlisten=0.0.0.0:8080
+bitcoin.active=true
+bitcoin.mainnet=true
+bitcoin.node=bitcoind
+bitcoind.dir=~/.bitcoin
+bitcoind.config=~/.bitcoin/bitcoin.conf
+bitcoind.rpcuser={rpcusername}
+bitcoind.rpcpass={rpcpassword}
+bitcoind.zmqpubrawblock=tcp://127.0.0.1:28332
+bitcoind.zmqpubrawtx=tcp://127.0.0.1:28333
+tor.active=true
+tor.streamisolation=true
+tor.v3=true
+"""
+
+    # Define the path to the ~/.lnd directory
+    lnd_directory = os.path.join(os.path.expanduser('~'), '.lnd')
+
+    # Create the directory if it doesn't exist
+    if not os.path.exists(lnd_directory):
+        os.makedirs(lnd_directory)
+
+    # Define the path to the configuration file
+    config_file_path = os.path.join(lnd_directory, 'lnd.conf')
+
+    # Write the configuration text to the file
+    with open(config_file_path, 'w') as config_file:
+        config_file.write(config_text)
+
+    print(f'Created config file {config_file_path}')
+
+if __name__ == "__main__":
+    create_lnd_config_file()
