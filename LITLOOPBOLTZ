@@ -1,0 +1,405 @@
+#!/usr/bin/env python3
+import os
+import tarfile
+import wget
+import shutil
+import subprocess
+import random
+import string
+import subprocess
+
+def download_file(url, filename):
+    """Downloads a file from the specified URL to the specified filename."""
+    downloads_directory = os.path.join(os.path.expanduser('~'), 'Downloads')
+    filepath = os.path.join(downloads_directory, filename)
+
+    print('Downloading file...')
+    wget.download(url, filepath)
+
+def extract_file(filename):
+    """Extracts a file from a tar archive."""
+    filepath = os.path.join(os.path.expanduser('~'), 'Downloads', filename)
+    if not os.path.exists(filepath):
+        print('File does not exist.')
+        return
+
+    with tarfile.open(filepath, 'r:gz') as tar:
+        tar.extractall(os.path.join(os.path.expanduser('~'), 'Downloads'))
+
+if __name__ == '__main__':
+    url = 'https://github.com/lightninglabs/lightning-terminal/releases/download/v0.10.5-alpha/lightning-terminal-linux-amd64-v0.10.5-alpha.tar.gz'
+    filename = 'lightning-terminal-linux-amd64-v0.10.5-alpha.tar.gz'
+
+    download_file(url, filename)
+    print('The file has been downloaded.')
+    extract_file(filename)
+
+def change_tor_cookie_permissions():
+    cookie_path = "/run/tor/control.authcookie"
+
+    try:
+        # Check if the file exists
+        if not os.path.exists(cookie_path):
+            print(f"Error: The file '{cookie_path}' does not exist.")
+            return
+
+        # Use subprocess to run the 'sudo chmod' command
+        subprocess.run(['sudo', 'chmod', 'o+r', cookie_path])
+
+        print(f"Changed permissions for '{cookie_path}' to allow read access by>
+    except Exception as e:
+        print(f"Error: {str(e)}")
+
+if __name__ == "__main__":
+    change_tor_cookie_permissions()
+
+def enable_rpc_middleware():
+    # Define the path to the lnd binary
+    lnd_binary = os.path.expanduser('~/.lnd/lnd')
+
+    # Check if the lnd binary exists
+    if not os.path.exists(lnd_binary):
+        print('lnd binary not found in ~/.lnd directory.')
+        return
+
+    # Define the command to enable rpcmiddleware
+    enable_command = [lnd_binary, '--rpcmiddleware.enable']
+
+    try:
+        # Execute the command
+        subprocess.run(enable_command, check=True)
+        print('rpcmiddleware has been enabled.')
+    except subprocess.CalledProcessError as e:
+        print(f'Error: {e}')
+    except Exception as e:
+        print(f'An unexpected error occurred: {e}')
+
+if __name__ == '__main__':
+    enable_rpc_middleware()
+
+def copy_file_with_sudo(source_file, dest_dir):
+    try:
+        # Use sudo to copy the file to the destination directory
+        subprocess.run(['sudo', 'cp', source_file, dest_dir], check=True)
+        print(f'Successfully copied {source_file} to {dest_dir} with sudo')
+    except Exception as e:
+        print(f'Error: {e}')
+
+if __name__ == '__main__':
+    source_directory = os.path.expanduser('~/Downloads/lightning-terminal-linux-amd64-v0.10.5-alpha')
+    destination_directory = '/usr/local/bin'  # Use the full path here
+
+    # List of files to copy individually
+    files_to_copy = ["frcli", "litcli", "litd", "lncli", "loop", "pool", "tapcli"]
+
+    for file_name in files_to_copy:
+        source_file = os.path.join(source_directory, file_name)
+        copy_file_with_sudo(source_file, destination_directory)
+
+def generate_random_password(length):
+    characters = string.ascii_letters + string.digits
+    return ''.join(random.choice(characters) for i in range(length))
+
+if __name__ == '__main__':
+    source_directory = os.path.expanduser('~/Downloads/lightning-terminal-linux-amd64-v0.10.5-alpha')
+    
+    # Generate a random password
+    alphanumeric_password = generate_random_password(12)
+    
+    # Command to execute litd with the generated password and httpslisten parameter
+    litd_command = f'./litd --uipassword={alphanumeric_password} --httpslisten=0.0.0.0:8443'
+    
+    # Change the working directory to the source directory
+    os.chdir(source_directory)
+    
+    # Execute the litd command
+    subprocess.run(litd_command, shell=True, check=True)
+    
+    print(f'litd started with password: {alphanumeric_password}')
+
+    # Create the litd service file
+    file_path = "/etc/systemd/system/litd.service"
+    content = f'''[Unit]
+Description=Lightning Loop daemon
+Wants=lnd.service
+After=lnd.service
+
+[Service]
+ExecStart=/usr/local/bin/litd --uipassword={alphanumeric_password} --httpslisten=0.0.0.0:8443
+User=humble
+Restart=always
+TimeoutSec=120
+RestartSec=30
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+'''
+
+    # Write the content to a temporary file
+    temp_file_path = "/tmp/litd.service"
+    with open(temp_file_path, 'w') as file:
+        file.write(content)
+
+    # Use sudo to move the temporary file to the target directory
+    move_command = ["sudo", "mv", temp_file_path, file_path]
+    subprocess.run(move_command, check=True)
+
+    # Set the correct ownership and permissions for the service file
+    chown_command = ["sudo", "chown", "root:root", file_path]
+    subprocess.run(chown_command, check=True)
+    chmod_command = ["sudo", "chmod", "644", file_path]
+    subprocess.run(chmod_command, check=True)
+
+    # Reload systemd configuration
+    reload_command = ["sudo", "systemctl", "daemon-reload"]
+    subprocess.run(reload_command, check=True)
+
+    # Enable the litd service
+    enable_command = ["sudo", "systemctl", "enable", "litd.service"]
+    subprocess.run(enable_command, check=True)
+
+    # Start the litd service
+    start_command = ["sudo", "systemctl", "start", "litd.service"]
+    subprocess.run(start_command, check=True)
+
+def update_rtl_config(config_path):
+    # Define the path to the RTL config file
+    rtl_config_path = os.path.expanduser(config_path)
+
+    # Check if the file exists
+    if not os.path.exists(rtl_config_path):
+        print(f'RTL config file not found at {rtl_config_path}')
+        return
+
+    # Read the JSON content from the config file
+    with open(rtl_config_path, 'r') as config_file:
+        config_data = json.load(config_file)
+
+    # Update the specific fields in the config data
+    config_data['nodes'][0]['Authentication']['swapMacaroonPath'] = "/home/humble/.loop/mainnet"
+    config_data['nodes'][0]['Settings']['swapServerUrl'] = "https://127.0.0.1:8443"
+    config_data['nodes'][0]['Settings']['boltzServerUrl'] = "https://127.0.0.1:9003"
+
+    # Write the updated JSON data back to the config file
+    with open(rtl_config_path, 'w') as config_file:
+        json.dump(config_data, config_file, indent=2)
+
+    print(f'RTL config file updated at {rtl_config_path}')
+
+if __name__ == '__main__':
+    rtl_config_file_path = '~/RTL/RTL-Config.json'  # Update the path accordingly
+    update_rtl_config(rtl_config_file_path)
+
+def restart_rtl_service():
+    try:
+        # Execute the systemctl restart RTL.service command
+        subprocess.run(['sudo', 'systemctl', 'restart', 'RTL.service'], check=True)
+        print('RTL.service restarted successfully.')
+    except Exception as e:
+        print(f'Error: {e}')
+
+if __name__ == '__main__':
+    rtl_config_file_path = '~/RTL/RTL-Config.json'  # Update the path accordingly
+    update_rtl_config(rtl_config_file_path)
+    restart_rtl_service()
+
+import os
+import wget
+import zipfile
+
+def download_file(url, filename):
+    """Downloads a file from the specified URL to the specified filename."""
+    downloads_directory = os.path.join(os.path.expanduser('~'), 'Downloads')
+    filepath = os.path.join(downloads_directory, filename)
+
+    print('Downloading file...')
+    wget.download(url, filepath)
+
+def extract_zip_file(filename):
+    """Extracts a ZIP file."""
+    filepath = os.path.join(os.path.expanduser('~'), 'Downloads', filename)
+    extraction_directory = os.path.join(os.path.expanduser('~'), 'Downloads')
+
+    if not os.path.exists(filepath):
+        print('File does not exist.')
+        return
+
+    try:
+        with zipfile.ZipFile(filepath, 'r') as zip_ref:
+            zip_ref.extractall(extraction_directory)
+        print(f'File {filename} has been extracted.')
+    except Exception as e:
+        print(f'Error extracting {filename}: {e}')
+
+if __name__ == '__main__':
+    url = 'https://github.com/BoltzExchange/boltz-lnd/releases/download/v1.2.7/boltz-lnd-linux-amd64.zip'
+    filename = 'boltz-lnd-linux-amd64.zip'
+
+    download_file(url, filename)
+    extract_zip_file(filename)
+
+def copy_file_with_sudo(source_file, dest_dir):
+    try:
+        # Use sudo to copy the file to the destination directory
+        subprocess.run(['sudo', 'cp', source_file, dest_dir], check=True)
+        print(f'Successfully copied {source_file} to {dest_dir} with sudo')
+
+        # Add execute permission to the copied file
+        file_path = os.path.join(dest_dir, os.path.basename(source_file))
+        subprocess.run(['sudo', 'chmod', '+x', file_path], check=True)
+        print(f'Added execute permission to {file_path}')
+    except Exception as e:
+        print(f'Error: {e}')
+
+if __name__ == '__main__':
+    source_directory = os.path.expanduser('~/Downloads')
+    destination_directory = '/usr/local/bin'  # Use the full path here
+
+    # List of files to copy
+    files_to_copy = ["boltzcli", "boltzd"]
+
+    for file_name in files_to_copy:
+        source_file = os.path.join(source_directory, file_name)
+        copy_file_with_sudo(source_file, destination_directory)
+
+def create_boltz_directory():
+    # Get the user's home directory
+    home_directory = os.path.expanduser("~")
+
+    # Specify the directory path
+    boltz_directory = os.path.join(home_directory, ".boltz-lnd")
+
+    try:
+        # Create the directory if it doesn't exist
+        os.makedirs(boltz_directory, exist_ok=True)
+        print(f"Created directory: {boltz_directory}")
+    except Exception as e:
+        print(f"Error creating directory: {e}")
+
+if __name__ == "__main__":
+    create_boltz_directory()
+
+import os
+
+def create_boltz_toml_file():
+    # Get the user's home directory
+    home_directory = os.path.expanduser("~")
+
+    # Specify the directory path for boltz-lnd
+    boltz_directory = os.path.join(home_directory, ".boltz-lnd")
+
+    # Specify the file path for boltz.toml
+    boltz_toml_path = os.path.join(boltz_directory, "boltz.toml")
+
+    # Content of boltz.toml
+    toml_content = """[LND]
+macaroon = "/home/humble/.lnd/data/chain/bitcoin/mainnet/admin.macaroon"
+certificate = "/home/humble/.lnd/tls.cert"
+"""
+
+    try:
+        # Create the .boltz-lnd directory if it doesn't exist
+        os.makedirs(boltz_directory, exist_ok=True)
+
+        # Write the content to boltz.toml
+        with open(boltz_toml_path, "w") as f:
+            f.write(toml_content)
+
+        print(f"Created {boltz_toml_path} with the specified content.")
+    except Exception as e:
+        print(f"Error creating {boltz_toml_path}: {e}")
+
+if __name__ == "__main__":
+    create_boltz_toml_file()
+
+def update_rtl_config(config_path):
+    # Define the path to the RTL config file
+    rtl_config_path = os.path.expanduser(config_path)
+
+    # Check if the file exists
+    if not os.path.exists(rtl_config_path):
+        print(f'RTL config file not found at {rtl_config_path}')
+        return
+
+    # Read the JSON content from the config file
+    with open(rtl_config_path, 'r') as config_file:
+        config_data = json.load(config_file)
+
+    # Update the specific fields in the config data
+    config_data['nodes'][0]['Authentication']['swapMacaroonPath'] = "/home/humble/.loop/mainnet"
+    config_data['nodes'][0]['Authentication']['boltzMacaroonPath'] = "/home/humble/.boltz-lnd/macaroons"
+
+    # Write the updated JSON data back to the config file
+    with open(rtl_config_path, 'w') as config_file:
+        json.dump(config_data, config_file, indent=2)
+
+    print(f'RTL config file updated at {rtl_config_path}')
+
+if __name__ == '__main__':
+    rtl_config_file_path = '~/RTL/RTL-Config.json'  # Update the path accordingly
+    update_rtl_config(rtl_config_file_path)
+
+def restart_rtl_service():
+    try:
+        # Execute the systemctl restart RTL.service command
+        subprocess.run(['sudo', 'systemctl', 'restart', 'RTL.service'], check=True)
+        print('RTL.service restarted successfully.')
+    except Exception as e:
+        print(f'Error: {e}')
+
+if __name__ == '__main__':
+    rtl_config_file_path = '~/RTL/RTL-Config.json'  # Update the path accordingly
+    update_rtl_config(rtl_config_file_path)
+    restart_rtl_service()
+
+import subprocess
+
+def create_boltzd_service(system_username):
+    file_path = "/etc/systemd/system/boltzd.service"
+    content = '''[Unit]
+Description=Boltz daemon
+Wants=lnd.service
+After=lnd.service
+
+[Service]
+ExecStart=/usr/local/bin/boltzd
+User=humble
+Restart=always
+TimeoutSec=120
+RestartSec=30
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+'''
+
+    # Write the content to a temporary file
+    temp_file_path = "/tmp/boltzd.service"
+    with open(temp_file_path, 'w') as file:
+        file.write(content)
+
+    # Use sudo to move the temporary file to the target directory
+    move_command = ["sudo", "mv", temp_file_path, file_path]
+    subprocess.run(move_command, check=True)
+
+    # Set the correct ownership and permissions for the service file
+    chown_command = ["sudo", "chown", "root:root", file_path]
+    subprocess.run(chown_command, check=True)
+    chmod_command = ["sudo", "chmod", "644", file_path]
+    subprocess.run(chmod_command, check=True)
+
+    # Reload systemd configuration
+    reload_command = ["sudo", "systemctl", "daemon-reload"]
+    subprocess.run(reload_command, check=True)
+
+    # Enable the boltzd service
+    enable_command = ["sudo", "systemctl", "enable", "boltzd.service"]
+    subprocess.run(enable_command, check=True)
+
+    # Start the boltzd service
+    start_command = ["sudo", "systemctl", "start", "boltzd.service"]
+    subprocess.run(start_command, check=True)
+
+if __name__ == "__main__":
+    create_boltzd_service("humble")
