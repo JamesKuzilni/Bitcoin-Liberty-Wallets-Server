@@ -46,3 +46,32 @@ def update_config_with_fingerprint(fingerprint):
 if __name__ == '__main__':
     fingerprint = check_tls_fingerprint()
     update_config_with_fingerprint(fingerprint)
+
+def check_tls_fingerprint():
+    try:
+        # Get the absolute path to the tls.cert file
+        tls_cert_path = os.path.expanduser('~/.lnd/tls.cert')
+
+        # Execute the OpenSSL command with the absolute path
+        result = subprocess.run(['openssl', 'x509', '-noout', '-fingerprint', '-sha256', '-inform', 'pem', '-in', tls_cert_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text>
+
+        # Extract the fingerprint and remove unwanted text
+        output_lines = result.stdout.strip().split('\n')
+        fingerprint_line = [line for line in output_lines if 'Fingerprint=' in line][0]
+        fingerprint = fingerprint_line.split('=', 1)[1].replace(":", "")
+
+        return fingerprint
+    except subprocess.CalledProcessError as e:
+        print(f"Error: {e}")
+        print(e.stderr)
+        return None
+
+if __name__ == '__main__':
+    fingerprint = check_tls_fingerprint()
+    if fingerprint is not None:
+        lightning_config = f'type=lnd-rest;server=https://localhost:8080/;macaroonfilepath=/home/humble/.lnd/data/chain/bitcoin/mainnet/admin.macaroon;certthumbprint={fingerprint}'
+        print(lightning_config)
+    else:
+        print("TLS fingerprint retrieval failed.")
+
+
