@@ -1,0 +1,382 @@
+#!/usr/bin/env python3
+import subprocess
+import os
+import wget
+import tarfile
+import shutil
+
+def run_apt_get_update():
+    try:
+        # Use subprocess to run the 'sudo apt-get update' command
+        subprocess.run(['sudo', 'apt-get', 'update'])
+
+        print("apt-get update completed successfully.")
+    except Exception as e:
+        print(f"Error: {str(e)}")
+
+if __name__ == "__main__":
+    run_apt_get_update()
+import subprocess
+
+def install_packages():
+    try:
+        # List of packages to install
+        packages = ["ca-certificates", "curl", "gnupg"]
+
+        # Create the command to run 'sudo apt-get install'
+        command = ["sudo", "apt-get", "install", "-y"] + packages
+
+        # Use subprocess to run the command
+        subprocess.run(command)
+
+        print("Packages installed successfully.")
+    except Exception as e:
+        print(f"Error: {str(e)}")
+
+if __name__ == "__main__":
+    install_packages()
+import subprocess
+
+def create_keyrings_directory():
+    try:
+        # Create the directory using 'sudo mkdir'
+        command = ["sudo", "mkdir", "-p", "/etc/apt/keyrings"]
+        subprocess.run(command)
+
+        print("Directory '/etc/apt/keyrings' created successfully.")
+    except Exception as e:
+        print(f"Error: {str(e)}")
+
+if __name__ == "__main__":
+    create_keyrings_directory()
+
+def download_and_install_gpg_key():
+    try:
+        # Download the GPG key using 'curl' and pipe it to 'gpg'
+        curl_command = ["curl", "-fsSL", "https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key"]
+        gpg_command = ["sudo", "gpg", "--dearmor", "-o", "/etc/apt/keyrings/nodesource.gpg"]
+
+        curl_process = subprocess.Popen(curl_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        gpg_process = subprocess.Popen(gpg_command, stdin=curl_process.stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        
+        curl_process.stdout.close()
+        curl_process.stderr.close()
+        
+        gpg_output, gpg_error = gpg_process.communicate()
+
+        if gpg_process.returncode == 0:
+            print("GPG key installed successfully.")
+        else:
+            print(f"Error installing GPG key: {gpg_error.decode('utf-8').strip()}")
+
+    except Exception as e:
+        print(f"Error: {str(e)}")
+
+if __name__ == "__main__":
+    download_and_install_gpg_key()
+import os
+
+def set_node_major_environment_variable():
+    try:
+        os.environ["NODE_MAJOR"] = "20"
+        print("NODE_MAJOR environment variable set to '20'")
+    except Exception as e:
+        print(f"Error: {str(e)}")
+
+if __name__ == "__main__":
+    set_node_major_environment_variable()
+import subprocess
+
+# Define the NODE_MAJOR variable
+NODE_MAJOR = "20"
+
+# The command to execute
+command = f'echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_{NODE_MAJOR}.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list'
+
+# Execute the command
+try:
+    subprocess.run(command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    print("Command executed successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Error executing the command: {e}")
+import subprocess
+
+# The command to install Node.js
+command = 'sudo apt-get install nodejs -y'
+
+# Execute the command
+try:
+    subprocess.run(command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    print("Node.js installed successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Error installing Node.js: {e}")
+
+# The command to install npm
+command = 'sudo apt install npm -y'
+
+# Execute the command
+try:
+    subprocess.run(command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    print("npm installed successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Error installing npm: {e}")
+
+# Define the path to the ~/.npm-global directory
+npm_global_directory = os.path.join(os.path.expanduser('~'), '.npm-global')
+
+# Create the directory if it doesn't exist
+if not os.path.exists(npm_global_directory):
+    os.makedirs(npm_global_directory)
+    print(f'Created directory {npm_global_directory}')
+else:
+    print(f'Directory {npm_global_directory} already exists.')
+# Define the npm prefix value
+npm_prefix = '~/.npm-global'
+
+# Define the path to the .npmrc file in the user's home directory
+npmrc_path = os.path.expanduser('~/.npmrc')
+
+# Check if the .npmrc file already exists
+if os.path.exists(npmrc_path):
+    # If it exists, open it in append mode and add the prefix configuration
+    with open(npmrc_path, 'a') as npmrc_file:
+        npmrc_file.write(f'prefix={npm_prefix}\n')
+else:
+    # If it doesn't exist, create a new .npmrc file and write the prefix configuration
+    with open(npmrc_path, 'w') as npmrc_file:
+        npmrc_file.write(f'prefix={npm_prefix}\n')
+
+print(f'npm prefix set to {npm_prefix}')
+
+# Define the text to add to the .profile file
+profile_text = 'export PATH=~/.npm-global/bin:$PATH'
+
+# Define the path to the .profile file in the user's home directory
+profile_path = os.path.expanduser('~/.profile')
+
+# Check if the .profile file already exists
+if os.path.exists(profile_path):
+    # If it exists, open it in append mode and add the text
+    with open(profile_path, 'a') as profile_file:
+        profile_file.write(f'\n{profile_text}\n')
+else:
+    # If it doesn't exist, create a new .profile file and write the text
+    with open(profile_path, 'w') as profile_file:
+        profile_file.write(f'{profile_text}\n')
+
+print(f'Added "{profile_text}" to {profile_path}')
+
+
+# Command to source the .profile file
+source_command = ". ~/.profile"
+
+# Use subprocess to run the source command
+subprocess.run(source_command, shell=True)
+
+print("Sourced .profile")
+
+
+
+def download_and_extract(url, filename):
+    """Downloads a tar archive from the specified URL and extracts it."""
+    # Define the downloads directory
+    downloads_directory = os.path.join(os.path.expanduser('~'), 'Downloads')
+    filepath = os.path.join(downloads_directory, filename)
+
+    # Check if the file already exists
+    if os.path.exists(filepath):
+        print('File already exists.')
+    else:
+        print('Downloading file...')
+        # Download the file from the URL
+        wget.download(url, filepath)
+        print('Download complete.')
+
+    # Check if the downloaded file exists
+    if not os.path.exists(filepath):
+        print('File does not exist.')
+        return
+
+    # Extract the tar.gz file
+    with tarfile.open(filepath, 'r:gz') as tar:
+        tar.extractall(downloads_directory)
+        print('Extraction complete.')
+
+if __name__ == '__main__':
+    url = 'https://github.com/Ride-The-Lightning/RTL/archive/refs/tags/v0.14.0.tar.gz'
+    filename = 'RTL-0.14.0.tar.gz'
+
+    download_and_extract(url, filename)
+
+def move_and_rename_directory(source_dir, destination_dir, new_name):
+    """Moves a directory and renames it."""
+    source_path = os.path.join(source_dir, source_name)
+    destination_path = os.path.join(destination_dir, new_name)
+
+    try:
+        # Rename and move the directory
+        shutil.move(source_path, destination_path)
+        print(f'Moved and renamed directory to {destination_path}')
+    except Exception as e:
+        print(f'Error: {e}')
+
+if __name__ == '__main__':
+    source_name = 'RTL-0.14.0'
+    destination_dir = os.path.expanduser('~')
+    new_name = 'RTL'
+
+    move_and_rename_directory(os.path.expanduser('~/Downloads'), destination_dir, new_name)
+
+def execute_command_in_directory(command, directory):
+    try:
+        # Change the current working directory to the specified directory
+        os.chdir(directory)
+
+        # Execute the command
+        subprocess.run(command, shell=True, check=True)
+    except subprocess.CalledProcessError as e:
+        print(f'Error executing command: {e}')
+    except Exception as e:
+        print(f'An error occurred: {e}')
+    finally:
+        # Change the working directory back to the original location
+        os.chdir(os.path.expanduser('~'))
+
+if __name__ == '__main__':
+    directory = os.path.join(os.path.expanduser('~'), 'RTL')
+    command = 'npm install --omit=dev --legacy-peer-deps'
+
+    execute_command_in_directory(command, directory)
+
+def initialize_npm_package():
+    try:
+        subprocess.run(["npm", "init", "-y"], check=True)
+        print("npm package initialized successfully.")
+    except subprocess.CalledProcessError as e:
+        print(f"Error initializing npm package: {e}")
+
+if __name__ == "__main__":
+    initialize_npm_package()
+import subprocess
+
+def npm_install():
+    try:
+        subprocess.run(["npm", "install"], check=True)
+        print("npm install completed successfully.")
+    except subprocess.CalledProcessError as e:
+        print(f"Error running npm install: {e}")
+
+if __name__ == "__main__":
+    npm_install()
+
+def rename_rtl_config():
+    source_path = os.path.expanduser("~/RTL/Sample-RTL-Config.json")
+    destination_path = os.path.expanduser("~/RTL/RTL-Config.json")
+
+    try:
+        os.rename(source_path, destination_path)
+        print(f"File renamed from '{source_path}' to '{destination_path}'")
+    except Exception as e:
+        print(f"Error renaming the file: {e}")
+
+if __name__ == "__main__":
+    rename_rtl_config()
+import os
+import json
+import random
+import string
+
+def generate_random_password(length):
+    # Generate a random password of the specified length
+    characters = string.ascii_letters + string.digits
+    password = ''.join(random.choice(characters) for _ in range(length))
+    return password
+
+def create_rtl_config_file():
+    random_password = generate_random_password(12)  # Change the length as needed
+    print(f"Generated random password: {random_password}")
+
+    config_data = {
+        "multiPass": random_password,
+        "port": "3000",
+        "defaultNodeIndex": 1,
+        "dbDirectoryPath": "C:\\Users\\xyz\\RTL",
+        "SSO": {
+            "rtlSSO": 0,
+            "rtlCookiePath": "",
+            "logoutRedirectLink": ""
+        },
+        "nodes": [
+            {
+                "index": 1,
+                "lnNode": "DonkeyKong",
+                "lnImplementation": "LND",
+                "Authentication": {
+                    "macaroonPath": "/home/humble/.lnd/data/chain/bitcoin/mainnet",
+                    "configPath": "/home/humble/.lnd/lnd.conf",
+                    "swapMacaroonPath": "",
+                    "boltzMacaroonPath": ""
+                },
+                "Settings": {
+                    "userPersona": "MERCHANT",
+                    "themeMode": "DAY",
+                    "themeColor": "PURPLE",
+                    "channelBackupPath": "/home/humble/lndbackup",
+                    "logLevel": "ERROR",
+                    "lnServerUrl": "https://127.0.0.1:8080",
+                    "swapServerUrl": "https://127.0.0.1:8081",
+                    "boltzServerUrl": "https://127.0.0.1:9003",
+                    "fiatConversion": False,
+                    "unannouncedChannels": False
+                }
+            }
+        ]
+    }
+
+    config_file_path = os.path.expanduser("~/RTL/RTL-Config.json")
+
+    with open(config_file_path, 'w') as config_file:
+        json.dump(config_data, config_file, indent=3)
+
+    print(f'Created RTL-Config.json file at {config_file_path}')
+
+if __name__ == "__main__":
+    create_rtl_config_file()
+
+def create_lndbackup_directory():
+    lndbackup_directory = os.path.expanduser("~/lndbackup")
+
+    # Check if the directory already exists
+    if os.path.exists(lndbackup_directory):
+        print(f"Directory {lndbackup_directory} already exists.")
+    else:
+        try:
+            os.makedirs(lndbackup_directory)
+            print(f"Created directory {lndbackup_directory}")
+        except OSError as e:
+            print(f"Error creating directory: {e}")
+
+if __name__ == "__main__":
+    create_lndbackup_directory()
+
+def run_rtl():
+    rtl_directory = os.path.expanduser("~/RTL")
+
+    # Check if the RTL directory exists
+    if not os.path.exists(rtl_directory):
+        print(f"RTL directory not found at {rtl_directory}")
+        return
+
+    # Change the current working directory to the RTL directory
+    os.chdir(rtl_directory)
+
+    # Run the "node rtl" command
+    try:
+        subprocess.run(["node", "rtl"])
+    except FileNotFoundError:
+        print("Node.js is not installed, please install Node.js to run RTL.")
+    except Exception as e:
+        print(f"Error running RTL: {e}")
+
+if __name__ == "__main__":
+    run_rtl()
