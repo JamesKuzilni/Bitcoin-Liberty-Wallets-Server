@@ -1,0 +1,48 @@
+#!/usr/bin/env python3
+import os
+import subprocess
+
+def check_tls_fingerprint():
+    try:
+        # Get the absolute path to the tls.cert file
+        tls_cert_path = os.path.expanduser('~/.lnd/tls.cert')
+
+        # Execute the OpenSSL command with the absolute path
+        result = subprocess.run(['openssl', 'x509', '-noout', '-fingerprint', '-sha256', '-inform', 'pem', '-in', tls_cert_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+
+        # Extract the fingerprint and remove colons
+        fingerprint = result.stdout.strip().replace(":", "")
+
+        print(f"TLS Fingerprint: {fingerprint}")  # Print the fingerprint
+
+        return fingerprint
+    except subprocess.CalledProcessError as e:
+        print(f"Error: {e}")
+        print(e.stderr)
+        return None
+
+def update_config_with_fingerprint(fingerprint):
+    if fingerprint is not None:
+        # Define the path to the settings.config file
+        config_file_path = os.path.expanduser("~/.btcpayserver/Main/settings.config")
+
+        # Read the current content of the configuration file
+        with open(config_file_path, "r") as file:
+            config_lines = file.readlines()
+
+        # Find and update the line with the certthumbprint
+        updated_lines = []
+        for line in config_lines:
+            if line.strip().startswith("#BTC.lightning="):
+                line = f'BTC.lightning=type=lnd-rest;server=https://127.0.0.1:8080/;macaroonfilepath=/home/humble/.lnd/data/chain/bitcoin/mainnet/admin.macaroon;certthumbprint="{fingerprint}">\n'
+            updated_lines.append(line)
+
+        # Write the updated content back to the configuration file
+        with open(config_file_path, "w") as file:
+            file.writelines(updated_lines)
+
+        print("Configuration file updated.")
+
+if __name__ == '__main__':
+    fingerprint = check_tls_fingerprint()
+    update_config_with_fingerprint(fingerprint)
