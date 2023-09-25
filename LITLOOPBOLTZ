@@ -107,7 +107,7 @@ if __name__ == '__main__':
     alphanumeric_password = generate_random_password(12)
     
     # Command to execute litd with the generated password and httpslisten parameter
-    litd_command = f'./litd --uipassword={alphanumeric_password} --httpslisten=0.0.0.0:8443'
+    litd_command = f'./litd --uipassword={alphanumeric_password} --httpslisten=0.0.0.0:8081'
     
     # Change the working directory to the source directory
     os.chdir(source_directory)
@@ -178,7 +178,7 @@ def update_rtl_config(config_path):
 
     # Update the specific fields in the config data
     config_data['nodes'][0]['Authentication']['swapMacaroonPath'] = "/home/humble/.loop/mainnet"
-    config_data['nodes'][0]['Settings']['swapServerUrl'] = "https://127.0.0.1:8443"
+    config_data['nodes'][0]['Settings']['swapServerUrl'] = "https://127.0.0.1:8081"
     config_data['nodes'][0]['Settings']['boltzServerUrl'] = "https://127.0.0.1:9003"
 
     # Write the updated JSON data back to the config file
