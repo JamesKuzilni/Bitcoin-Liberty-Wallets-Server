@@ -403,3 +403,17 @@ WantedBy=multi-user.target
 
 if __name__ == "__main__":
     create_boltzd_service("humble")
+
+# Define the Git repository URL
+repository_url = "https://github.com/lightninglabs/loop.git"
+
+# Define the target directory where you want to clone the repository
+target_directory = "loop"
+
+# Run the Git clone command
+try:
+    subprocess.run(["git", "clone", repository_url, target_directory], check=True)
+    print(f"Repository cloned successfully to {target_directory}.")
+except subprocess.CalledProcessError as e:
+    print(f"Error: Failed to clone the repository. {e}")
+
