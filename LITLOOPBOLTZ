@@ -416,4 +416,58 @@ try:
     print(f"Repository cloned successfully to {target_directory}.")
 except subprocess.CalledProcessError as e:
     print(f"Error: Failed to clone the repository. {e}")
+import subprocess
+
+def create_loopd_service(system_username):
+    file_path = "/etc/systemd/system/loopd.service"
+    content = f'''[Unit]
+Description=Loop daemon
+Wants=lnd.service
+After=lnd.service
+
+[Service]
+ExecStart=/usr/local/bin/loopd
+User={system_username}
+Restart=always
+TimeoutSec=120
+RestartSec=30
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+'''
+
+    # Write the content to a temporary file
+    temp_file_path = "/tmp/loopd.service"
+    with open(temp_file_path, 'w') as file:
+        file.write(content)
+
+    # Use sudo to move the temporary file to the target directory
+    move_command = ["sudo", "mv", temp_file_path, file_path]
+    subprocess.run(move_command, check=True)
+
+    # Set the correct ownership and permissions for the service file
+    chown_command = ["sudo", "chown", "root:root", file_path]
+    subprocess.run(chown_command, check=True)
+    chmod_command = ["sudo", "chmod", "644", file_path]
+    subprocess.run(chmod_command, check=True)
+
+    # Reload systemd configuration
+    reload_command = ["sudo", "systemctl", "daemon-reload"]
+    subprocess.run(reload_command, check=True)
+
+    # Enable the loopd service
+    enable_command = ["sudo", "systemctl", "enable", "loopd.service"]
+    subprocess.run(enable_command, check=True)
+
+    # Start the loopd service
+    start_command = ["sudo", "systemctl", "start", "loopd.service"]
+    subprocess.run(start_command, check=True)
+
+def main():
+    system_username = "humble"  # Replace with the desired system username
+    create_loopd_service(system_username)
+
+if __name__ == "__main__":
+    main()
 
