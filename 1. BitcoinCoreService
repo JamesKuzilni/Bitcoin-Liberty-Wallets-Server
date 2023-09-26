@@ -49,6 +49,20 @@ if __name__ == '__main__':
   print('The file has been downloaded.')
   extract_file(filename)
 
+def main():
+    # Prompt the user to go to cd Downloads
+    print("Please go to cd Downloads")
+
+    # Prompt the user to type "sudo install -m 0755 -o root -t /usr/local/bin bitcoin-25.0/bin/*"
+    print("Please type 'sudo install -m 0755 -o root -t /usr/local/bin bitcoin-25.0/bin/*'")
+
+    print('Downloading file...')
+    wget.download(url, filepath)
+
+if __name__ == "__main__":
+    main()
+
+
 def create_bitcoin_conf_file():
   """Creates a bitcoin.conf file in the ~/.bitcoin directory."""
   bitcoin_conf_filepath = os.path.join(os.path.expanduser('~'), '.bitcoin', 'bitcoin.conf')
