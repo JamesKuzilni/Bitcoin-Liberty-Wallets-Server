@@ -3,6 +3,7 @@ import os
 import wget
 import tarfile
 import subprocess
+import time
 
 def create_downloads_directory():
     downloads_directory = os.path.join(os.path.expanduser('~'), 'Downloads')
@@ -25,37 +26,21 @@ except Exception as e:
 
 filename = "bitcoin-25.0-x86_64-linux-gnu.tar.gz"
 download_path = os.path.expanduser(f'~/Downloads/{filename}')
-extracted_dir = os.path.expanduser(f'~/Downloads/bitcoin-25.0')
+extracted_dir_parent = os.path.expanduser(f'~/Downloads')
 
 try:
     with tarfile.open(download_path, 'r:gz') as tar:
-        tar.extractall(path=extracted_dir)
-    print(f"Extracted contents from '{filename}' into '{extracted_dir}' successfully.")
+        tar.extractall(path=extracted_dir_parent)
+    print(f"Extracted contents from '{filename}' into '{extracted_dir_parent}' successfully.")
 except Exception as e:
     print(f"Extraction failed: {str(e)}")
 
 
 
-# Define the directory containing extracted files
-bitcoin_dir = os.path.expanduser('~/Downloads/')
+
 
 # Define the command to execute
-command = f"sudo install -m 0755 -o root -g root -t /usr/local/bin bitcoin-25.0/bin/*"
-
-try:
-    # Change the working directory to ~/Downloads
-    os.chdir(os.path.expanduser('~/Downloads'))
-
-    # Execute the command using subprocess
-    subprocess.run(command, shell=True, check=True)
-    print("Installation successful.")
-except subprocess.CalledProcessError as e:
-    print(f"Error during installation: {e}")
-except Exception as e:
-    print(f"An error occurred: {e}")
-
-# Define the command to execute
-command = "sudo install -m 0755 -o root -g root -t /usr/local/bin ~/Downloads/bitcoin-25.0/bitcoin-25.0/bin/*"
+command = "sudo install -m 0755 -o root -g root -t /usr/local/bin ~/Downloads/bitcoin-25.0/bin/*"
 
 try:
     # Get the full path to the Downloads directory
@@ -69,6 +54,7 @@ except subprocess.CalledProcessError as e:
 except Exception as e:
     print(f"An error occurred: {e}")
 
+# Assuming bitcoind is in your PATH after installation, you can start it like this:
 try:
     # Start bitcoind in the background with the -daemon flag
     subprocess.Popen(['bitcoind', '-daemon'])
@@ -76,6 +62,16 @@ try:
 except Exception as e:
     print(f'An error occurred: {e}')
 
+
+# Set the duration of the timer in seconds
+duration = 10
+
+print(f"Starting {duration}-second timer...")
+
+# Sleep for the specified duration
+time.sleep(duration)
+
+print("Timer finished!")
 
 def create_bitcoin_conf_file():
   """Creates a bitcoin.conf file in the ~/.bitcoin directory."""
@@ -99,6 +95,7 @@ def create_bitcoin_conf_file():
 
 if __name__ == '__main__':
   create_bitcoin_conf_file()
+
 def stop_bitcoincore():
   """Stops Bitcoin Core."""
   command = "bitcoin-cli stop"
@@ -147,8 +144,8 @@ def append_rpcauth_to_bitcoin_conf(rpcauth):
         bitcoin_conf_file.write(f'rpcauth={rpcauth}\n')
 
 # Example usage
-username = "rpcusername"
-password = "rpcpassword"
+username = "Bitcoinnode"
+password = "QuL4hfnH6Bnc1"
 rpcauth = run_rpcauth(username, password)
 append_rpcauth_to_bitcoin_conf(rpcauth)
 
