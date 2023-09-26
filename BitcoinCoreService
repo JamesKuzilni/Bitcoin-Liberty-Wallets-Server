@@ -69,13 +69,10 @@ except subprocess.CalledProcessError as e:
 except Exception as e:
     print(f"An error occurred: {e}")
 
-
 try:
-    # Start bitcoind
-    subprocess.run(['bitcoind'], check=True)
-    print('Bitcoin Core (bitcoind) has been started.')
-except subprocess.CalledProcessError as e:
-    print(f'Error starting bitcoind: {e}')
+    # Start bitcoind in the background
+    subprocess.Popen(['bitcoind'])
+    print('Bitcoin Core (bitcoind) is starting in the background.')
 except Exception as e:
     print(f'An error occurred: {e}')
 
