@@ -70,11 +70,12 @@ except Exception as e:
     print(f"An error occurred: {e}")
 
 try:
-    # Start bitcoind in the background
-    subprocess.Popen(['bitcoind'])
+    # Start bitcoind in the background with the -daemon flag
+    subprocess.Popen(['bitcoind', '-daemon'])
     print('Bitcoin Core (bitcoind) is starting in the background.')
 except Exception as e:
     print(f'An error occurred: {e}')
+
 
 def create_bitcoin_conf_file():
   """Creates a bitcoin.conf file in the ~/.bitcoin directory."""
