@@ -5,54 +5,52 @@ import tarfile
 import subprocess
 
 def create_downloads_directory():
-  """Creates a Downloads directory in the home directory."""
-  downloads_directory = os.path.join(os.path.expanduser('~'), 'Downloads')
-  if not os.path.exists(downloads_directory):
-    os.makedirs(downloads_directory)
-import os
-import tarfile
-import subprocess
-import wget
-
-def create_downloads_directory():
     downloads_directory = os.path.join(os.path.expanduser('~'), 'Downloads')
     if not os.path.exists(downloads_directory):
         os.makedirs(downloads_directory)
 
 def download_file(url, filename):
-    create_downloads_directory()
-    downloads_directory = os.path.join(os.path.expanduser('~'), 'Downloads')
-    filepath = os.path.join(downloads_directory, filename)
-    print('Downloading file...')
-    wget.download(url, filepath)
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            with open(filename, 'wb') as f:
+                f.write(response.content)
+            print(f"Downloaded {filename} successfully.")
+        else:
+            print(f"Failed to download {filename}. Status code: {response.status_code}")
+    except Exception as e:
+        print(f"Download failed: {str(e)}")
 
 def extract_and_install(filename, target_directory):
-    create_downloads_directory()
-    filepath = os.path.join(os.path.expanduser('~'), 'Downloads', filename)
-    if not os.path.exists(filepath):
-        print('File does not exist.')
+    if not os.path.exists(filename):
+        print(f"File '{filename}' does not exist.")
         return
 
-    with open(filepath, 'rb') as f:
-        tar = tarfile.open(fileobj=f)
-        tar.extractall(os.path.join(os.path.expanduser('~'), 'Downloads'))
-
-    extracted_dir_name = os.path.splitext(os.path.basename(filename))[0]
-
     try:
-        extracted_dir_path = os.path.join(os.path.expanduser('~'), 'Downloads', extracted_dir_name)
+        with tarfile.open(filename, 'r:gz') as tar:
+            tar.extractall()
+            print(f"Extracted contents from '{filename}' successfully.")
+
+        extracted_dir_name = os.path.commonprefix([filename, tar.getnames()])
+        extracted_dir_path = os.path.abspath(extracted_dir_name)
+        
         for root, dirs, files in os.walk(extracted_dir_path):
             for file in files:
                 source_path = os.path.join(root, file)
-                subprocess.run(['sudo', 'install', '-m', '0755', '-o', 'root', '-g', 'root', source_path, target_directory], check=True)
-        print(f'Successfully installed to {target_directory}')
-    except subprocess.CalledProcessError as e:
-        print(f'Installation failed: {e}')
+                dest_path = os.path.join(target_directory, file)
+                shutil.copy2(source_path, dest_path)
+                os.chmod(dest_path, 0o755)
+                os.chown(dest_path, 0, 0)
+        
+        print(f"Installed files to '{target_directory}' successfully.")
+    except Exception as e:
+        print(f"Installation failed: {str(e)}")
 
 if __name__ == "__main__":
     url = "https://bitcoincore.org/bin/bitcoin-core-25.0/bitcoin-25.0-x86_64-linux-gnu.tar.gz"
     filename = "bitcoin-25.0-x86_64-linux-gnu.tar.gz"
     target_directory = "/usr/local/bin"
+
     download_file(url, filename)
     extract_and_install(filename, target_directory)
 
@@ -62,6 +60,8 @@ if __name__ == "__main__":
         print('Bitcoin Core has been started.')
     except subprocess.CalledProcessError as e:
         print(f'Error starting bitcoind: {e}')
+
+
 
 
 
