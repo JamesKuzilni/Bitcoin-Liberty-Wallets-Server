@@ -9,58 +9,61 @@ def create_downloads_directory():
   downloads_directory = os.path.join(os.path.expanduser('~'), 'Downloads')
   if not os.path.exists(downloads_directory):
     os.makedirs(downloads_directory)
+import os
+import tarfile
+import subprocess
+import wget
+
+def create_downloads_directory():
+    downloads_directory = os.path.join(os.path.expanduser('~'), 'Downloads')
+    if not os.path.exists(downloads_directory):
+        os.makedirs(downloads_directory)
 
 def download_file(url, filename):
-  """Downloads a file from the specified URL to the specified filename."""
-  downloads_directory = os.path.join(os.path.expanduser('~'), 'Downloads')
-  filepath = os.path.join(downloads_directory, filename)
+    create_downloads_directory()
+    downloads_directory = os.path.join(os.path.expanduser('~'), 'Downloads')
+    filepath = os.path.join(downloads_directory, filename)
+    print('Downloading file...')
+    wget.download(url, filepath)
 
-  print('Downloading file...')
+def extract_and_install(filename, target_directory):
+    create_downloads_directory()
+    filepath = os.path.join(os.path.expanduser('~'), 'Downloads', filename)
+    if not os.path.exists(filepath):
+        print('File does not exist.')
+        return
 
-  if not os.path.exists(downloads_directory):
-    os.makedirs(downloads_directory)
+    with open(filepath, 'rb') as f:
+        tar = tarfile.open(fileobj=f)
+        tar.extractall(os.path.join(os.path.expanduser('~'), 'Downloads'))
 
-  wget.download(url, filepath)
+    extracted_dir_name = os.path.splitext(os.path.basename(filename))[0]
 
-def main():
-  url = 'https://bitcoincore.org/bin/bitcoin-core-25.0/bitcoin-25.0-x86_64-linux-gnu.tar.gz'
-  filename = 'bitcoin-25.0-x86_64-linux-gnu.tar.gz'
-
-  download_file(url, filename)
-
-if __name__ == '__main__':
-  main()
-def extract_file(filename):
-  """Extracts a file from a tar archive."""
-  filepath = os.path.join(os.path.expanduser('~'), 'Downloads', filename)
-  if not os.path.exists(filepath):
-    print('File does not exist.')
-    return
-
-  with open(filepath, 'rb') as f:
-    tar = tarfile.open(fileobj=f)
-    tar.extractall(os.path.join(os.path.expanduser('~'), 'Downloads'))
-
-if __name__ == '__main__':
-  create_downloads_directory()
-  url = 'https://bitcoincore.org/bin/bitcoin-core-25.0/bitcoin-25.0-x86_64-linux-gnu.tar.gz'
-  filename = 'bitcoin-25.0-x86_64-linux-gnu.tar.gz'
-
-  print('The file has been downloaded.')
-  extract_file(filename)
-
-def main():
-    # Prompt the user to type the installation command
-    print("Please type 'sudo install -m 0755 -o root -g root -t /usr/local/bin bitcoin-25.0/bin/*'")
-    user_command = input("Type the command and press Enter: ")
-
-    # Proceed with the installation logic (which you can add as needed)
-
-    # Prompt the user to type "done" to finish
-    done_input = input("Type 'done' and press Enter to finish: ")
+    try:
+        extracted_dir_path = os.path.join(os.path.expanduser('~'), 'Downloads', extracted_dir_name)
+        for root, dirs, files in os.walk(extracted_dir_path):
+            for file in files:
+                source_path = os.path.join(root, file)
+                subprocess.run(['sudo', 'install', '-m', '0755', '-o', 'root', '-g', 'root', source_path, target_directory], check=True)
+        print(f'Successfully installed to {target_directory}')
+    except subprocess.CalledProcessError as e:
+        print(f'Installation failed: {e}')
 
 if __name__ == "__main__":
-    main()
+    url = "https://bitcoincore.org/bin/bitcoin-core-25.0/bitcoin-25.0-x86_64-linux-gnu.tar.gz"
+    filename = "bitcoin-25.0-x86_64-linux-gnu.tar.gz"
+    target_directory = "/usr/local/bin"
+    download_file(url, filename)
+    extract_and_install(filename, target_directory)
+
+    # Start bitcoind
+    try:
+        subprocess.run(['bitcoind'], check=True)
+        print('Bitcoin Core has been started.')
+    except subprocess.CalledProcessError as e:
+        print(f'Error starting bitcoind: {e}')
+
+
 
 
 def create_bitcoin_conf_file():
