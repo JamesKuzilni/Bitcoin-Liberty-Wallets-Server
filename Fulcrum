@@ -111,6 +111,8 @@ def delete_file():
     print('Deleting file...')
     os.remove(file_path)
 
+import os
+
 def create_fulcrum_conf(file_path, rpcusername, rpcpassword):
     """Creates the fulcrum.conf file with the specified contents."""
     config_contents = f"""datadir = /home/humble/fulcrum_db  # Windows: datadir = D:\\FulcrumData\\mainnet
@@ -129,11 +131,30 @@ fast-sync = 5000
 
 if __name__ == '__main__':
     file_path = os.path.join(os.path.expanduser('~'), 'fulcrum', 'fulcrum.conf')
-    rpcusername = input('Enter RPC username')
-    rpcpassword = input('Enter RPC password')
+    rpcusername = 'your_rpc_username'
+    rpcpassword = 'your_rpc_password'
     create_fulcrum_conf(file_path, rpcusername, rpcpassword)
 
     print('fulcrum.conf file has been created.')
+
+
+# List of files to make executable
+files_to_make_executable = ["~/fulcrum/Fulcrum", "~/fulcrum/FulcrumAdmin"]
+
+for file_path in files_to_make_executable:
+    # Expand the tilde (~) to the user's home directory
+    expanded_file_path = os.path.expanduser(file_path)
+
+    # Check if the file exists
+    if os.path.exists(expanded_file_path):
+        try:
+            # Set the executable permission using chmod
+            os.chmod(expanded_file_path, 0o755)  # 0o755 corresponds to chmod +x
+            print(f"File {expanded_file_path} is now executable.")
+        except OSError as e:
+            print(f"Error changing permissions for {expanded_file_path}: {e}")
+    else:
+        print(f"File {expanded_file_path} does not exist.")
 
 def create_fulcrum_service(system_username):
     file_path = "/etc/systemd/system/fulcrum.service"
@@ -174,28 +195,6 @@ WantedBy=multi-user.target
     # Enable the fulcrum service
     enable_command = ["sudo", "systemctl", "enable", "fulcrum.service"]
     subprocess.run(enable_command, check=True)
-
-# List of files to make executable
-files_to_make_executable = ["~/fulcrum/Fulcrum", "~/fulcrum/FulcrumAdmin"]
-
-for file_path in files_to_make_executable:
-    # Expand the tilde (~) to the user's home directory
-    expanded_file_path = os.path.expanduser(file_path)
-
-    # Check if the file exists
-    if os.path.exists(expanded_file_path):
-        try:
-            # Set the executable permission using chmod
-            os.chmod(expanded_file_path, 0o755)  # 0o755 corresponds to chmod +x
-            print(f"File {expanded_file_path} is now executable.")
-        except OSError as e:
-            print(f"Error changing permissions for {expanded_file_path}: {e}")
-    else:
-        print(f"File {expanded_file_path} does not exist.")
-
-    # Start the fulcrum service
-    start_command = ["sudo", "systemctl", "start", "fulcrum.service"]
-    subprocess.run(start_command, check=True)
 
 # Call the function with the desired system username
 create_fulcrum_service("humble")
