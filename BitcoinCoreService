@@ -9,6 +9,9 @@ def create_downloads_directory():
     if not os.path.exists(downloads_directory):
         os.makedirs(downloads_directory)
 
+# Call the function to create the Downloads directory if it doesn't exist
+create_downloads_directory()
+
 def download_file(url, filename):
     try:
         response = requests.get(url)
