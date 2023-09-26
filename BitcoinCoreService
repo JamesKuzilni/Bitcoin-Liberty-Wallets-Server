@@ -53,14 +53,26 @@ def main():
     # Prompt the user to go to cd Downloads
     print("Please go to cd Downloads")
 
-    # Prompt the user to type "sudo install -m 0755 -o root -t /usr/local/bin bitcoin-25.0/bin/*"
-    print("Please type 'sudo install -m 0755 -o root -t /usr/local/bin bitcoin-25.0/bin/*'")
+    # Require the user to type "done" to proceed
+    user_input = input("Type 'done' and press Enter to continue: ")
+    if user_input.strip().lower() != "done":
+        print("You did not type 'done'. Exiting...")
+        return
 
-    print('Downloading file...')
-    wget.download(url, filepath)
+    # Prompt the user to type the installation command
+    print("Please type 'sudo install -m 0755 -o root -t /usr/local/bin bitcoin-25.0/bin/*'")
+    user_command = input("Type the command and press Enter: ")
+
+    # Check if the user input matches the required command
+    if user_command == "sudo install -m 0755 -o root -t /usr/local/bin bitcoin-25.0/bin/*":
+        print("Proceeding with the installation...")
+        # You can add the installation logic here
+    else:
+        print("Invalid command. Exiting...")
 
 if __name__ == "__main__":
     main()
+
 
 
 def create_bitcoin_conf_file():
