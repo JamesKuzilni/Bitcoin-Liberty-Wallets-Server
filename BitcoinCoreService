@@ -37,7 +37,7 @@ except Exception as e:
 
 
 # Define the directory containing extracted files
-bitcoin_dir = os.path.expanduser('~/Downloads/bitcoin-25.0')
+bitcoin_dir = os.path.expanduser('~/Downloads/')
 
 # Define the command to execute
 command = f"sudo install -m 0755 -o root -g root -t /usr/local/bin bitcoin-25.0/bin/*"
