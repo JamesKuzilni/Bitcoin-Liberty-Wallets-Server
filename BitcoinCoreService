@@ -51,7 +51,7 @@ if __name__ == '__main__':
 
 def main():
     # Prompt the user to type the installation command
-    print("Please type 'sudo install -m 0755 -o root -t /usr/local/bin bitcoin-25.0/bin/*'")
+    print("Please type 'sudo install -m 0755 -o root -g root -t /usr/local/bin bitcoin-25.0/bin/*'")
     user_command = input("Type the command and press Enter: ")
 
     # Proceed with the installation logic (which you can add as needed)
