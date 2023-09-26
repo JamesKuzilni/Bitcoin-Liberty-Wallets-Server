@@ -50,29 +50,17 @@ if __name__ == '__main__':
   extract_file(filename)
 
 def main():
-    # Prompt the user to go to cd Downloads
-    print("Please go to cd Downloads")
-
-    # Require the user to type "done" to proceed
-    user_input = input("Type 'done' and press Enter to continue: ")
-    if user_input.strip().lower() != "done":
-        print("You did not type 'done'. Exiting...")
-        return
-
     # Prompt the user to type the installation command
     print("Please type 'sudo install -m 0755 -o root -t /usr/local/bin bitcoin-25.0/bin/*'")
     user_command = input("Type the command and press Enter: ")
 
-    # Check if the user input matches the required command
-    if user_command == "sudo install -m 0755 -o root -t /usr/local/bin bitcoin-25.0/bin/*":
-        print("Proceeding with the installation...")
-        # You can add the installation logic here
-    else:
-        print("Invalid command. Exiting...")
+    # Proceed with the installation logic (which you can add as needed)
+
+    # Prompt the user to type "done" to finish
+    done_input = input("Type 'done' and press Enter to finish: ")
 
 if __name__ == "__main__":
     main()
-
 
 
 def create_bitcoin_conf_file():
