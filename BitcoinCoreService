@@ -12,62 +12,72 @@ def create_downloads_directory():
 # Call the function to create the Downloads directory if it doesn't exist
 create_downloads_directory()
 
-def download_file(url, filename):
-    try:
-        response = requests.get(url)
-        if response.status_code == 200:
-            with open(filename, 'wb') as f:
-                f.write(response.content)
-            print(f"Downloaded {filename} successfully.")
-        else:
-            print(f"Failed to download {filename}. Status code: {response.status_code}")
-    except Exception as e:
-        print(f"Download failed: {str(e)}")
+url = "https://bitcoincore.org/bin/bitcoin-core-25.0/bitcoin-25.0-x86_64-linux-gnu.tar.gz"
+download_command = f'wget {url} -P ~/Downloads'
 
-def extract_and_install(filename, target_directory):
-    if not os.path.exists(filename):
-        print(f"File '{filename}' does not exist.")
-        return
+try:
+    subprocess.run(download_command, shell=True, check=True)
+    print("Download completed successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Error during download: {e}")
+except Exception as e:
+    print(f"Download failed: {str(e)}")
 
-    try:
-        with tarfile.open(filename, 'r:gz') as tar:
-            tar.extractall()
-            print(f"Extracted contents from '{filename}' successfully.")
+filename = "bitcoin-25.0-x86_64-linux-gnu.tar.gz"
+download_path = os.path.expanduser(f'~/Downloads/{filename}')
+extracted_dir = os.path.expanduser(f'~/Downloads/bitcoin-25.0')
 
-        extracted_dir_name = os.path.commonprefix([filename, tar.getnames()])
-        extracted_dir_path = os.path.abspath(extracted_dir_name)
-        
-        for root, dirs, files in os.walk(extracted_dir_path):
-            for file in files:
-                source_path = os.path.join(root, file)
-                dest_path = os.path.join(target_directory, file)
-                shutil.copy2(source_path, dest_path)
-                os.chmod(dest_path, 0o755)
-                os.chown(dest_path, 0, 0)
-        
-        print(f"Installed files to '{target_directory}' successfully.")
-    except Exception as e:
-        print(f"Installation failed: {str(e)}")
+try:
+    with tarfile.open(download_path, 'r:gz') as tar:
+        tar.extractall(path=extracted_dir)
+    print(f"Extracted contents from '{filename}' into '{extracted_dir}' successfully.")
+except Exception as e:
+    print(f"Extraction failed: {str(e)}")
 
-if __name__ == "__main__":
-    url = "https://bitcoincore.org/bin/bitcoin-core-25.0/bitcoin-25.0-x86_64-linux-gnu.tar.gz"
-    filename = "bitcoin-25.0-x86_64-linux-gnu.tar.gz"
-    target_directory = "/usr/local/bin"
 
-    download_file(url, filename)
-    extract_and_install(filename, target_directory)
 
+# Define the directory containing extracted files
+bitcoin_dir = os.path.expanduser('~/Downloads/bitcoin-25.0')
+
+# Define the command to execute
+command = f"sudo install -m 0755 -o root -g root -t /usr/local/bin bitcoin-25.0/bin/*"
+
+try:
+    # Change the working directory to ~/Downloads
+    os.chdir(os.path.expanduser('~/Downloads'))
+
+    # Execute the command using subprocess
+    subprocess.run(command, shell=True, check=True)
+    print("Installation successful.")
+except subprocess.CalledProcessError as e:
+    print(f"Error during installation: {e}")
+except Exception as e:
+    print(f"An error occurred: {e}")
+
+# Define the command to execute
+command = "sudo install -m 0755 -o root -g root -t /usr/local/bin ~/Downloads/bitcoin-25.0/bitcoin-25.0/bin/*"
+
+try:
+    # Get the full path to the Downloads directory
+    downloads_directory = os.path.expanduser('~/Downloads')
+
+    # Execute the command using subprocess and specify the working directory as the Downloads directory
+    subprocess.run(command, shell=True, check=True, cwd=downloads_directory)
+    print("Installation successful.")
+except subprocess.CalledProcessError as e:
+    print(f"Error during installation: {e}")
+except Exception as e:
+    print(f"An error occurred: {e}")
+
+
+try:
     # Start bitcoind
-    try:
-        subprocess.run(['bitcoind'], check=True)
-        print('Bitcoin Core has been started.')
-    except subprocess.CalledProcessError as e:
-        print(f'Error starting bitcoind: {e}')
-
-
-
-
-
+    subprocess.run(['bitcoind'], check=True)
+    print('Bitcoin Core (bitcoind) has been started.')
+except subprocess.CalledProcessError as e:
+    print(f'Error starting bitcoind: {e}')
+except Exception as e:
+    print(f'An error occurred: {e}')
 
 def create_bitcoin_conf_file():
   """Creates a bitcoin.conf file in the ~/.bitcoin directory."""
@@ -139,8 +149,8 @@ def append_rpcauth_to_bitcoin_conf(rpcauth):
         bitcoin_conf_file.write(f'rpcauth={rpcauth}\n')
 
 # Example usage
-username = "rpcusername"
-password = "rpcpassword"
+username = "Project"
+password = "HUAymSI6UP2n"
 rpcauth = run_rpcauth(username, password)
 append_rpcauth_to_bitcoin_conf(rpcauth)
 
