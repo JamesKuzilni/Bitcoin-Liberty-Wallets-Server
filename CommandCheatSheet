@@ -25,6 +25,9 @@ bitcoin-cli getblockchaininfo - Get information about the current state of the b
 bitcoin-cli getblockcount - Get the current block height.
 bitcoin-cli gettxoutsetinfo - Get statistics about the UTXO (Unspent Transaction Output) set.
 bitcoin-cli getconnectioncount - Get the number of connections to other nodes in the Bitcoin network.
+bitcoin-cli start - Start bitcoin-core
+bitcoin-cli stop - Stop bitcoin-core
+bitcoind - Start bitcoin in the background
 
 To Restart Samourai Wallet Dojo:
 
