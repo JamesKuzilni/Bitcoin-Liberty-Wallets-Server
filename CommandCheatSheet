@@ -1,0 +1,39 @@
+Check Operation of Applications:
+
+sudo systemctl status bitcoind.service
+sudo systemctl status fulcrum.service
+sudo systemctl status lnd.service
+sudo systemctl status RTL.service
+sudo systemctl status boltzd.service
+sudo systemctl status loopd.service
+sudo systemctl status litd.service
+
+sudo systemctl restart bitcoind.service
+sudo systemctl restart fulcrum.service
+sudo systemctl restart lnd.service
+sudo systemctl restart RTL.service
+sudo systemctl restart boltzd.service
+sudo systemctl restart loopd.service
+sudo systemctl restart litd.service
+
+sudo systemctl stop bitcoind.service
+sudo systemctl start bitcoind.service
+
+Blockchain and Block Commands:
+
+bitcoin-cli getblockchaininfo - Get information about the current state of the blockchain.
+bitcoin-cli getblockcount - Get the current block height.
+bitcoin-cli gettxoutsetinfo - Get statistics about the UTXO (Unspent Transaction Output) set.
+bitcoin-cli getconnectioncount - Get the number of connections to other nodes in the Bitcoin network.
+
+To Restart Samourai Wallet Dojo:
+
+cd /home/humble/dojo-app/samourai/docker/my-dojo/ -> type: sudo docker-compose up
+
+To Restart Mempool:
+
+cd ~/mempool/docker/ -> type: sudo docker-compose up 
+
+PORTS:
+Mempool->IPaddress:4080
+Ride The Lightning(RTL)->IPaddress:3000
