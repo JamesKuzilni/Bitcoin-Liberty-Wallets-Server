@@ -29,7 +29,7 @@ def install_application(filename):
     print('Installation complete.')
 
 # Usage example
-url = 'https://github.com/sparrowwallet/sparrow/releases/download/1.7.7/sparrow_1.7.7-1_amd64.deb'
-filename = 'sparrow_1.7.7-1_amd64.deb'
+url = 'https://github.com/sparrowwallet/sparrow/releases/download/1.7.9/sparrow_1.7.9-1_amd64.deb'
+filename = 'sparrow_1.7.9-1_amd64.deb'
 download_file(url, filename)
 install_application(filename)
