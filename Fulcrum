@@ -137,24 +137,20 @@ if __name__ == '__main__':
 
     print('fulcrum.conf file has been created.')
 
-
 # List of files to make executable
-files_to_make_executable = ["~/fulcrum/Fulcrum", "~/fulcrum/FulcrumAdmin"]
+files_to_make_executable = ["/home/humble/fulcrum/Fulcrum", "/home/humble/fulcrum/FulcrumAdmin"]
 
 for file_path in files_to_make_executable:
-    # Expand the tilde (~) to the user's home directory
-    expanded_file_path = os.path.expanduser(file_path)
-
     # Check if the file exists
-    if os.path.exists(expanded_file_path):
+    if os.path.exists(file_path):
         try:
-            # Set the executable permission using chmod
-            os.chmod(expanded_file_path, 0o755)  # 0o755 corresponds to chmod +x
-            print(f"File {expanded_file_path} is now executable.")
+            # Set the executable permission using sudo and chmod
+            os.system(f"sudo chmod +x {file_path}")
+            print(f"File {file_path} is now executable.")
         except OSError as e:
-            print(f"Error changing permissions for {expanded_file_path}: {e}")
+            print(f"Error changing permissions for {file_path}: {e}")
     else:
-        print(f"File {expanded_file_path} does not exist.")
+        print(f"File {file_path} does not exist.")
 
 def create_fulcrum_service(system_username):
     file_path = "/etc/systemd/system/fulcrum.service"
