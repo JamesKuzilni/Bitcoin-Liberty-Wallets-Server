@@ -9,6 +9,18 @@ import time
 import random 
 import string
 
+def install_moby_buildx():
+  """Installs the moby-buildx package using subprocess."""
+
+  command = ["sudo", "apt", "install", "moby-buildx"]
+  process = subprocess.run(command, check=True)
+
+  if process.returncode != 0:
+    raise Exception("Failed to install moby-buildx")
+
+if __name__ == "__main__":
+  install_moby_buildx()
+
 def download_file(url, filename):
     """Downloads a file from the specified URL to the specified filename."""
     downloads_directory = os.path.join(os.path.expanduser('~'), 'Downloads')
