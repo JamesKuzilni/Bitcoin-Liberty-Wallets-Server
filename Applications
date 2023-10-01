@@ -33,3 +33,27 @@ url = 'https://github.com/sparrowwallet/sparrow/releases/download/1.7.9/sparrow_
 filename = 'sparrow_1.7.9-1_amd64.deb'
 download_file(url, filename)
 install_application(filename)
+
+def download_and_install_tor_browser():
+    # Replace the URL with the latest version's URL
+    url = "https://www.torproject.org/dist/torbrowser/12.5.5/tor-browser-linux64-12.5.5_ALL.tar.xz"
+    download_dir = os.path.expanduser('~/Downloads')
+
+    # Use wget to download the Tor Browser
+    subprocess.run(["wget", url], cwd=download_dir)
+
+    # Extract the downloaded tar.xz file
+    tar_file = os.path.join(download_dir, "tor-browser-linux64-12.5.5_ALL.tar.xz")
+    subprocess.run(["tar", "-xf", tar_file], cwd=download_dir)
+
+    # Get the extracted folder name
+    extracted_folder = "tor-browser"
+
+    # Change to the extracted folder
+    os.chdir(os.path.join(download_dir, extracted_folder))
+
+    # Run the Tor Browser installation script
+    subprocess.run(["./start-tor-browser.desktop", "--register-app"])
+
+# Call the function to download and install Tor Browser
+download_and_install_tor_browser()
