@@ -601,3 +601,50 @@ def get_node_api_key_from_conf():
 
 # Get and print the NODE_API_KEY from the configuration file
 get_node_api_key_from_conf()
+
+import subprocess
+
+# Define the paths to the Docker Compose YAML file and its directory
+compose_file_path = "~/dojo-app/samourai-dojo-v1.20.0/docker/my-dojo/docker-compose.yaml"
+compose_directory = "~/dojo-app/samourai-dojo-v1.20.0/docker/my-dojo"
+
+# Expand the tilde (~) to the user's home directory
+compose_file_path = subprocess.check_output(["echo", compose_file_path]).decode().strip()
+compose_directory = subprocess.check_output(["echo", compose_directory]).decode().strip()
+
+# Command to create the Dojo systemd service unit file
+create_service_command = f"""\
+[Unit]
+Description=Dojo Docker Compose Stack
+Requires=docker.service
+After=docker.service
+
+[Service]
+ExecStart={subprocess.check_output(["which", "docker-compose"]).decode().strip()} -f {compose_file_path} up -d
+ExecStop={subprocess.check_output(["which", "docker-compose"]).decode().strip()} -f {compose_file_path} down
+WorkingDirectory={compose_directory}
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+"""
+
+# Path to the service file
+service_file_path = "/etc/systemd/system/dojo.service"
+
+# Write the service unit file
+with open(service_file_path, "w") as service_file:
+    service_file.write(create_service_command)
+
+# Set the correct ownership and permissions
+subprocess.run(["sudo", "chown", "root:root", service_file_path], check=True)
+subprocess.run(["sudo", "chmod", "644", service_file_path], check=True)
+
+# Reload systemd configuration
+subprocess.run(["sudo", "systemctl", "daemon-reload"], check=True)
+
+# Enable and start the Dojo service
+subprocess.run(["sudo", "systemctl", "enable", "dojo.service"], check=True)
+subprocess.run(["sudo", "systemctl", "start", "dojo.service"], check=True)
+
+print("Dojo service created and started.")
