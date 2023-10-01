@@ -9,21 +9,21 @@ import time
 import random 
 import string
 
+# Command to run the "hello-world" container
+docker_hello_world_command = 'docker run hello-world'
 
+# Execute the Docker command using subprocess
+try:
+    subprocess.run(docker_hello_world_command, shell=True, check=True)
+    print("Hello-world Docker container executed successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Error running the hello-world Docker container: {e}")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+try:
+    subprocess.run(enable_docker_command, shell=True, check=True)
+    print("Docker service enabled successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Error enabling Docker service: {e}")
 
 def download_file(url, filename):
     """Downloads a file from the specified URL to the specified filename."""
