@@ -300,7 +300,7 @@ def create_rtl_config_file():
         "multiPass": random_password,
         "port": "3000",
         "defaultNodeIndex": 1,
-        "dbDirectoryPath": "C:\\Users\\xyz\\RTL",
+        "dbDirectoryPath": "/home/humble/RTL",
         "SSO": {
             "rtlSSO": 0,
             "rtlCookiePath": "",
