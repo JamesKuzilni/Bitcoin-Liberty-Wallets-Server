@@ -178,7 +178,7 @@ def create_settings_file():
     btc_rpc_auth = f"btc.rpc.auth={rpc_username}:{rpc_password}"
     port = 24445
     mainnet = 1
-    postgres = f"User ID={database_username};Password={database_password};Host=localhost;Port=5432;Database=nbxplorer;"
+    postgres = f"postgres=User ID={database_username};Password={database_password};Host=localhost;Port=5432;Database=nbxplorer;"
     
     with open(settings_file, 'w') as file:
         file.write(f'{btc_rpc_auth}\n')
