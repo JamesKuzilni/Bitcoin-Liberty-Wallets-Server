@@ -138,8 +138,8 @@ except subprocess.CalledProcessError as e:
 import subprocess
 
 # Define the paths to the Docker Compose YAML file and its directory
-compose_file_path = "/path/to/docker-compose.yml"
-compose_directory = "/path/to/docker-compose-directory"
+compose_file_path = "~/mempool/docker/docker-compose.yml"
+compose_directory = "/mempool/docker/docker-compose-directory"
 
 # Command to create the Mempool systemd service unit file
 create_service_command = f"""\
