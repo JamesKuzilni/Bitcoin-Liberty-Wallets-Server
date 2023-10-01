@@ -135,8 +135,48 @@ try:
 except subprocess.CalledProcessError as e:
     print(f"Error enabling Docker service: {e}")
 
+import subprocess
 
+# Define the paths to the Docker Compose YAML file and its directory
+compose_file_path = "/path/to/docker-compose.yml"
+compose_directory = "/path/to/docker-compose-directory"
 
+# Command to create the Mempool systemd service unit file
+create_service_command = f"""\
+[Unit]
+Description=Mempool Docker Compose Stack
+Requires=docker.service
+After=docker.service
+
+[Service]
+ExecStart={subprocess.check_output(["which", "docker-compose"]).decode().strip()} -f {compose_file_path} up -d
+ExecStop={subprocess.check_output(["which", "docker-compose"]).decode().strip()} -f {compose_file_path} down
+WorkingDirectory={compose_directory}
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+"""
+
+# Path to the service file
+service_file_path = "/etc/systemd/system/mempool.service"
+
+# Write the service unit file
+with open(service_file_path, "w") as service_file:
+    service_file.write(create_service_command)
+
+# Set the correct ownership and permissions
+subprocess.run(["sudo", "chown", "root:root", service_file_path], check=True)
+subprocess.run(["sudo", "chmod", "644", service_file_path], check=True)
+
+# Reload systemd configuration
+subprocess.run(["sudo", "systemctl", "daemon-reload"], check=True)
+
+# Enable and start the Mempool service
+subprocess.run(["sudo", "systemctl", "enable", "mempool.service"], check=True)
+subprocess.run(["sudo", "systemctl", "start", "mempool.service"], check=True)
+
+print("Mempool service created and started.")
 
 try:
     subprocess.run(docker_compose_up_command, check=True)
