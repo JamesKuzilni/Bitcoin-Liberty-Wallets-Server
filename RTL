@@ -380,3 +380,44 @@ def run_rtl():
 
 if __name__ == "__main__":
     run_rtl()
+import subprocess
+
+def create_RTL_service(system_username):
+    # Define the service file content
+    content = f'''[Unit]
+Description=RTL daemon
+Wants=lnd.service
+After=lnd.service
+
+[Service]
+ExecStart=/usr/bin/node /home/{system_username}/RTL/rtl
+User={system_username}
+Restart=always
+TimeoutSec=120
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
+'''
+
+    # Define the service file path
+    file_path = f"/etc/systemd/system/RTL.service"
+
+    # Write the content to the service file
+    with open(file_path, 'w') as file:
+        file.write(content)
+
+    # Set the correct ownership and permissions for the service file
+    subprocess.run(["sudo", "chown", "root:root", file_path], check=True)
+    subprocess.run(["sudo", "chmod", "644", file_path], check=True)
+
+    # Reload systemd configuration
+    subprocess.run(["sudo", "systemctl", "daemon-reload"], check=True)
+
+    # Enable and start the RTL service
+    subprocess.run(["sudo", "systemctl", "enable", "RTL.service"], check=True)
+    subprocess.run(["sudo", "systemctl", "start", "RTL.service"], check=True)
+
+if __name__ == "__main__":
+    # Replace 'your_username' with the actual system username
+    create_RTL_service("your_username")
