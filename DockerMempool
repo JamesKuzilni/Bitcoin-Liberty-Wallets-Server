@@ -125,6 +125,19 @@ os.chdir(docker_directory)
 # Command to execute
 docker_compose_up_command = ["sudo", "docker-compose", "up"]
 
+# Command to enable the Docker service
+enable_docker_command = 'sudo systemctl enable docker'
+
+# Execute the enable Docker command using subprocess
+try:
+    subprocess.run(enable_docker_command, shell=True, check=True)
+    print("Docker service enabled successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Error enabling Docker service: {e}")
+
+
+
+
 try:
     subprocess.run(docker_compose_up_command, check=True)
 except subprocess.CalledProcessError as e:
