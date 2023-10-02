@@ -232,38 +232,6 @@ try:
 except subprocess.CalledProcessError as e:
     print(f"Error installing Docker Compose: {e}")
 
-# Command to create the "dojo" user
-create_user_command = (
-    'sudo useradd -s /bin/bash -d /home/dojo -m -G sudo dojo'
-)
-
-# Execute the create user command using subprocess
-try:
-    subprocess.run(create_user_command, shell=True, check=True)
-    print("User 'dojo' created successfully.")
-except subprocess.CalledProcessError as e:
-    print(f"Error creating user 'dojo': {e}")
-
-# Command to set the password for the "dojo" user
-set_password_command = 'sudo passwd dojo'
-
-# Execute the set password command using subprocess
-try:
-    subprocess.run(set_password_command, shell=True, check=True, input=b'dojo\ndojo\n')
-    print("Password for user 'dojo' set successfully.")
-except subprocess.CalledProcessError as e:
-    print(f"Error setting the password for user 'dojo': {e}")
-
-# Command to add the "dojo" user to the "docker" group
-add_to_docker_group_command = 'sudo usermod -aG docker dojo'
-
-# Execute the add to docker group command using subprocess
-try:
-    subprocess.run(add_to_docker_group_command, shell=True, check=True)
-    print("User 'dojo' added to the 'docker' group successfully.")
-except subprocess.CalledProcessError as e:
-    print(f"Error adding user 'dojo' to the 'docker' group: {e}")
-
 # Command to reboot the system immediately
 reboot_command = 'sudo shutdown -r now'
 
