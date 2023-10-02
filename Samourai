@@ -9,22 +9,6 @@ import time
 import random 
 import string
 
-# Command to run the "hello-world" container
-docker_hello_world_command = 'docker run hello-world'
-
-# Execute the Docker command using subprocess
-try:
-    subprocess.run(docker_hello_world_command, shell=True, check=True)
-    print("Hello-world Docker container executed successfully.")
-except subprocess.CalledProcessError as e:
-    print(f"Error running the hello-world Docker container: {e}")
-
-try:
-    subprocess.run(enable_docker_command, shell=True, check=True)
-    print("Docker service enabled successfully.")
-except subprocess.CalledProcessError as e:
-    print(f"Error enabling Docker service: {e}")
-
 def download_file(url, filename):
     """Downloads a file from the specified URL to the specified filename."""
     downloads_directory = os.path.join(os.path.expanduser('~'), 'Downloads')
@@ -601,8 +585,6 @@ def get_node_api_key_from_conf():
 
 # Get and print the NODE_API_KEY from the configuration file
 get_node_api_key_from_conf()
-
-import subprocess
 
 # Define the paths to the Docker Compose YAML file and its directory
 compose_file_path = "~/dojo-app/samourai-dojo-v1.20.0/docker/my-dojo/docker-compose.yaml"
