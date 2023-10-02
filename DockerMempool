@@ -135,65 +135,6 @@ try:
 except subprocess.CalledProcessError as e:
     print(f"Error enabling Docker service: {e}")
 
-import subprocess
-
-# Define the paths to the Docker Compose YAML file and its directory
-compose_file_path = "~/mempool/docker/docker-compose.yml"
-compose_directory = "/mempool/docker/docker-compose-directory"
-
-# Command to create the Mempool systemd service unit file
-create_service_command = f"""\
-[Unit]
-Description=Mempool Docker Compose Stack
-Requires=docker.service
-After=docker.service
-
-[Service]
-ExecStart={subprocess.check_output(["which", "docker-compose"]).decode().strip()} -f {compose_file_path} up -d
-ExecStop={subprocess.check_output(["which", "docker-compose"]).decode().strip()} -f {compose_file_path} down
-WorkingDirectory={compose_directory}
-Restart=always
-
-[Install]
-WantedBy=multi-user.target
-"""
-
-# Path to the service file
-service_file_path = "/etc/systemd/system/mempool.service"
-
-# Write the service unit file
-with open(service_file_path, "w") as service_file:
-    service_file.write(create_service_command)
-
-# Set the correct ownership and permissions
-subprocess.run(["sudo", "chown", "root:root", service_file_path], check=True)
-subprocess.run(["sudo", "chmod", "644", service_file_path], check=True)
-
-# Reload systemd configuration
-subprocess.run(["sudo", "systemctl", "daemon-reload"], check=True)
-
-# Enable and start the Mempool service
-subprocess.run(["sudo", "systemctl", "enable", "mempool.service"], check=True)
-subprocess.run(["sudo", "systemctl", "start", "mempool.service"], check=True)
-
-print("Mempool service created and started.")
-
-try:
-    subprocess.run(docker_compose_up_command, check=True)
-except subprocess.CalledProcessError as e:
-    print(f"Error running 'docker-compose up': {e}")
-def install_moby_buildx():
-  """Installs the moby-buildx package using subprocess."""
-
-  command = ["sudo", "apt", "install", "moby-buildx"]
-  process = subprocess.run(command, check=True)
-
-  if process.returncode != 0:
-    raise Exception("Failed to install moby-buildx")
-
-if __name__ == "__main__":
-  install_moby_buildx()
-
 # Command to update the package list
 update_command = "sudo apt-get update"
 
@@ -308,7 +249,7 @@ set_password_command = 'sudo passwd dojo'
 
 # Execute the set password command using subprocess
 try:
-    subprocess.run(set_password_command, shell=True, check=True, input=b'new_password_here\nnew_password_here\n')
+    subprocess.run(set_password_command, shell=True, check=True, input=b'dojo\ndojo\n')
     print("Password for user 'dojo' set successfully.")
 except subprocess.CalledProcessError as e:
     print(f"Error setting the password for user 'dojo': {e}")
