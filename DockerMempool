@@ -14,9 +14,13 @@ subprocess.run(docker_install_command, check=True)
 docker_compose_install_command = ["sudo", "apt", "install", "docker-compose"]
 subprocess.run(docker_compose_install_command, check=True)
 
-# Add current user to the docker group
+# Get the current user's username
 current_user = os.getlogin()
+
+# Construct the command to add the current user to the Docker group
 add_user_to_docker_command = ["sudo", "usermod", "-aG", "docker", current_user]
+
+# Run the command
 subprocess.run(add_user_to_docker_command, check=True)
 
 # Make docker-compose executable
