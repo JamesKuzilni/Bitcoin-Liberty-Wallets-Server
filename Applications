@@ -57,3 +57,24 @@ def download_and_install_tor_browser():
 
 # Call the function to download and install Tor Browser
 download_and_install_tor_browser()
+
+# Define the URL to download the .deb file
+url = "https://code.samourai.io/whirlpool/whirlpool-gui/uploads/fda2da816431c25598f532486ac0da09/whirlpool-gui_0.10.3_amd64.deb"
+
+# Define the download directory
+download_directory = os.path.expanduser("~/Downloads")
+
+# Define the full path to save the .deb file
+deb_file_path = os.path.join(download_directory, "whirlpool-gui_0.10.3_amd64.deb")
+
+try:
+    # Step 1: Use wget to download the .deb file to the ~/Downloads directory
+    subprocess.run(["wget", url, "-P", download_directory], check=True)
+    print(f".deb file from {url} downloaded to {download_directory} successfully.")
+
+    # Step 2: Install the downloaded .deb package using sudo dpkg -i
+    subprocess.run(["sudo", "dpkg", "-i", deb_file_path], check=True)
+    print(f"Package {deb_file_path} installed successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Error running command: {e}")
+
