@@ -47,7 +47,26 @@ except OSError as e:
 except subprocess.CalledProcessError as e:
     print(f"Error running wget command: {e}")
 
-import subprocess
+# Define the command to be executed
+command = ["java", "-jar", "whirlpool-client-cli-0.10.16-run.jar", "--init"]
+
+# Define the working directory
+working_directory = "/home/humble/Whirlpool"
+
+# Expand the tilde (~) to the user's home directory
+expanded_working_directory = subprocess.check_output(["echo", "-n", working_directory], universal_newlines=True).strip()
+
+# Change to the working directory and execute the command
+try:
+    # Change the current working directory
+    os.chdir(expanded_working_directory)
+
+    # Execute the command
+    subprocess.run(command, check=True)
+except subprocess.CalledProcessError as e:
+    print(f"Command failed with exit code {e.returncode}")
+except FileNotFoundError:
+    print("The specified directory does not exist.")
 
 def create_whirlpool_service(system_username):
     # Define the file path for the systemd service unit file
