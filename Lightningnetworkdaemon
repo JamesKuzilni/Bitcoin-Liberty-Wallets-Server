@@ -3,6 +3,9 @@ import os
 import subprocess
 import wget
 import tarfile
+import random
+import string
+import time
 
 def change_tor_cookie_permissions():
     cookie_path = "/run/tor/control.authcookie"
@@ -147,3 +150,58 @@ tor.v3=true
 
 if __name__ == "__main__":
     create_lnd_config_file()
+
+def generate_random_password(length=12):
+    """Generates a random alphanumeric password."""
+    characters = string.ascii_letters + string.digits
+    password = ''.join(random.choice(characters) for _ in range(length))
+    return password
+
+def create_password_file():
+    # Define the path to the ~/.lnd directory
+    lnd_directory = os.path.join(os.path.expanduser('~'), '.lnd')
+
+    # Create the directory if it doesn't exist
+    if not os.path.exists(lnd_directory):
+        os.makedirs(lnd_directory)
+
+    # Define the path to the password file
+    password_file_path = os.path.join(lnd_directory, 'password.txt')
+
+    # Generate a random alphanumeric password
+    random_password = generate_random_password()
+
+    # Write the password to the file
+    with open(password_file_path, 'w') as password_file:
+        password_file.write(random_password)
+
+    print(f'Created password file {password_file_path} with password: {random_password}')
+
+if __name__ == "__main__":
+    create_password_file()
+
+# Set the duration of the timer (3 seconds)
+duration = 3
+
+# Start the timer
+start_time = time.time()
+
+# Wait for the specified duration
+while time.time() - start_time < duration:
+    pass
+
+# Timer has elapsed, do something here (e.g., print a message)
+print("Timer has finished!")
+
+
+def execute_lncli_create():
+    try:
+        subprocess.run(['lncli', 'create'], check=True)
+        print('lncli create command executed successfully.')
+    except subprocess.CalledProcessError as e:
+        print(f'Error executing lncli create command: {e}')
+
+if __name__ == "__main__":
+    execute_lncli_create()
+
+

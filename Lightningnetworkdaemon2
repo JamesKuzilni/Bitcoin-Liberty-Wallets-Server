@@ -7,61 +7,6 @@ import random
 import string
 import time
 
-def generate_random_password(length=12):
-    """Generates a random alphanumeric password."""
-    characters = string.ascii_letters + string.digits
-    password = ''.join(random.choice(characters) for _ in range(length))
-    return password
-
-def create_password_file():
-    # Define the path to the ~/.lnd directory
-    lnd_directory = os.path.join(os.path.expanduser('~'), '.lnd')
-
-    # Create the directory if it doesn't exist
-    if not os.path.exists(lnd_directory):
-        os.makedirs(lnd_directory)
-
-    # Define the path to the password file
-    password_file_path = os.path.join(lnd_directory, 'password.txt')
-
-    # Generate a random alphanumeric password
-    random_password = generate_random_password()
-
-    # Write the password to the file
-    with open(password_file_path, 'w') as password_file:
-        password_file.write(random_password)
-
-    print(f'Created password file {password_file_path} with password: {random_password}')
-
-if __name__ == "__main__":
-    create_password_file()
-
-def execute_lncli_create():
-    try:
-        subprocess.run(['lncli', 'create'], check=True)
-        print('lncli create command executed successfully.')
-    except subprocess.CalledProcessError as e:
-        print(f'Error executing lncli create command: {e}')
-
-if __name__ == "__main__":
-    execute_lncli_create()
-
-import time
-
-def five_minute_timer():
-    try:
-        print("Starting 5-minute timer...")
-        for remaining in range(5, 0, -1):
-            print(f"Time remaining: {remaining} minutes")
-            time.sleep(60)  # Sleep for 1 minute (60 seconds)
-        
-        print("Timer expired! 5 minutes have passed.")
-    except KeyboardInterrupt:
-        print("Timer stopped manually.")
-
-if __name__ == "__main__":
-    five_minute_timer()
-
 def stop_lnd():
     try:
         subprocess.run(['lncli', 'stop'], check=True)
@@ -77,10 +22,10 @@ if __name__ == "__main__":
 
 def create_lnd_config_file():
     # Predefined values
-    rpcusername = "BitcoinLibertyWallets"
-    rpcpassword = "6hn3kmdak2n1m"
+    rpcusername = "rpcusername"
+    rpcpassword = "rpcpassword"
     ubuntuusername = "humble"
-    nameoflightningnode = "LightningNode123"
+    nameoflightningnode = "nameoflightningnode"
 
     # Define the configuration text
     config_text = f"""\
