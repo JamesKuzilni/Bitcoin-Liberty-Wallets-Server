@@ -2,22 +2,24 @@
 import subprocess
 import os
 
-# Define the command to create the directory
-command = "sudo mkdir -p --mode=0755 /usr/share/keyrings"
+import subprocess
 
-# Run the command
+# Define the command to create the directory
+directory_command = "sudo mkdir -p --mode=0755 /usr/share/keyrings"
+
+# Run the directory command
 try:
-    subprocess.run(command, shell=True, check=True)
+    subprocess.run(directory_command, shell=True, check=True)
     print("Directory created successfully.")
 except subprocess.CalledProcessError as e:
     print(f"Error creating directory: {e}")
 
 # Define the command to download and save the GPG key
-command = "curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | sudo tee>
+gpg_key_command = "curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | sudo tee /usr/share/keyrings/cloudflare-main.gpg > /dev/null"
 
-# Run the command
+# Run the GPG key command
 try:
-    subprocess.run(command, shell=True, check=True)
+    subprocess.run(gpg_key_command, shell=True, check=True)
     print("GPG key downloaded and saved successfully.")
 except subprocess.CalledProcessError as e:
     print(f"Error downloading and saving GPG key: {e}")
@@ -32,14 +34,14 @@ file_path = "/etc/apt/sources.list.d/cloudflared.list"
 echo_command = f'echo "{line_to_append}"'
 
 # Combine the echo command with sudo and tee to append to the file
-command = f'{echo_command} | sudo tee -a {file_path}'
+append_command = f'{echo_command} | sudo tee -a {file_path}'
 
-# Run the command
+# Run the append command
 try:
-    subprocess.run(command, shell=True, check=True)
-    print(f"Line appended to {file_path} successfully.")
+    subprocess.run(append_command, shell=True, check=True)
+    print("Line appended to the file successfully.")
 except subprocess.CalledProcessError as e:
-    print(f"Error appending line to {file_path}: {e}")
+    print(f"Error appending line to the file: {e}")
 
 # Define the update command
 update_command = "sudo apt-get update"
@@ -119,11 +121,13 @@ credentials-file: /home/humble/.cloudflared/{tunnel_id}.json
     except Exception as e:
         print(f"Error creating config.yml file: {e}")
 
+import subprocess
+
 # Define the website domain
-user_website = "websitedomain"  # Replace with your desired website domain
+user_website = "thekingofmacedon.online"  # Replace with your desired website domain
 
 # Define the tunnel route command
-route_command = f"cloudflared tunnel route dns btcpayserver btcpay.{user_websit>
+route_command = f"cloudflared tunnel route dns btcpayserver btcpay.{user_website}"
 
 # Run the tunnel route command
 try:
