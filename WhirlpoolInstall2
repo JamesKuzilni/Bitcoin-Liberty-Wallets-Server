@@ -1,0 +1,96 @@
+#!/usr/bin/env python3
+import os
+import subprocess
+import wget
+import tarfile
+import re
+
+def create_whirlpool_service(system_username):
+    # Define the file path for the systemd service unit file
+    file_path = f"/etc/systemd/system/whirlpool.service"
+    
+    # Define the service unit file content
+    content = f'''[Unit]
+Description=Whirlpool
+After=tor.service
+
+[Service]
+WorkingDirectory=/home/{system_username}/Whirlpool
+ExecStart=/usr/bin/java -jar whirlpool-client-cli-0.10.16-run.jar --server=mainnet --tor --auto-mix --mixs-target=0 --listen
+User={system_username}
+Group={system_username}
+Type=simple
+KillMode=process
+TimeoutSec=60
+Restart=always
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target'''
+
+    # Write the content to a temporary file
+    temp_file_path = "/tmp/whirlpool.service"
+    with open(temp_file_path, 'w') as file:
+        file.write(content)
+
+    # Use sudo to move the temporary file to the target directory
+    move_command = ["sudo", "mv", temp_file_path, file_path]
+    subprocess.run(move_command, check=True)
+
+    # Set the correct ownership and permissions for the service file
+    chown_command = ["sudo", "chown", "root:root", file_path]
+    subprocess.run(chown_command, check=True)
+    chmod_command = ["sudo", "chmod", "644", file_path]
+    subprocess.run(chmod_command, check=True)
+
+    # Reload systemd configuration
+    reload_command = ["sudo", "systemctl", "daemon-reload"]
+    subprocess.run(reload_command, check=True)
+
+    # Enable and start the whirlpool service
+    enable_command = ["sudo", "systemctl", "enable", "whirlpool.service"]
+    start_command = ["sudo", "systemctl", "start", "whirlpool.service"]
+    
+    subprocess.run(enable_command, check=True)
+    subprocess.run(start_command, check=True)
+
+if __name__ == "__main__":
+    create_whirlpool_service("humble")
+
+# Print the message
+print("Open whirlpool-gui application")
+
+# Define the IP address
+ip_address = "ipaddress"  # Replace with the desired IP address
+
+# Create the URL with the defined IP address
+url = f"https://{ip_address}:8899"
+
+# Print the URL
+print("Generated URL:", url)
+
+# Define the path to the whirlpool-cli-config.properties file
+config_file_path = os.path.expanduser("~/Whirlpool/whirlpool-cli-config.properties")
+
+# Define a regular expression pattern to match the cli.apiKey line
+api_key_pattern = re.compile(r'^cli\.apiKey=(.*)$')
+
+try:
+    # Open and read the config file
+    with open(config_file_path, 'r') as config_file:
+        # Iterate through each line in the file
+        for line in config_file:
+            # Use the regular expression pattern to match the cli.apiKey line
+            match = api_key_pattern.match(line.strip())
+            if match:
+                # Extract and print the apiKey value
+                api_key = match.group(1)
+                print(api_key)
+                break  # Stop searching after finding the first apiKey
+except FileNotFoundError:
+    print(f"Config file not found: {config_file_path}")
+except Exception as e:
+    print(f"Error reading the config file: {e}")
+
+
+
