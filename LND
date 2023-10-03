@@ -180,28 +180,12 @@ def create_password_file():
 if __name__ == "__main__":
     create_password_file()
 
-# Set the duration of the timer (3 seconds)
-duration = 3
-
-# Start the timer
-start_time = time.time()
-
-# Wait for the specified duration
-while time.time() - start_time < duration:
-    pass
-
-# Timer has elapsed, do something here (e.g., print a message)
-print("Timer has finished!")
-
-
-def execute_lncli_create():
+def execute_lnd_command():
     try:
-        subprocess.run(['lncli', 'create'], check=True)
-        print('lncli create command executed successfully.')
+        subprocess.run(['lnd'], check=True, cwd='~/.lnd')
+        print('lnd command executed successfully.')
     except subprocess.CalledProcessError as e:
-        print(f'Error executing lncli create command: {e}')
+        print(f'Error executing lnd command: {e}')
 
 if __name__ == "__main__":
-    execute_lncli_create()
-
-
+    execute_lnd_command()
