@@ -38,15 +38,14 @@ def update_and_install_packages():
 # Call the function to update and install the packages
 update_and_install_packages()
 
+chosen_username = "your_chosen_username"  # Replace with the desired username
 
-def create_postgres_user():
+def create_postgres_user(superuser='n', databases='y', more_roles='n'):
+    # Print the default parameter values
+    print(f"superuser='{superuser}', databases='{databases}', more_roles='{more_roles}'")
+
     # Print the command to create a new user interactively
     print('createuser --pwprompt --interactive')
-
-    # Ask for additional options
-    superuser = input("Superuser? (n): ")
-    databases = input("Can create databases? (y): ")
-    more_roles = input("Can add more roles? (n): ")
 
     # Construct the command with additional options
     command = f'createuser --interactive --superuser={superuser} --createdb={databases} --no-createrole={more_roles}'
@@ -55,16 +54,10 @@ def create_postgres_user():
     subprocess.run(["sudo", "-i", "-u", "postgres", command])
 
 def create_btcpayserver_database():
-    # Get the chosen username
-    chosen_username = input("Enter the chosen username: ")
-
     # Print the command to create the btcpayserver database
     print(f'createdb -O "{chosen_username}" btcpayserver')
 
 def create_nbxplorer_database():
-    # Get the chosen username
-    chosen_username = input("Enter the chosen username: ")
-
     # Print the command to create the nbxplorer database
     print(f'createdb -O "{chosen_username}" nbxplorer')
 
@@ -72,6 +65,7 @@ def create_nbxplorer_database():
 create_postgres_user()
 create_btcpayserver_database()
 create_nbxplorer_database()
+
 
 def install_postgresql():
     # Install PostgreSQL and PostgreSQL-contrib packages
