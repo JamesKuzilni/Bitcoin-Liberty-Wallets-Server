@@ -182,7 +182,7 @@ if __name__ == "__main__":
 
 def execute_lnd_command():
     try:
-        subprocess.run(['lnd'], check=True, cwd='~/.lnd')
+        subprocess.run(['lnd'], check=True, cwd='/home/humble/.lnd')
         print('lnd command executed successfully.')
     except subprocess.CalledProcessError as e:
         print(f'Error executing lnd command: {e}')
