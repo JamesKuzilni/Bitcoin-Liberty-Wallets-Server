@@ -174,7 +174,7 @@ except tarfile.TarError as e:
 
 # Define the source and destination directories
 source_dir = os.path.expanduser("~/Downloads/node-v18.18.0-linux-x64")
-destination_dir = os.path.expanduser("~/nodejs")
+destination_dir = os.path.expanduser("~")
 
 # Check if the source directory exists
 if not os.path.exists(source_dir):
