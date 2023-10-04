@@ -46,7 +46,7 @@ def change_tor_cookie_permissions():
         # Use subprocess to run the 'sudo chmod' command
         subprocess.run(['sudo', 'chmod', 'o+r', cookie_path])
 
-        print(f"Changed permissions for '{cookie_path}' to allow read access by>
+        print(f"Changed permissions for '{cookie_path}' to allow read access by others.")
     except Exception as e:
         print(f"Error: {str(e)}")
 
