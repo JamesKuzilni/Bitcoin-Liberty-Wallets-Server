@@ -121,62 +121,6 @@ try:
 except subprocess.CalledProcessError as e:
     print(f"Error installing npm: {e}")
 
-# Define the path to the ~/.npm-global directory
-npm_global_directory = os.path.join(os.path.expanduser('~'), '.npm-global')
-
-# Create the directory if it doesn't exist
-if not os.path.exists(npm_global_directory):
-    os.makedirs(npm_global_directory)
-    print(f'Created directory {npm_global_directory}')
-else:
-    print(f'Directory {npm_global_directory} already exists.')
-# Define the npm prefix value
-npm_prefix = '~/.npm-global'
-
-# Define the path to the .npmrc file in the user's home directory
-npmrc_path = os.path.expanduser('~/.npmrc')
-
-# Check if the .npmrc file already exists
-if os.path.exists(npmrc_path):
-    # If it exists, open it in append mode and add the prefix configuration
-    with open(npmrc_path, 'a') as npmrc_file:
-        npmrc_file.write(f'prefix={npm_prefix}\n')
-else:
-    # If it doesn't exist, create a new .npmrc file and write the prefix configuration
-    with open(npmrc_path, 'w') as npmrc_file:
-        npmrc_file.write(f'prefix={npm_prefix}\n')
-
-print(f'npm prefix set to {npm_prefix}')
-
-# Define the text to add to the .profile file
-profile_text = 'export PATH=~/.npm-global/bin:$PATH'
-
-# Define the path to the .profile file in the user's home directory
-profile_path = os.path.expanduser('~/.profile')
-
-# Check if the .profile file already exists
-if os.path.exists(profile_path):
-    # If it exists, open it in append mode and add the text
-    with open(profile_path, 'a') as profile_file:
-        profile_file.write(f'\n{profile_text}\n')
-else:
-    # If it doesn't exist, create a new .profile file and write the text
-    with open(profile_path, 'w') as profile_file:
-        profile_file.write(f'{profile_text}\n')
-
-print(f'Added "{profile_text}" to {profile_path}')
-
-
-# Command to source the .profile file
-source_command = ". ~/.profile"
-
-# Use subprocess to run the source command
-subprocess.run(source_command, shell=True)
-
-print("Sourced .profile")
-
-
-
 def download_and_extract(url, filename):
     """Downloads a tar archive from the specified URL and extracts it."""
     # Define the downloads directory
@@ -215,7 +159,7 @@ def move_and_rename_directory(source_dir, destination_dir, new_name):
 
     try:
         # Rename and move the directory
-        shutil.move(source_path, destination_path)
+        os.rename(source_path, destination_path)
         print(f'Moved and renamed directory to {destination_path}')
     except Exception as e:
         print(f'Error: {e}')
@@ -226,6 +170,7 @@ if __name__ == '__main__':
     new_name = 'RTL'
 
     move_and_rename_directory(os.path.expanduser('~/Downloads'), destination_dir, new_name)
+
 
 def execute_command_in_directory(command, directory):
     try:
