@@ -7,6 +7,7 @@ import subprocess
 import random
 import string
 import subprocess
+import json
 
 def download_file(url, filename):
     """Downloads a file from the specified URL to the specified filename."""
