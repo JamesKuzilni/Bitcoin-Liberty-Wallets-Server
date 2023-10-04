@@ -208,6 +208,10 @@ WantedBy=multi-user.target
     enable_command = ["sudo", "systemctl", "enable", "RTL.service"]
     subprocess.run(enable_command, check=True)
 
+    # Start the RTL service
+    start_command = ["sudo", "systemctl", "start", "RTL.service"]
+    subprocess.run(start_command, check=True)
+
 if __name__ == "__main__":
     create_RTL_service()
 
