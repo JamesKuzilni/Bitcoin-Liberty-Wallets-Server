@@ -53,7 +53,12 @@ def check_tls_fingerprint():
         tls_cert_path = os.path.expanduser('~/.lnd/tls.cert')
 
         # Execute the OpenSSL command with the absolute path
-        result = subprocess.run(['openssl', 'x509', '-noout', '-fingerprint', '-sha256', '-inform', 'pem', '-in', tls_cert_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text>
+        result = subprocess.run(['openssl', 'x509', '-noout', '-fingerprint', '-sha256', '-inform', 'pem', '-in', tls_cert_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+
+        # Check if the subprocess had an error
+        if result.returncode != 0:
+            print(f"Error: {result.stderr.strip()}")
+            return None
 
         # Extract the fingerprint and remove unwanted text
         output_lines = result.stdout.strip().split('\n')
@@ -61,9 +66,8 @@ def check_tls_fingerprint():
         fingerprint = fingerprint_line.split('=', 1)[1].replace(":", "")
 
         return fingerprint
-    except subprocess.CalledProcessError as e:
+    except Exception as e:
         print(f"Error: {e}")
-        print(e.stderr)
         return None
 
 if __name__ == '__main__':
@@ -73,5 +77,4 @@ if __name__ == '__main__':
         print(lightning_config)
     else:
         print("TLS fingerprint retrieval failed.")
-
 
