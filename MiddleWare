@@ -7,6 +7,32 @@ import subprocess
 import random
 import string
 import subprocess
+import time
+
+def stop_lncli():
+    try:
+        # Define the command to stop lncli
+        stop_command = ['lncli', 'stop']
+
+        # Execute the command
+        subprocess.run(stop_command, check=True)
+        print('lncli has been stopped.')
+    except subprocess.CalledProcessError as e:
+        print(f'Error: {e}')
+    except Exception as e:
+        print(f'An unexpected error occurred: {e}')
+
+if __name__ == '__main__':
+    stop_lncli()
+
+def timer():
+    print("Starting 5-second timer...")
+    time.sleep(5)
+    print("Timer expired after 5 seconds!")
+
+if __name__ == '__main__':
+    timer()
+
 
 def change_tor_cookie_permissions():
     cookie_path = "/run/tor/control.authcookie"
@@ -28,16 +54,18 @@ if __name__ == "__main__":
     change_tor_cookie_permissions()
 
 def enable_rpc_middleware():
-    # Define the path to the lnd binary
-    lnd_binary = os.path.expanduser('~/.lnd/lnd')
-
-    # Check if the lnd binary exists
-    if not os.path.exists(lnd_binary):
-        print('lnd binary not found in ~/.lnd directory.')
+    # Change the current working directory to the .lnd directory
+    lnd_directory = os.path.expanduser('/home/humble/.lnd')
+    
+    if not os.path.exists(lnd_directory):
+        print('The .lnd directory does not exist at /home/humble/.lnd.')
         return
-
+    
+    # Change the working directory to .lnd
+    os.chdir(lnd_directory)
+    
     # Define the command to enable rpcmiddleware
-    enable_command = [lnd_binary, '--rpcmiddleware.enable']
+    enable_command = ['lnd', '--rpcmiddleware.enable']
 
     try:
         # Execute the command
@@ -50,4 +78,3 @@ def enable_rpc_middleware():
 
 if __name__ == '__main__':
     enable_rpc_middleware()
-
