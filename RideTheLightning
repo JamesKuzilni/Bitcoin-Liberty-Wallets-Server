@@ -4,6 +4,9 @@ import os
 import wget
 import tarfile
 import shutil
+import json
+import random
+import string
 
 def download_and_extract(url, filename):
     """Downloads a tar archive from the specified URL and extracts it."""
@@ -77,27 +80,6 @@ if __name__ == '__main__':
 
     execute_command_in_directory(command, directory)
 
-def initialize_npm_package():
-    try:
-        subprocess.run(["npm", "init", "-y"], check=True)
-        print("npm package initialized successfully.")
-    except subprocess.CalledProcessError as e:
-        print(f"Error initializing npm package: {e}")
-
-if __name__ == "__main__":
-    initialize_npm_package()
-import subprocess
-
-def npm_install():
-    try:
-        subprocess.run(["npm", "install"], check=True)
-        print("npm install completed successfully.")
-    except subprocess.CalledProcessError as e:
-        print(f"Error running npm install: {e}")
-
-if __name__ == "__main__":
-    npm_install()
-
 def rename_rtl_config():
     source_path = os.path.expanduser("~/RTL/Sample-RTL-Config.json")
     destination_path = os.path.expanduser("~/RTL/RTL-Config.json")
@@ -110,10 +92,6 @@ def rename_rtl_config():
 
 if __name__ == "__main__":
     rename_rtl_config()
-import os
-import json
-import random
-import string
 
 def generate_random_password(length):
     # Generate a random password of the specified length
@@ -187,29 +165,6 @@ def create_lndbackup_directory():
 
 if __name__ == "__main__":
     create_lndbackup_directory()
-
-def run_rtl():
-    rtl_directory = os.path.expanduser("~/RTL")
-
-    # Check if the RTL directory exists
-    if not os.path.exists(rtl_directory):
-        print(f"RTL directory not found at {rtl_directory}")
-        return
-
-    # Change the current working directory to the RTL directory
-    os.chdir(rtl_directory)
-
-    # Run the "node rtl" command
-    try:
-        subprocess.run(["node", "rtl"])
-    except FileNotFoundError:
-        print("Node.js is not installed, please install Node.js to run RTL.")
-    except Exception as e:
-        print(f"Error running RTL: {e}")
-
-if __name__ == "__main__":
-    run_rtl()
-import subprocess
 
 def create_RTL_service():
     file_path = "/etc/systemd/system/RTL.service"
