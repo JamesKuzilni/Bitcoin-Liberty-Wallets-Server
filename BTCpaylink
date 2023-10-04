@@ -21,7 +21,6 @@ def check_tls_fingerprint():
         print(e.stderr)
         return None
 
-
 def update_config_with_fingerprint(fingerprint):
     if fingerprint is not None:
         # Define the path to the settings.config file
