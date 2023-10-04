@@ -34,49 +34,6 @@ if __name__ == '__main__':
     print('The file has been downloaded.')
     extract_file(filename)
 
-def change_tor_cookie_permissions():
-    cookie_path = "/run/tor/control.authcookie"
-
-    try:
-        # Check if the file exists
-        if not os.path.exists(cookie_path):
-            print(f"Error: The file '{cookie_path}' does not exist.")
-            return
-
-        # Use subprocess to run the 'sudo chmod' command
-        subprocess.run(['sudo', 'chmod', 'o+r', cookie_path])
-
-        print(f"Changed permissions for '{cookie_path}' to allow read access by others.")
-    except Exception as e:
-        print(f"Error: {str(e)}")
-
-if __name__ == "__main__":
-    change_tor_cookie_permissions()
-
-def enable_rpc_middleware():
-    # Define the path to the lnd binary
-    lnd_binary = os.path.expanduser('~/.lnd/lnd')
-
-    # Check if the lnd binary exists
-    if not os.path.exists(lnd_binary):
-        print('lnd binary not found in ~/.lnd directory.')
-        return
-
-    # Define the command to enable rpcmiddleware
-    enable_command = [lnd_binary, '--rpcmiddleware.enable']
-
-    try:
-        # Execute the command
-        subprocess.run(enable_command, check=True)
-        print('rpcmiddleware has been enabled.')
-    except subprocess.CalledProcessError as e:
-        print(f'Error: {e}')
-    except Exception as e:
-        print(f'An unexpected error occurred: {e}')
-
-if __name__ == '__main__':
-    enable_rpc_middleware()
-
 def copy_file_with_sudo(source_file, dest_dir):
     try:
         # Use sudo to copy the file to the destination directory
