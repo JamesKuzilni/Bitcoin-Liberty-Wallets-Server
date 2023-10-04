@@ -166,6 +166,28 @@ def create_lndbackup_directory():
 if __name__ == "__main__":
     create_lndbackup_directory()
 
+def run_rtl():
+    rtl_directory = os.path.expanduser("~/RTL")
+
+    # Check if the RTL directory exists
+    if not os.path.exists(rtl_directory):
+        print(f"RTL directory not found at {rtl_directory}")
+        return
+
+    # Change the current working directory to the RTL directory
+    os.chdir(rtl_directory)
+
+    # Run the "node rtl" command
+    try:
+        subprocess.run(["node", "rtl"])
+    except FileNotFoundError:
+        print("Node.js is not installed, please install Node.js to run RTL.")
+    except Exception as e:
+        print(f"Error running RTL: {e}")
+
+if __name__ == "__main__":
+    run_rtl()
+
 def create_RTL_service():
     file_path = "/etc/systemd/system/RTL.service"
     content = '''\
@@ -207,33 +229,6 @@ WantedBy=multi-user.target
     # Enable the RTL service
     enable_command = ["sudo", "systemctl", "enable", "RTL.service"]
     subprocess.run(enable_command, check=True)
-
-def run_rtl():
-    rtl_directory = os.path.expanduser("~/RTL")
-
-    # Check if the RTL directory exists
-    if not os.path.exists(rtl_directory):
-        print(f"RTL directory not found at {rtl_directory}")
-        return
-
-    # Change the current working directory to the RTL directory
-    os.chdir(rtl_directory)
-
-    # Run the "node rtl" command
-    try:
-        subprocess.run(["node", "rtl"])
-    except FileNotFoundError:
-        print("Node.js is not installed, please install Node.js to run RTL.")
-    except Exception as e:
-        print(f"Error running RTL: {e}")
-
-if __name__ == "__main__":
-    run_rtl()
-
-
-    # Start the RTL service
-    start_command = ["sudo", "systemctl", "start", "RTL.service"]
-    subprocess.run(start_command, check=True)
 
 if __name__ == "__main__":
     create_RTL_service()
