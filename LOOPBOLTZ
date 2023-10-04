@@ -295,6 +295,54 @@ WantedBy=multi-user.target
 if __name__ == "__main__":
     create_boltzd_service("humble")
 
+import os
+import subprocess
+
+# Define the URL of the tar.gz file
+url = "https://github.com/lightninglabs/loop/releases/download/v0.26.3-beta/loop-linux-amd64-v0.26.3-beta.tar.gz"
+
+# Define the target directory where you want to save the file
+download_dir = os.path.expanduser("~/Downloads")
+
+# Ensure the download directory exists
+if not os.path.exists(download_dir):
+    os.makedirs(download_dir)
+
+# Define the full path to save the downloaded file
+download_path = os.path.join(download_dir, "loop-linux-amd64-v0.26.3-beta.tar.gz")
+
+# Use wget to download the file
+try:
+    subprocess.run(["wget", url, "-O", download_path], check=True)
+    print(f"Downloaded {url} to {download_path}")
+except subprocess.CalledProcessError as e:
+    print(f"Error downloading {url}: {e}")
+    exit(1)
+
+# Extract the tar.gz file to the download directory
+try:
+    subprocess.run(["tar", "xzvf", download_path, "-C", download_dir], check=True)
+    print(f"Extracted {download_path} to {download_dir}")
+except subprocess.CalledProcessError as e:
+    print(f"Error extracting {download_path}: {e}")
+    exit(1)
+# Define the source and target paths
+source_path = os.path.expanduser("~/Downloads/loop-linux-amd64-v0.26.3-beta/loopd")
+target_path = "/usr/local/bin/loopd"
+
+# Check if the source file exists
+if not os.path.exists(source_path):
+    print(f"Error: Source file '{source_path}' does not exist.")
+    exit(1)
+
+# Use sudo to move the file to /usr/local/bin
+try:
+    subprocess.run(["sudo", "mv", source_path, target_path], check=True)
+    print(f"Moved 'loopd' to {target_path}")
+except subprocess.CalledProcessError as e:
+    print(f"Error moving 'loopd' to {target_path}: {e}")
+    exit(1)
+
 # Define the Git repository URL
 repository_url = "https://github.com/lightninglabs/loop.git"
 
