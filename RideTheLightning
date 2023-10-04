@@ -5,122 +5,6 @@ import wget
 import tarfile
 import shutil
 
-def run_apt_get_update():
-    try:
-        # Use subprocess to run the 'sudo apt-get update' command
-        subprocess.run(['sudo', 'apt-get', 'update'])
-
-        print("apt-get update completed successfully.")
-    except Exception as e:
-        print(f"Error: {str(e)}")
-
-if __name__ == "__main__":
-    run_apt_get_update()
-import subprocess
-
-def install_packages():
-    try:
-        # List of packages to install
-        packages = ["ca-certificates", "curl", "gnupg"]
-
-        # Create the command to run 'sudo apt-get install'
-        command = ["sudo", "apt-get", "install", "-y"] + packages
-
-        # Use subprocess to run the command
-        subprocess.run(command)
-
-        print("Packages installed successfully.")
-    except Exception as e:
-        print(f"Error: {str(e)}")
-
-if __name__ == "__main__":
-    install_packages()
-import subprocess
-
-def create_keyrings_directory():
-    try:
-        # Create the directory using 'sudo mkdir'
-        command = ["sudo", "mkdir", "-p", "/etc/apt/keyrings"]
-        subprocess.run(command)
-
-        print("Directory '/etc/apt/keyrings' created successfully.")
-    except Exception as e:
-        print(f"Error: {str(e)}")
-
-if __name__ == "__main__":
-    create_keyrings_directory()
-
-def download_and_install_gpg_key():
-    try:
-        # Download the GPG key using 'curl' and pipe it to 'gpg'
-        curl_command = ["curl", "-fsSL", "https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key"]
-        gpg_command = ["sudo", "gpg", "--dearmor", "-o", "/etc/apt/keyrings/nodesource.gpg"]
-
-        curl_process = subprocess.Popen(curl_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        gpg_process = subprocess.Popen(gpg_command, stdin=curl_process.stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        
-        curl_process.stdout.close()
-        curl_process.stderr.close()
-        
-        gpg_output, gpg_error = gpg_process.communicate()
-
-        if gpg_process.returncode == 0:
-            print("GPG key installed successfully.")
-        else:
-            print(f"Error installing GPG key: {gpg_error.decode('utf-8').strip()}")
-
-    except Exception as e:
-        print(f"Error: {str(e)}")
-
-if __name__ == "__main__":
-    download_and_install_gpg_key()
-import os
-
-def set_node_major_environment_variable():
-    try:
-        os.environ["NODE_MAJOR"] = "20"
-        print("NODE_MAJOR environment variable set to '20'")
-    except Exception as e:
-        print(f"Error: {str(e)}")
-
-if __name__ == "__main__":
-    set_node_major_environment_variable()
-import subprocess
-
-# Define the NODE_MAJOR variable
-NODE_MAJOR = "20"
-
-# The command to execute
-command = f'echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_{NODE_MAJOR}.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list'
-
-# Execute the command
-try:
-    subprocess.run(command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    print("Command executed successfully.")
-except subprocess.CalledProcessError as e:
-    print(f"Error executing the command: {e}")
-import subprocess
-
-# The command to install Node.js
-command = 'sudo apt-get install nodejs -y'
-
-# Execute the command
-try:
-    subprocess.run(command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    print("Node.js installed successfully.")
-except subprocess.CalledProcessError as e:
-    print(f"Error installing Node.js: {e}")
-
-# The command to install npm
-command = 'sudo apt install npm -y'
-
-# Execute the command
-try:
-    subprocess.run(command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    print("npm installed successfully.")
-except subprocess.CalledProcessError as e:
-    print(f"Error installing npm: {e}")
-
 def download_and_extract(url, filename):
     """Downloads a tar archive from the specified URL and extracts it."""
     # Define the downloads directory
@@ -254,7 +138,7 @@ def create_rtl_config_file():
         "nodes": [
             {
                 "index": 1,
-                "lnNode": "DonkeyKong",
+                "lnNode": "TheGreat",
                 "lnImplementation": "LND",
                 "Authentication": {
                     "macaroonPath": "/home/humble/.lnd/data/chain/bitcoin/mainnet",
