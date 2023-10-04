@@ -175,7 +175,7 @@ Wants=lnd.service
 After=lnd.service
 
 [Service]
-ExecStart=/usr/bin/node /home/humble/RTL/rtl
+ExecStart=/home/humble/nodejs/bin/node /home/humble/RTL/rtl
 User=humble
 Restart=always
 TimeoutSec=120
