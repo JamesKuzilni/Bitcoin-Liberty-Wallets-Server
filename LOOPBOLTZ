@@ -362,3 +362,15 @@ def main():
 if __name__ == "__main__":
     main()
 
+def restart_rtl_service():
+    try:
+        # Execute the systemctl restart RTL.service command
+        subprocess.run(['sudo', 'systemctl', 'restart', 'RTL.service'], check=True)
+        print('RTL.service restarted successfully.')
+    except Exception as e:
+        print(f'Error: {e}')
+
+if __name__ == '__main__':
+    rtl_config_file_path = '~/RTL/RTL-Config.json'  # Update the path accordingly
+    update_rtl_config(rtl_config_file_path)
+    restart_rtl_service()
