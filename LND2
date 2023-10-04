@@ -7,19 +7,6 @@ import random
 import string
 import time
 
-def stop_lnd():
-    try:
-        subprocess.run(['lncli', 'stop'], check=True)
-        print('LND has been stopped.')
-    except subprocess.CalledProcessError as e:
-        print(f'Error stopping LND: {e}')
-
-if __name__ == "__main__":
-    stop_lnd()
-
-
-
-
 def create_lnd_config_file():
     # Predefined values
     rpcusername = "rpcusername"
@@ -154,3 +141,5 @@ WantedBy=multi-user.target
 if __name__ == "__main__":
     system_username = "humble"  # Replace with the desired username
     create_lnd_service(system_username)
+import os
+import shutil
