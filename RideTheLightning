@@ -34,8 +34,8 @@ def download_and_extract(url, filename):
         print('Extraction complete.')
 
 if __name__ == '__main__':
-    url = 'https://github.com/Ride-The-Lightning/RTL/archive/refs/tags/v0.14.0.tar.gz'
-    filename = 'RTL-0.14.0.tar.gz'
+    url = 'https://github.com/Ride-The-Lightning/RTL/archive/refs/tags/v0.14.1.tar.gz'
+    filename = 'RTL-0.14.1.tar.gz'
 
     download_and_extract(url, filename)
 
@@ -52,7 +52,7 @@ def move_and_rename_directory(source_dir, destination_dir, new_name):
         print(f'Error: {e}')
 
 if __name__ == '__main__':
-    source_name = 'RTL-0.14.0'
+    source_name = 'RTL-0.14.1'
     destination_dir = os.path.expanduser('~')
     new_name = 'RTL'
 
