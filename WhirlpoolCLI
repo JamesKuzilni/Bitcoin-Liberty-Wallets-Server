@@ -61,10 +61,10 @@ if __name__ == "__main__":
 print("Open whirlpool-gui application")
 
 # Define the IP address
-ip_address = "ipaddress"  # Replace with the desired IP address
+ipaddress = "your_ip_address"  # Replace with the desired IP address
 
 # Create the URL with the defined IP address
-url = f"https://{ip_address}:8899"
+url = f"https://{ipaddress}:8899"
 
 # Print the URL
 print("Generated URL:", url)
