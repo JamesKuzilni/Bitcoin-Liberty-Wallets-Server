@@ -4,6 +4,7 @@ import wget
 import shutil
 import subprocess
 import tarfile
+import requests
 
 def download_file(url, filename):
     """Downloads a file from the specified URL to the specified filename."""
