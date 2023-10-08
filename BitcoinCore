@@ -290,8 +290,8 @@ if __name__ == "__main__":
     main()
 
 def main():
-    # Get the username from the user
-    username = input("Enter your username: ")
+    # Define the username directly in the script
+    username = "your_username_here"
 
     # Install Tor if not already installed
     install_command = "sudo apt install tor"
