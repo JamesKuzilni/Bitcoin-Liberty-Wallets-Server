@@ -291,7 +291,7 @@ if __name__ == "__main__":
 
 def main():
     # Define the username directly in the script
-    username = "your_username_here"
+    username = "humble"
 
     # Install Tor if not already installed
     install_command = "sudo apt install tor"
