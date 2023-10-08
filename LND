@@ -68,7 +68,7 @@ def extract_and_install(filename, target_directory):
         print(f'Installation failed: {e}')
 
 if __name__ == "__main__":
-    url = "https://github.com/lightningnetwork/lnd/releases/download/v0.16.4-beta/lnd-linux-amd64-v0.16.4-beta.tar.gz"
+    url = "https://github.com/lightningnetwork/lnd/releases/download/v0.17.0-beta/lnd-linux-amd64-v0.17.0-beta.tar.gz"
     filename = "lnd-linux-amd64-v0.16.4-beta.tar.gz"
     target_directory = "/usr/local/bin"
 
@@ -80,7 +80,7 @@ def main():
   print("Please go to cd Downloads")
 
   # Prompt the user to type "sudo install -m 0755 -o root -t /usr/local/bin bitcoin-25.0/bin/*"
-  print("Please type 'sudo install -m 0755 -o root -g root -t /usr/local/bin lnd-linux-amd64-v0.16.4-beta/*'")
+  print("Please type 'sudo install -m 0755 -o root -g root -t /usr/local/bin lnd-linux-amd64-v0.17.0-beta/*'")
 
   # Prompt the user for input
   input_command = input("Enter 'done' when you are ready to continue: ")
