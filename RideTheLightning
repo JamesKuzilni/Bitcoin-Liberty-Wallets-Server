@@ -93,6 +93,11 @@ def rename_rtl_config():
 if __name__ == "__main__":
     rename_rtl_config()
 
+import os
+import json
+import random
+import string
+
 def generate_random_password(length):
     # Generate a random password of the specified length
     characters = string.ascii_letters + string.digits
@@ -101,7 +106,9 @@ def generate_random_password(length):
 
 def create_rtl_config_file():
     random_password = generate_random_password(12)  # Change the length as needed
-    print(f"Generated random password: {random_password}")
+    
+    # Hardcode the name of the Lightning Node here
+    nameoflightningnode = "nameoflightningnode"
 
     config_data = {
         "multiPass": random_password,
@@ -116,7 +123,7 @@ def create_rtl_config_file():
         "nodes": [
             {
                 "index": 1,
-                "lnNode": "TheGreat",
+                "lnNode": nameoflightningnode,  # Use the hardcoded name here
                 "lnImplementation": "LND",
                 "Authentication": {
                     "macaroonPath": "/home/humble/.lnd/data/chain/bitcoin/mainnet",
@@ -149,6 +156,7 @@ def create_rtl_config_file():
 
 if __name__ == "__main__":
     create_rtl_config_file()
+
 
 def create_lndbackup_directory():
     lndbackup_directory = os.path.expanduser("~/lndbackup")
