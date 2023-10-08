@@ -124,7 +124,7 @@ credentials-file: /home/humble/.cloudflared/{tunnel_id}.json
 import subprocess
 
 # Define the website domain
-user_website = "thekingofmacedon.online"  # Replace with your desired website domain
+user_website = "yourwebsitedomain"  # Replace with your desired website domain
 
 # Define the tunnel route command
 route_command = f"cloudflared tunnel route dns btcpayserver btcpay.{user_website}"
