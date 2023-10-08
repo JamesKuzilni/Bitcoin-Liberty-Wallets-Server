@@ -131,8 +131,8 @@ fast-sync = 5000
 
 if __name__ == '__main__':
     file_path = os.path.join(os.path.expanduser('~'), 'fulcrum', 'fulcrum.conf')
-    rpcusername = 'your_rpc_username'
-    rpcpassword = 'your_rpc_password'
+    rpcusername = 'rpcusername'
+    rpcpassword = 'rpcpassword'
     create_fulcrum_conf(file_path, rpcusername, rpcpassword)
 
     print('fulcrum.conf file has been created.')
