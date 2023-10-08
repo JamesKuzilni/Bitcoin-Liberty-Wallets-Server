@@ -4,6 +4,7 @@ import wget
 import tarfile
 import subprocess
 import time
+import sys
 
 def create_downloads_directory():
     downloads_directory = os.path.join(os.path.expanduser('~'), 'Downloads')
@@ -34,10 +35,6 @@ try:
     print(f"Extracted contents from '{filename}' into '{extracted_dir_parent}' successfully.")
 except Exception as e:
     print(f"Extraction failed: {str(e)}")
-
-
-
-
 
 # Define the command to execute
 command = "sudo install -m 0755 -o root -g root -t /usr/local/bin ~/Downloads/bitcoin-25.0/bin/*"
@@ -123,6 +120,7 @@ url = "https://raw.githubusercontent.com/bitcoin/bitcoin/master/share/rpcauth/rp
 filename = "rpcauth.py"
 download_file(url, filename)
 
+# Function to generate the rpcauth string
 def run_rpcauth(username, password):
     downloads_directory = os.path.join(os.path.expanduser('~'), 'Downloads')
     script_path = os.path.join(downloads_directory, 'rpcauth.py')
@@ -130,26 +128,23 @@ def run_rpcauth(username, password):
     command = [script_path, username, password]
     result = subprocess.run(command, capture_output=True, text=True, check=True)
 
-    output = result.stdout
-    rpcauth_part = output.splitlines()[1]
-
+    output = result.stdout.strip()  # Remove leading/trailing whitespace
     print("Script execution result:", output)  # Added print statement to display the result
 
-    return rpcauth_part[12:]
+    return output
 
+# Function to append rpcauth to bitcoin.conf
 def append_rpcauth_to_bitcoin_conf(rpcauth):
     bitcoin_conf_path = os.path.join(os.path.expanduser('~'), '.bitcoin', 'bitcoin.conf')
 
     with open(bitcoin_conf_path, 'a') as bitcoin_conf_file:
-        bitcoin_conf_file.write(f'rpcauth={rpcauth}\n')
+        bitcoin_conf_file.write(f'{rpcauth}\n')
 
 # Example usage
 username = "rpcusername"
 password = "rpcpassword"
 rpcauth = run_rpcauth(username, password)
 append_rpcauth_to_bitcoin_conf(rpcauth)
-
-import sys
 
 def main():
     # Print the instructions
