@@ -75,19 +75,29 @@ if __name__ == "__main__":
     download_file(url, filename)
     extract_and_install(filename, target_directory)
 
-def main():
-  # Prompt the user to go to cd Downloads
-  print("Please go to cd Downloads")
+source_dir = os.path.expanduser("~/Downloads/lnd-linux-amd64-v0.17.0-beta/")
 
-  # Prompt the user to type "sudo install -m 0755 -o root -t /usr/local/bin bitcoin-25.0/bin/*"
-  print("Please type 'sudo install -m 0755 -o root -g root -t /usr/local/bin lnd-linux-amd64-v0.17.0-beta/*'")
+# Specify the source paths for the files
+source_lncli = os.path.join(source_dir, "lncli")
+source_lnd = os.path.join(source_dir, "lnd")
 
-  # Prompt the user for input
-  input_command = input("Enter 'done' when you are ready to continue: ")
+# Destination directory
+destination_dir = "/usr/local/bin/"
 
-if __name__ == "__main__":
-  main()
-
+# Check if the script is running with superuser privileges
+if os.geteuid() == 0:
+    # Move the files to the destination directory
+    shutil.move(source_lncli, os.path.join(destination_dir, "lncli"))
+    shutil.move(source_lnd, os.path.join(destination_dir, "lnd"))
+    print("Files moved to /usr/local/bin/")
+else:
+    # Attempt to move the files using sudo
+    try:
+        subprocess.run(["sudo", "mv", source_lncli, os.path.join(destination_dir, "lncli")])
+        subprocess.run(["sudo", "mv", source_lnd, os.path.join(destination_dir, "lnd")])
+        print("Files moved to /usr/local/bin/ using sudo")
+    except Exception as e:
+        print("Error: ", str(e))
 
 def create_lnd_directory():
     """Creates the ~/.lnd directory if it does not exist."""
