@@ -262,8 +262,8 @@ except subprocess.CalledProcessError as e:
 btcpayserver_directory = os.path.expanduser("~/.btcpayserver/Main")
 
 # Define the BTCpayusername and BTCpaypassword
-btc_pay_username = "your_username_here"
-btc_pay_password = "your_password_here"
+database_username = "BTCpayusername"
+database_password = "BTCpaypassword"
 
 # Define the content of the settings.conf file with the predefined variables
 settings_content = f"""network=mainnet
@@ -272,7 +272,7 @@ bind=0.0.0.0
 chains=btc
 BTC.explorer.url=http://127.0.0.1:24445
 #BTC.lightning=type=lnd-rest;server=https://127.0.0.1:8080/;macaroonfilepath=/home/humble/.lnd/data/chain/bitcoin/mainnet/admin.macaroon;certthumbprint=BC5BDE3FEF35EECDA838C4DAFA01FC>
-postgres=User ID="{btc_pay_username}";Password="{btc_pay_password}";Host=localhost;Port=5432;Database=btcpayserver;
+postgres=User ID="{database_username}";Password="{database_password}";Host=localhost;Port=5432;Database=btcpayserver;
 """
 
 # Create the directory if it doesn't exist
