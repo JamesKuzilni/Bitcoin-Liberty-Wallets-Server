@@ -74,8 +74,8 @@ if __name__ == '__main__':
     print('The conf directory has been created with sudo privileges.')
 
 ipaddress = "your_ip_address"
-rpcusername = "rpcusername"
-rpcpassword = "rpcpassword"
+rpcusername = "rpc_username"
+rpcpassword = "rpc_password"
 
 def create_docker_bitcoind_conf():
     conf_directory = os.path.expanduser('~/dojo-app/samourai-dojo-v1.20.0/docker/my-dojo/conf')
