@@ -141,8 +141,8 @@ def append_rpcauth_to_bitcoin_conf(rpcauth):
         bitcoin_conf_file.write(f'{rpcauth}\n')
 
 # Example usage
-rpcusername = "rpcusername"
-rpcpassword = "rpcpassword"
+rpcusername = "rpc_username"
+rpcpassword = "rpc_password"
 rpcauth = run_rpcauth(rpcusername, rpcpassword)
 append_rpcauth_to_bitcoin_conf(rpcauth)
 
