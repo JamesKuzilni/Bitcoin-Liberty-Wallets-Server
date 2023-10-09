@@ -164,8 +164,8 @@ def create_settings_file():
     nbxplorer_dir = os.path.expanduser('~/.nbxplorer/Main')
     settings_file = os.path.join(nbxplorer_dir, 'settings.config')
     
-    rpcusername = "rpcusername"
-    rpcpassword = "rpcpassword"
+    rpcusername = "rpc_username"
+    rpcpassword = "rpc_password"
     database_username = "BTCpayusername"
     database_password = "BTCpaypassword"
     
