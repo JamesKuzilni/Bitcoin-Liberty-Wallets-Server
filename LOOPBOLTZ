@@ -8,6 +8,9 @@ import random
 import string
 import subprocess
 import json
+import os
+import subprocess
+
 
 def download_file(url, filename):
     """Downloads a file from the specified URL to the specified filename."""
@@ -422,3 +425,99 @@ if __name__ == '__main__':
     rtl_config_file_path = '~/RTL/RTL-Config.json'  # Update the path accordingly
     update_rtl_config(rtl_config_file_path)
     restart_rtl_service()
+
+import subprocess
+
+# Define the list of packages to install
+packages_to_install = ["libusb-1.0-0-dev", "libudev-dev", "python3-dev"]
+
+try:
+    # Use subprocess to run the apt commands with sudo
+    subprocess.check_call(["sudo", "apt", "update"])
+    subprocess.check_call(["sudo", "apt", "install", "-y"] + packages_to_install)
+    print("Packages installed successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Error running the command: {e}")
+except Exception as e:
+    print(f"An unexpected error occurred: {e}")
+import subprocess
+
+# Define the URL of the Git repository to clone
+repository_url = "https://github.com/cryptoadvance/specter-desktop.git"
+
+# Define the directory where you want to clone the repository (optional)
+# If not specified, it will be cloned in the current directory.
+clone_directory = "/path/to/clone/directory"
+
+try:
+    # Use subprocess to run the git clone command
+    if clone_directory:
+        subprocess.check_call(["git", "clone", repository_url, clone_directory])
+    else:
+        subprocess.check_call(["git", "clone", repository_url])
+
+    print("Repository cloned successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Error running the command: {e}")
+except Exception as e:
+    print(f"An unexpected error occurred: {e}")
+import os
+import subprocess
+
+# Define the directory where specter-desktop is located
+specter_directory = "~/specter-desktop"
+
+# Expand the tilde (~) to the user's home directory
+specter_directory = os.path.expanduser(specter_directory)
+
+try:
+    # Change the working directory to the specter-desktop directory
+    os.chdir(specter_directory)
+
+    # Execute the pip3 command to install requirements from requirements.txt
+    subprocess.check_call(["pip3", "install", "-r", "requirements.txt"])
+
+    print("Requirements installed successfully.")
+except FileNotFoundError:
+    print(f"The directory {specter_directory} does not exist.")
+except subprocess.CalledProcessError as e:
+    print(f"Error running the command: {e}")
+except Exception as e:
+    print(f"An unexpected error occurred: {e}")
+
+# Define the directory where specter-desktop is located
+specter_directory = "~/specter-desktop"
+
+# Expand the tilde (~) to the user's home directory
+specter_directory = os.path.expanduser(specter_directory)
+
+import os
+import subprocess
+
+# Define the directory where specter-desktop is located
+specter_directory = "~/specter-desktop"
+
+# Expand the tilde (~) to the user's home directory
+specter_directory = os.path.expanduser(specter_directory)
+
+try:
+    # Change the working directory to the specter-desktop directory
+    os.chdir(specter_directory)
+
+    # Execute the pip3 command to install requirements from requirements.txt
+    subprocess.check_call(["pip3", "install", "-r", "requirements.txt"])
+
+    # Execute the python3 setup.py install command
+    subprocess.check_call(["python3", "setup.py", "install"])
+
+    # Execute the python3 -m cryptoadvance.specter server command
+    subprocess.check_call(["python3", "-m", "cryptoadvance.specter", "server", "--host", "0.0.0.0"])
+
+    print("Requirements installed, setup.py installed, and specter server started successfully.")
+except FileNotFoundError:
+    print(f"The directory {specter_directory} does not exist.")
+except subprocess.CalledProcessError as e:
+    print(f"Error running the command: {e}")
+except Exception as e:
+    print(f"An unexpected error occurred: {e}")
+
