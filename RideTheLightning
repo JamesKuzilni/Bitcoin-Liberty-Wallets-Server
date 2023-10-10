@@ -108,7 +108,7 @@ def create_rtl_config_file():
     random_password = generate_random_password(12)  # Change the length as needed
     
     # Hardcode the name of the Lightning Node here
-    nameoflightningnode = "nameoflightningnode"
+    nameoflightningnode = "name_of_lightning_node"
 
     config_data = {
         "multiPass": random_password,
