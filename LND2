@@ -11,10 +11,10 @@ import shutil
 
 def create_lnd_config_file():
     # Predefined values
-    rpcusername = "rpcusername"
-    rpcpassword = "rpcpassword"
+    rpcusername = "rpc_username"
+    rpcpassword = "rpc_password"
     ubuntuusername = "humble"
-    nameoflightningnode = "nameoflightningnode"
+    nameoflightningnode = "name_of_lightning_node"
 
     # Define the configuration text
     config_text = f"""\
