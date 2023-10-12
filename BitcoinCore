@@ -146,6 +146,22 @@ rpcpassword = "rpc_password"
 rpcauth = run_rpcauth(rpcusername, rpcpassword)
 append_rpcauth_to_bitcoin_conf(rpcauth)
 
+# Define the path to the hidden file
+file_path = os.path.expanduser("~/.Passwords")
+
+# Check if the file already exists
+if not os.path.exists(file_path):
+    # Create the file
+    with open(file_path, 'w') as password_file:
+        # Optionally, you can write some content to the file
+        password_file.write("This is a password file.\n")
+        password_file.write("You can store your passwords here.")
+
+    print(f"Created the file: {file_path}")
+else:
+    print(f"The file already exists: {file_path}")
+
+
 def main():
     # Print the instructions
     print("Type: sudo systemctl status bitcoind.service")
