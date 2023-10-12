@@ -95,8 +95,8 @@ if __name__ == "__main__":
 
 import os
 import json
-import random
 import string
+import random
 
 def generate_random_password(length):
     # Generate a random password of the specified length
@@ -106,9 +106,14 @@ def generate_random_password(length):
 
 def create_rtl_config_file():
     random_password = generate_random_password(12)  # Change the length as needed
-    
+
     # Hardcode the name of the Lightning Node here
     nameoflightningnode = "name_of_lightning_node"
+
+    # Write the random password to the ~/Passwords file with RTL='Password'
+    passwords_file_path = os.path.expanduser("~/Passwords")
+    with open(passwords_file_path, 'w') as passwords_file:
+        passwords_file.write(f'RTL={random_password}\n')
 
     config_data = {
         "multiPass": random_password,
@@ -153,6 +158,7 @@ def create_rtl_config_file():
         json.dump(config_data, config_file, indent=3)
 
     print(f'Created RTL-Config.json file at {config_file_path}')
+    print(f'Written RTL={random_password} to {passwords_file_path}')
 
 if __name__ == "__main__":
     create_rtl_config_file()
