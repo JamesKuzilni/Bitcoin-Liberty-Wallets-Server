@@ -512,6 +512,33 @@ try:
 except subprocess.CalledProcessError as e:
     print("An error occurred:", e)
 
+# Define the list of commands to execute
+commands = [
+    "sudo cp ~/specter-desktop/udev/*.rules /etc/udev/rules.d/",
+    "sudo udevadm trigger",
+    "sudo udevadm control --reload-rules",
+    "sudo usermod -aG plugdev `whoami`",
+]
+
+# Check if the 'plugdev' group exists
+check_group_command = "getent group plugdev"
+try:
+    subprocess.check_output(check_group_command, shell=True)
+except subprocess.CalledProcessError as e:
+    if e.returncode != 0:
+        # Group does not exist, so create it
+        groupadd_command = "sudo groupadd plugdev"
+        subprocess.run(groupadd_command, shell=True, check=True)
+
+# Directory where the commands will be executed
+directory = "/home/humble/specter-desktop"
+
+# Loop through and execute the commands
+for command in commands:
+    subprocess.run(command, shell=True, cwd=directory, check=True)
+
+print("All commands executed successfully.")
+
 def create_specterd_service(system_username):
     content = f'''[Unit]
 Description=Specter Desktop Service
