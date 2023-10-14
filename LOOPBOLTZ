@@ -491,33 +491,45 @@ specter_directory = "~/specter-desktop"
 # Expand the tilde (~) to the user's home directory
 specter_directory = os.path.expanduser(specter_directory)
 
-import os
-import subprocess
+# Set the working directory to "~/.specter"
+working_directory = "~/.specter"
 
-# Define the directory where specter-desktop is located
-specter_directory = "~/specter-desktop"
-
-# Expand the tilde (~) to the user's home directory
-specter_directory = os.path.expanduser(specter_directory)
+# The openssl command you want to run
+openssl_command = [
+    "openssl",
+    "req",
+    "-newkey", "rsa:2048",
+    "-new", "-nodes",
+    "-x509",
+    "-days", "3650",
+    "-keyout", "key.pem",
+    "-out", "cert.pem"
+]
 
 try:
-    # Change the working directory to the specter-desktop directory
-    os.chdir(specter_directory)
-
-    # Execute the pip3 command to install requirements from requirements.txt
-    subprocess.check_call(["pip3", "install", "-r", "requirements.txt"])
-
-    # Execute the python3 setup.py install command
-    subprocess.check_call(["python3", "setup.py", "install"])
-
-    # Execute the python3 -m cryptoadvance.specter server command
-    subprocess.check_call(["python3", "-m", "cryptoadvance.specter", "server", "--host", "0.0.0.0"])
-
-    print("Requirements installed, setup.py installed, and specter server started successfully.")
-except FileNotFoundError:
-    print(f"The directory {specter_directory} does not exist.")
+    # Change the working directory
+    subprocess.run(f"cd {working_directory} && {' '.join(openssl_command)}", shell=True, check=True)
 except subprocess.CalledProcessError as e:
-    print(f"Error running the command: {e}")
-except Exception as e:
-    print(f"An unexpected error occurred: {e}")
+    print("An error occurred:", e)
+
+# Set the working directory to "~/.specter"
+working_directory = "~/.specter"
+
+# The command you want to run
+specter_command = [
+    "python3",
+    "-m",
+    "cryptoadvance.specter",
+    "server",
+    "--host", "0.0.0.0",
+    "--cert", "/home/humble/.specter/cert.pem",
+    "--key", "/home/humble/.specter/key.pem"
+]
+
+try:
+    # Change the working directory
+    subprocess.run(f"cd {working_directory} && {' '.join(specter_command)}", shell=True, check=True)
+except subprocess.CalledProcessError as e:
+    print("An error occurred:", e)
+
 
