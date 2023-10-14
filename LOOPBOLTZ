@@ -512,24 +512,52 @@ try:
 except subprocess.CalledProcessError as e:
     print("An error occurred:", e)
 
-# Set the working directory to "~/.specter"
-working_directory = "~/.specter"
+def create_specterd_service(system_username):
+    content = f'''[Unit]
+Description=Specter Desktop Service
+After=multi-user.target
+Conflicts=getty@tty1.service
 
-# The command you want to run
-specter_command = [
-    "python3",
-    "-m",
-    "cryptoadvance.specter",
-    "server",
-    "--host", "0.0.0.0",
-    "--cert", "/home/humble/.specter/cert.pem",
-    "--key", "/home/humble/.specter/key.pem"
-]
+[Service]
+User={system_username}
+Type=simple
+ExecStart=/usr/bin/python3 -m cryptoadvance.specter server --host 0.0.0.0 --cert=/home/humble/.specter/cert.pem --key=/home/humble/.specter/key.pem
+StandardInput=tty-force
 
-try:
-    # Change the working directory
-    subprocess.run(f"cd {working_directory} && {' '.join(specter_command)}", shell=True, check=True)
-except subprocess.CalledProcessError as e:
-    print("An error occurred:", e)
+[Install]
+WantedBy=multi-user.target
+'''
 
+    # Define the path to the systemd service unit file
+    file_path = "/etc/systemd/system/specterd.service"
+
+    # Write the content to a temporary file
+    temp_file_path = "/tmp/specterd.service"
+    with open(temp_file_path, 'w') as file:
+        file.write(content)
+
+    # Use sudo to move the temporary file to the target directory
+    move_command = ["sudo", "mv", temp_file_path, file_path]
+    subprocess.run(move_command, check=True)
+
+    # Set the correct ownership and permissions for the service file
+    chown_command = ["sudo", "chown", "root:root", file_path]
+    subprocess.run(chown_command, check=True)
+    chmod_command = ["sudo", "chmod", "644", file_path]
+    subprocess.run(chmod_command, check=True)
+
+    # Reload systemd configuration
+    reload_command = ["sudo", "systemctl", "daemon-reload"]
+    subprocess.run(reload_command, check=True)
+
+    # Enable the specterd service
+    enable_command = ["sudo", "systemctl", "enable", "specterd.service"]
+    subprocess.run(enable_command, check=True)
+
+    # Start the specterd service
+    start_command = ["sudo", "systemctl", "start", "specterd.service"]
+    subprocess.run(start_command, check=True)
+
+if __name__ == "__main__":
+    create_specterd_service('humble')  # Replace 'humble' with the actual system username
 
