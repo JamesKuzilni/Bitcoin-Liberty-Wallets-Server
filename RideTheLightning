@@ -8,6 +8,16 @@ import json
 import random
 import string
 
+# Define the command to install npm@10.2.0 globally
+command = ["npm", "install", "-g", "npm@10.2.0"]
+
+try:
+    # Run the command using subprocess
+    subprocess.run(command, check=True, shell=False)
+    print("npm@10.2.0 has been successfully installed globally.")
+except subprocess.CalledProcessError as e:
+    print(f"Error: {e}")
+
 def download_and_extract(url, filename):
     """Downloads a tar archive from the specified URL and extracts it."""
     # Define the downloads directory
