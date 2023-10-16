@@ -53,7 +53,7 @@ if __name__ == "__main__":
 
 # Define file path, IP address, RPC username, and RPC password
 file_path = "/home/humble/mempool/docker/docker-compose.yml"
-ipaddress = "your_ip_address"
+ipaddress = "ip_address"
 rpcusername = "rpc_username"
 rpcpassword = "rpc_password"
 
