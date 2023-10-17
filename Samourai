@@ -73,7 +73,7 @@ if __name__ == '__main__':
 
     print('The conf directory has been created with sudo privileges.')
 
-ipaddress = "your_ip_address"
+ipaddress = "ip_address"
 rpcusername = "rpc_username"
 rpcpassword = "rpc_password"
 
