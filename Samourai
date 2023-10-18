@@ -548,18 +548,18 @@ def run_dojo_install():
 # Run the dojo.sh install command
 run_dojo_install()
 
-# Wait for 15 minutes before proceeding
-print("Waiting for 15 minutes...")
-time.sleep(900)  # 900 seconds = 15 minutes
-
 def run_dojo_onion():
     directory = os.path.expanduser('~/dojo-app/samourai-dojo-v1.20.0/docker/my-dojo')
     command = './dojo.sh onion'
 
     # Use sudo to execute the command with elevated privileges
-    subprocess.run(['sudo', '-E', 'bash', '-c', command], cwd=directory)
+    result = subprocess.run(['sudo', '-E', 'bash', '-c', command], cwd=directory, capture_output=True, text=True)
+    
+    # Save the result to a file
+    with open('.Passwords', 'w') as password_file:
+        password_file.write(result.stdout)
 
-# Run the dojo.sh onion command
+# Run the dojo.sh onion command and save the result to a file
 run_dojo_onion()
 
 def get_node_api_key_from_conf():
@@ -577,56 +577,74 @@ def get_node_api_key_from_conf():
         end_index = content.find('\n', start_index)
         if end_index != -1:
             node_api_key = content[start_index:end_index].strip()
-            print("NODE_API_KEY:", node_api_key)
+            
+            # Append the result to the existing .Passwords file
+            with open('.Passwords', 'a') as password_file:
+                password_file.write('\nNODE_API_KEY: ' + node_api_key)
         else:
             print("NODE_API_KEY not found in the file.")
     else:
         print("NODE_API_KEY not found in the file.")
 
-# Get and print the NODE_API_KEY from the configuration file
+# Get and append the NODE_API_KEY from the configuration file to the .Passwords file
 get_node_api_key_from_conf()
 
-# Define the paths to the Docker Compose YAML file and its directory
-compose_file_path = "~/dojo-app/samourai-dojo-v1.20.0/docker/my-dojo/docker-compose.yaml"
-compose_directory = "~/dojo-app/samourai-dojo-v1.20.0/docker/my-dojo"
 
-# Expand the tilde (~) to the user's home directory
-compose_file_path = subprocess.check_output(["echo", compose_file_path]).decode().strip()
-compose_directory = subprocess.check_output(["echo", compose_directory]).decode().strip()
-
-# Command to create the Dojo systemd service unit file
-create_service_command = f"""\
+def create_dojo_service(system_username, service_file_path):
+    # Define the systemd service unit content
+    service_unit = f"""\
 [Unit]
 Description=Dojo Docker Compose Stack
 Requires=docker.service
 After=docker.service
 
 [Service]
-ExecStart={subprocess.check_output(["which", "docker-compose"]).decode().strip()} -f {compose_file_path} up -d
-ExecStop={subprocess.check_output(["which", "docker-compose"]).decode().strip()} -f {compose_file_path} down
-WorkingDirectory={compose_directory}
+ExecStart=/usr/bin/docker-compose up
+ExecStop=/usr/bin/docker-compose down
+WorkingDirectory=/home/mcdonald/dojo-app/samourai-dojo-v1.20.0/docker/my-dojo/
 Restart=always
 
 [Install]
 WantedBy=multi-user.target
+
 """
 
-# Path to the service file
-service_file_path = "/etc/systemd/system/dojo.service"
+    # Write the service unit content to a temporary file
+    temp_service_file = "/tmp/dojo.service"
+    with open(temp_service_file, "w") as file:
+        file.write(service_unit)
 
-# Write the service unit file
-with open(service_file_path, "w") as service_file:
-    service_file.write(create_service_command)
+    try:
+        # Use sudo to move the temporary file to the target directory
+        move_command = ["sudo", "mv", temp_service_file, service_file_path]
+        subprocess.run(move_command, check=True)
 
-# Set the correct ownership and permissions
-subprocess.run(["sudo", "chown", "root:root", service_file_path], check=True)
-subprocess.run(["sudo", "chmod", "644", service_file_path], check=True)
+        # Set the correct ownership and permissions for the service file
+        chown_command = ["sudo", "chown", "root:root", service_file_path]
+        subprocess.run(chown_command, check=True)
+        chmod_command = ["sudo", "chmod", "644", service_file_path]
+        subprocess.run(chmod_command, check=True)
 
-# Reload systemd configuration
-subprocess.run(["sudo", "systemctl", "daemon-reload"], check=True)
+        # Reload systemd configuration
+        reload_command = ["sudo", "systemctl", "daemon-reload"]
+        subprocess.run(reload_command, check=True)
 
-# Enable and start the Dojo service
-subprocess.run(["sudo", "systemctl", "enable", "dojo.service"], check=True)
-subprocess.run(["sudo", "systemctl", "start", "dojo.service"], check=True)
+        # Enable and start the dojo service
+        enable_command = ["sudo", "systemctl", "enable", "dojo.service"]
+        subprocess.run(enable_command, check=True)
+        start_command = ["sudo", "systemctl", "start", "dojo.service"]
+        subprocess.run(start_command, check=True)
 
-print("Dojo service created and started.")
+        print("Dojo service created, enabled, and started successfully.")
+    except Exception as e:
+        print(f"Error: {str(e)}")
+
+def main():
+    system_username = "humble"  # Replace with your system username
+    service_file_path = "/etc/systemd/system/dojo.service"  # Replace with your desired target path
+    create_dojo_service(system_username, service_file_path)
+
+if __name__ == "__main__":
+    main()
+
+
