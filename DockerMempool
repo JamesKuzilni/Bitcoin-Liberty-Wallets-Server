@@ -236,13 +236,52 @@ try:
 except subprocess.CalledProcessError as e:
     print(f"Error installing Docker Compose: {e}")
 
-# Command to reboot the system immediately
-reboot_command = 'sudo shutdown -r now'
+import subprocess
 
-# Execute the reboot command using subprocess
-try:
-    subprocess.run(reboot_command, shell=True, check=True)
-    print("System is rebooting.")
-except subprocess.CalledProcessError as e:
-    print(f"Error rebooting the system: {e}")
+def create_mempool_service(system_username):
+    file_path = "/etc/systemd/system/mempool.service"
+    content = '''\
+[Unit]
+Description=Mempool Docker Compose Stack
+Requires=docker.service
+After=docker.service
 
+[Service]
+ExecStart=/usr/bin/docker-compose up
+ExecStop=/usr/bin/docker-compose down
+WorkingDirectory=/home/mcdonald/mempool/docker/
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+'''
+
+    # Write the content to a temporary file
+    temp_file_path = "/tmp/mempool.service"
+    with open(temp_file_path, 'w') as file:
+        file.write(content)
+
+    # Use sudo to move the temporary file to the target directory
+    move_command = ["sudo", "mv", temp_file_path, file_path]
+    subprocess.run(move_command, check=True)
+
+    # Set the correct ownership and permissions for the service file
+    chown_command = ["sudo", "chown", "root:root", file_path]
+    subprocess.run(chown_command, check=True)
+    chmod_command = ["sudo", "chmod", "644", file_path]
+    subprocess.run(chmod_command, check=True)
+
+    # Reload systemd configuration
+    reload_command = ["sudo", "systemctl", "daemon-reload"]
+    subprocess.run(reload_command, check=True)
+
+    # Enable the mempool service
+    enable_command = ["sudo", "systemctl", "enable", "mempool.service"]
+    subprocess.run(enable_command, check=True)
+
+    # Start the mempool service
+    start_command = ["sudo", "systemctl", "start", "mempool.service"]
+    subprocess.run(start_command, check=True)
+
+if __name__ == "__main__":
+    create_mempool_service("humble")  # Replace with your system username
