@@ -601,7 +601,7 @@ After=docker.service
 [Service]
 ExecStart=/usr/bin/docker-compose up
 ExecStop=/usr/bin/docker-compose down
-WorkingDirectory=/home/mcdonald/dojo-app/samourai-dojo-v1.20.0/docker/my-dojo/
+WorkingDirectory=/home/humble/dojo-app/samourai-dojo-v1.20.0/docker/my-dojo/
 Restart=always
 
 [Install]
