@@ -36,14 +36,14 @@ install_application(filename)
 
 def download_and_install_tor_browser():
     # Replace the URL with the latest version's URL
-    url = "https://www.torproject.org/dist/torbrowser/12.5.6/tor-browser-linux64-12.5.6_ALL.tar.xz"
+    url = "https://www.torproject.org/dist/torbrowser/13.0/tor-browser-linux-x86_64-13.0.tar.xz"
     download_dir = os.path.expanduser('~/Downloads')
 
     # Use wget to download the Tor Browser
     subprocess.run(["wget", url], cwd=download_dir)
 
     # Extract the downloaded tar.xz file
-    tar_file = os.path.join(download_dir, "tor-browser-linux64-12.5.6_ALL.tar.xz")
+    tar_file = os.path.join(download_dir, "tor-browser-linux64-13.0.tar.xz")
     subprocess.run(["tar", "-xf", tar_file], cwd=download_dir)
 
     # Get the extracted folder name
@@ -78,3 +78,93 @@ try:
 except subprocess.CalledProcessError as e:
     print(f"Error running command: {e}")
 
+#!/usr/bin/env python3
+import subprocess
+import wget
+
+url = "https://github.com/cryptoadvance/specter-desktop/releases/download/v2.0.2/specter_desktop-v2.0.2-x86_64-linux-gnu.tar.gz"
+download_command = f"wget {url}"
+
+try:
+    subprocess.run(download_command, shell=True, check=True)
+    print("Download completed successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Download failed with error code {e.returncode}.")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+
+
+# Specify the archive file name
+archive_file = "specter_desktop-v2.0.2-x86_64-linux-gnu.tar.gz"
+
+# Build the tar command
+tar_command = f"tar -xzvf {archive_file}"
+
+try:
+    subprocess.run(tar_command, shell=True, check=True)
+    print(f"Extracted {archive_file} successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Extraction failed with error code {e.returncode}.")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+
+import subprocess
+
+def enable_universe_repository():
+    try:
+        subprocess.run(["sudo", "add-apt-repository", "universe"], check=True)
+        print("The 'universe' repository has been enabled.")
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to enable the 'universe' repository. Error code: {e.returncode}")
+    except Exception as e:
+        print(f"An unexpected error occurred: {str(e)}")
+
+if __name__ == "__main__":
+    enable_universe_repository()
+
+import subprocess
+
+def install_libfuse2():
+    try:
+        subprocess.run(["sudo", "apt", "install", "libfuse2"], check=True)
+        print("libfuse2 has been successfully installed.")
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to install libfuse2. Error code: {e.returncode}")
+    except Exception as e:
+        print(f"An unexpected error occurred: {str(e)}")
+
+if __name__ == "__main__":
+    install_libfuse2()
+
+# Define the commands to be executed
+commands = [
+    "sudo cp udev/*.rules /etc/udev/rules.d/",
+    "sudo udevadm trigger",
+    "sudo udevadm control --reload-rules",
+    "sudo groupadd plugdev",
+    f"sudo usermod -aG plugdev {subprocess.check_output(['whoami'], text=True).strip()}"
+]
+
+# Execute the commands one by one
+for cmd in commands:
+    try:
+        subprocess.run(cmd, shell=True, check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Error running command: {cmd}")
+        print(e)
+
+source_file = "Specter-2.0.2.AppImage"
+destination_file = "Specter"
+
+# Execute the 'mv' command to rename the file
+try:
+    subprocess.run(f"mv {source_file} {destination_file}", shell=True, check=True)
+except subprocess.CalledProcessError as e:
+
+import subprocess
+
+# Execute the './Specter' command
+try:
+    subprocess.run("./Specter", shell=True, check=True)
+except subprocess.CalledProcessError as e:
+    print(f"Error running the './Specter' command: {e}")
