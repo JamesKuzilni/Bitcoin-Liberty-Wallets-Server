@@ -1,0 +1,645 @@
+#!/usr/bin/env python3
+import subprocess
+import pexpect
+import secrets
+import string
+
+# The command to run
+command = "sudo apt update"
+
+try:
+    # Run the command using subprocess
+    subprocess.run(command, shell=True, check=True)
+    print("Update completed successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Update failed with error code {e.returncode}.")
+except FileNotFoundError:
+    print("Error: The 'sudo' or 'apt' command was not found.")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+
+# The command to run
+command = "sudo apt dist-upgrade -y"
+
+try:
+    # Run the command using subprocess
+    subprocess.run(command, shell=True, check=True)
+    print("Distribution upgrade completed successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Distribution upgrade failed with error code {e.returncode}.")
+except FileNotFoundError:
+    print("Error: The 'sudo' or 'apt' command was not found.")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+import subprocess
+
+# The command to run
+command = "sudo apt autoremove -y"
+
+try:
+    # Run the command using subprocess
+    subprocess.run(command, shell=True, check=True)
+    print("Autoremove completed successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Autoremove failed with error code {e.returncode}.")
+except FileNotFoundError:
+    print("Error: The 'sudo' or 'apt' command was not found.")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+
+# The URL to download
+download_url = "https://download.nextcloud.com/server/releases/latest.zip"
+
+# The command to run
+command = f"wget {download_url}"
+
+try:
+    # Run the command using subprocess
+    subprocess.run(command, shell=True, check=True)
+    print(f"Download from {download_url} completed successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Download from {download_url} failed with error code {e.returncode}.")
+except FileNotFoundError:
+    print("Error: The 'wget' command was not found. Please make sure 'wget' is installed.")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+
+# The command to run
+command = "sudo apt install mariadb-server -y"
+
+try:
+    # Run the command using subprocess
+    subprocess.run(command, shell=True, check=True)
+    print("MariaDB server installation completed successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"MariaDB server installation failed with error code {e.returncode}.")
+except FileNotFoundError:
+    print("Error: The 'sudo' or 'apt' command was not found.")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+
+# Generate a random alphanumeric password
+password_length = 12  # You can adjust the length as needed
+alphabet = string.ascii_letters + string.digits
+root_password = ''.join(secrets.choice(alphabet) for _ in range(password_length))
+
+# Print the generated root password
+print(f"Generated MySQL root password: {root_password}")
+
+# The command to run
+command = "sudo mysql_secure_installation"
+
+try:
+    # Run the command using pexpect
+    child = pexpect.spawn(command)
+    
+    # Expect and respond to prompts
+    child.expect("Enter current password for root (enter for none):")
+    child.sendline("")  # Leave the current password empty
+    
+    child.expect("Set root password?")
+    child.sendline("Y")  # Set a root password
+    
+    child.expect("New password:")
+    child.sendline(root_password)  # Use the generated root password
+    
+    child.expect("Re-enter new password:")
+    child.sendline(root_password)  # Re-enter the generated root password
+    
+    child.expect("Remove anonymous users?")
+    child.sendline("Y")  # Remove anonymous users
+    
+    child.expect("Disallow root login remotely?")
+    child.sendline("Y")  # Disallow root login remotely
+    
+    child.expect("Remove test database and access to it?")
+    child.sendline("Y")  # Remove test database
+    
+    child.expect("Reload privilege tables now?")
+    child.sendline("Y")  # Reload privilege tables
+    
+    child.expect(pexpect.EOF)
+    
+    print("MySQL secure installation completed successfully.")
+except pexpect.exceptions.ExceptionPexpect as e:
+    print(f"MySQL secure installation failed with the error: {str(e)}")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+
+
+import subprocess
+import secrets
+import string
+
+# Generate a random alphanumeric password
+password_length = 12  # You can adjust the length as needed
+alphabet = string.ascii_letters + string.digits
+random_password = ''.join(secrets.choice(alphabet) for _ in range(password_length))
+
+# Print the generated password
+print(f"Generated MariaDB password: {random_password}")
+
+# Define the SQL commands
+sql_commands = [
+    "CREATE DATABASE nextcloud;",
+    "SHOW DATABASES;",
+    f"GRANT ALL PRIVILEGES ON nextcloud.* TO 'nextcloud'@'localhost' IDENTIFIED BY '{random_password}';",
+    "FLUSH PRIVILEGES;",
+]
+
+# The command to run
+command = "sudo mariadb"
+
+try:
+    # Run the MariaDB client and execute SQL commands
+    child = subprocess.Popen(command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    
+    # Execute SQL commands and capture the output
+    for sql_command in sql_commands:
+        child.stdin.write(sql_command + "\n")
+    
+    # Capture the output from the MariaDB client
+    output, _ = child.communicate()
+
+    # Print the output
+    print(output)
+
+except subprocess.CalledProcessError as e:
+    print(f"Failed to execute SQL commands with error code {e.returncode}.")
+except FileNotFoundError:
+    print("Error: The 'sudo' or 'mariadb' command was not found.")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+
+import subprocess
+
+# List of packages to install
+packages_to_install = [
+    "php",
+    "php-apcu",
+    "php-bcmath",
+    "php-cli",
+    "php-common",
+    "php-curl",
+    "php-gd",
+    "php-gmp",
+    "php-imagick",
+    "php-intl",
+    "php-mbstring",
+    "php-mysql",
+    "php-zip",
+    "php-xml",
+]
+
+# Construct the install command
+install_command = "sudo apt install " + " ".join(packages_to_install)
+
+try:
+    # Run the command using subprocess
+    subprocess.run(install_command, shell=True, check=True)
+    print("Package installation completed successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Package installation failed with error code {e.returncode}.")
+except FileNotFoundError:
+    print("Error: The 'sudo' or 'apt' command was not found.")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+
+import subprocess
+
+# List of PHP modules to enable
+php_modules = ["bcmath", "gmp", "imagick", "intl"]
+
+try:
+    for module in php_modules:
+        # Construct the phpenmod command
+        phpenmod_command = f"sudo phpenmod {module}"
+        
+        # Run the command using subprocess
+        subprocess.run(phpenmod_command, shell=True, check=True)
+        print(f"PHP module '{module}' enabled successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Failed to enable PHP module with error code {e.returncode}.")
+except FileNotFoundError:
+    print("Error: The 'sudo' or 'phpenmod' command was not found.")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+
+import subprocess
+
+# The command to install the 'unzip' package
+command = "sudo apt install unzip -y"
+
+try:
+    # Run the command using subprocess
+    subprocess.run(command, shell=True, check=True)
+    print("Unzip installation completed successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Unzip installation failed with error code {e.returncode}.")
+except FileNotFoundError:
+    print("Error: The 'sudo' or 'apt' command was not found.")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+
+import subprocess
+
+# The command to unzip the file
+command = "unzip latest.zip"
+
+try:
+    # Run the command using subprocess
+    subprocess.run(command, shell=True, check=True)
+    print("Unzipping 'latest.zip' completed successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Unzipping 'latest.zip' failed with error code {e.returncode}.")
+except FileNotFoundError:
+    print("Error: The 'unzip' command was not found.")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+
+# The directory to change ownership for
+directory = "nextcloud"
+
+# The command to change ownership
+command = f"sudo chown -R www-data:www-data {directory}"
+
+try:
+    # Run the command using subprocess
+    subprocess.run(command, shell=True, check=True)
+    print(f"Ownership of '{directory}' changed to www-data:www-data successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Failed to change ownership of '{directory}' with error code {e.returncode}.")
+except FileNotFoundError:
+    print("Error: The 'sudo' or 'chown' command was not found.")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+
+# Source and destination paths
+source_directory = "nextcloud"
+destination_directory = "/var/www"
+
+# The command to move the directory
+command = f"sudo mv {source_directory} {destination_directory}"
+
+try:
+    # Run the command using subprocess
+    subprocess.run(command, shell=True, check=True)
+    print(f"Moved '{source_directory}' to '{destination_directory}' successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Failed to move '{source_directory}' to '{destination_directory}' with error code {e.returncode}.")
+except FileNotFoundError:
+    print("Error: The 'sudo' or 'mv' command was not found.")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+
+import subprocess
+
+# The name of the site configuration to disable
+site_config = "000-default.conf"
+
+# The command to disable the site
+command = f"sudo a2dissite {site_config}"
+
+try:
+    # Run the command using subprocess
+    subprocess.run(command, shell=True, check=True)
+    print(f"Disabled Apache site configuration: {site_config}")
+except subprocess.CalledProcessError as e:
+    print(f"Failed to disable Apache site configuration with error code {e.returncode}.")
+except FileNotFoundError:
+    print("Error: The 'sudo' or 'a2dissite' command was not found.")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+
+# The content to add to nextcloud.conf
+config_content = """
+<VirtualHost *:80>
+    DocumentRoot "/var/www/nextcloud"
+    ServerName nextcloud
+
+    <Directory "/var/www/nextcloud/">
+        Options MultiViews FollowSymlinks
+        AllowOverride All
+        Order allow,deny
+        Allow from all
+    </Directory>
+
+    TransferLog /var/log/apache2/nextcloud_access.log
+    ErrorLog /var/log/apache2/nextcloud_error.log
+</VirtualHost>
+"""
+
+# The path to the nextcloud.conf file
+config_file = "/etc/apache2/sites-available/nextcloud.conf"
+
+# The command to append the content to the file
+command = f"echo '{config_content}' | sudo tee -a {config_file}"
+
+try:
+    # Run the command using subprocess
+    subprocess.run(command, shell=True, check=True)
+    print(f"Added configuration to {config_file} successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Failed to add configuration to {config_file} with error code {e.returncode}.")
+except FileNotFoundError:
+    print("Error: The 'sudo' or 'tee' command was not found.")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+
+# The site configuration file to enable
+site_config = "nextcloud.conf"
+
+# The command to enable the site configuration
+command = f"sudo a2ensite {site_config}"
+
+try:
+    # Run the command using subprocess
+    subprocess.run(command, shell=True, check=True)
+    print(f"Enabled Apache site configuration: {site_config}")
+except subprocess.CalledProcessError as e:
+    print(f"Failed to enable Apache site configuration with error code {e.returncode}.")
+except FileNotFoundError:
+    print("Error: The 'sudo' or 'a2ensite' command was not found.")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+
+# Define the lines to search for and their replacements
+lines_to_search = [
+    "memory_limit = 128M",
+    "upload_max_filesize = 2M",
+    "max_execution_time = 30",
+    "post_max_size = 8M",
+    ";date.timezone =",
+    ";opcache.enable=1",
+    ";opcache.interned_strings_buffer=8",
+    ";opcache.max_accelerated_files=10000",
+    ";opcache.memory_consumption=128",
+    ";opcache.save_comments=1",
+    ";opcache.revalidate_freq=1"
+]
+
+replacement_lines = [
+    "memory_limit = 512M",
+    "upload_max_filesize = 200M",
+    "max_execution_time = 360",
+    "post_max_size = 200M",
+    "date.timezone = America/Detroit",
+    "opcache.enable=1",
+    "opcache.interned_strings_buffer=8",
+    "opcache.max_accelerated_files=10000",
+    "opcache.memory_consumption=128",
+    "opcache.save_comments=1",
+    "opcache.revalidate_freq=1"
+]
+
+# Path to the php.ini file
+php_ini_file = "/etc/php/8.1/apache2/php.ini"
+
+try:
+    # Read the contents of the php.ini file
+    with open(php_ini_file, "r") as file:
+        lines = file.readlines()
+
+    # Replace the specified lines
+    for i, line in enumerate(lines):
+        for j in range(len(lines_to_search)):
+            if line.strip() == lines_to_search[j]:
+                lines[i] = replacement_lines[j] + "\n"
+
+    # Write the modified contents back to the file
+    with open(php_ini_file, "w") as file:
+        file.writelines(lines)
+
+    print(f"Modified {php_ini_file} successfully.")
+except PermissionError:
+    print(f"Permission denied. You may need to run the script with elevated privileges (e.g., using sudo).")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+
+# List of Apache modules to enable
+apache_modules = ["dir", "env", "headers", "mime", "rewrite", "ssl"]
+
+try:
+    # Enable each Apache module using subprocess
+    for module in apache_modules:
+        command = f"sudo a2enmod {module}"
+        subprocess.run(command, shell=True, check=True)
+        print(f"Enabled Apache module: {module}")
+    
+    print("All Apache modules enabled successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Failed to enable Apache modules with error code {e.returncode}.")
+except FileNotFoundError:
+    print("Error: The 'sudo' or 'a2enmod' command was not found.")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+
+import subprocess
+
+try:
+    # Run the command to restart Apache using subprocess
+    command = "sudo systemctl restart apache2"
+    subprocess.run(command, shell=True, check=True)
+    print("Apache web server restarted successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Failed to restart Apache with error code {e.returncode}.")
+except FileNotFoundError:
+    print("Error: The 'sudo' or 'systemctl' command was not found.")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+
+import subprocess
+
+try:
+    # Run the command to install snapd using subprocess
+    command = "sudo apt install snapd -y"
+    subprocess.run(command, shell=True, check=True)
+    print("snapd installation completed successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"snapd installation failed with error code {e.returncode}.")
+except FileNotFoundError:
+    print("Error: The 'sudo' or 'apt' command was not found.")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+
+import subprocess
+
+try:
+    # Run the command to install the core snap using subprocess
+    install_command = "sudo snap install core"
+    subprocess.run(install_command, shell=True, check=True)
+    print("core snap installation completed successfully.")
+
+    # Run the command to refresh the core snap using subprocess
+    refresh_command = "sudo snap refresh core"
+    subprocess.run(refresh_command, shell=True, check=True)
+    print("core snap refresh completed successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Failed to install or refresh core snap with error code {e.returncode}.")
+except FileNotFoundError:
+    print("Error: The 'sudo' or 'snap' command was not found.")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+
+import subprocess
+
+try:
+    # Run the command to install certbot in classic mode using subprocess
+    command = "sudo snap install --classic certbot"
+    subprocess.run(command, shell=True, check=True)
+    print("certbot snap installation in classic mode completed successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Failed to install certbot snap with error code {e.returncode}.")
+except FileNotFoundError:
+    print("Error: The 'sudo' or 'snap' command was not found.")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+
+import subprocess
+
+try:
+    # Run the command to create the symbolic link using subprocess
+    command = "sudo ln -s /snap/bin/certbot /usr/bin/certbot"
+    subprocess.run(command, shell=True, check=True)
+    print("Symbolic link created successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Failed to create the symbolic link with error code {e.returncode}.")
+except FileNotFoundError:
+    print("Error: The 'sudo' or 'ln' command was not found.")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+
+import subprocess
+
+try:
+    # Run the certbot command with the --apache flag using subprocess
+    command = "sudo certbot --apache"
+    subprocess.run(command, shell=True, check=True)
+    print("Certbot command completed successfully with the --apache flag.")
+except subprocess.CalledProcessError as e:
+    print(f"Certbot command with --apache flag failed with error code {e.returncode}.")
+except FileNotFoundError:
+    print("Error: The 'sudo' or 'certbot' command was not found.")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+import subprocess
+
+try:
+    # Run the command to create the symbolic link using subprocess
+    command = "sudo ln -s /snap/bin/certbot /usr/bin/certbot"
+    subprocess.run(command, shell=True, check=True)
+    print("Symbolic link created successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Failed to create the symbolic link with error code {e.returncode}.")
+except FileNotFoundError:
+    print("Error: The 'sudo' or 'ln' command was not found.")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+
+import subprocess
+
+try:
+    # Run the command to change the file permissions using subprocess
+    command = "sudo chmod 660 /var/www/nextcloud/config/config.php"
+    subprocess.run(command, shell=True, check=True)
+    print("File permissions changed to 660 successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Failed to change file permissions with error code {e.returncode}.")
+except FileNotFoundError:
+    print("Error: The 'sudo' or 'chmod' command was not found.")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+
+import subprocess
+
+try:
+    # Run the command to change the file ownership using subprocess
+    command = "sudo chown root:www-data /var/www/nextcloud/config/config.php"
+    subprocess.run(command, shell=True, check=True)
+    print("File ownership changed to root:www-data successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Failed to change file ownership with error code {e.returncode}.")
+except FileNotFoundError:
+    print("Error: The 'sudo' or 'chown' command was not found.")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+
+import subprocess
+
+# The line to add
+line_to_add = "'memcache.local' => '\\OC\\Memcache\\APCu',"
+
+# Path to the config.php file
+config_file = "/var/www/nextcloud/config/config.php"
+
+try:
+    # Run the command to append the line to the file using subprocess
+    command = f"echo {line_to_add} | sudo tee -a {config_file}"
+    subprocess.run(command, shell=True, check=True)
+    print(f"Added the line to {config_file} successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Failed to add the line to {config_file} with error code {e.returncode}.")
+except FileNotFoundError:
+    print("Error: The 'sudo' or 'tee' command was not found.")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+
+import subprocess
+
+# The line to add
+line_to_add = "'default_phone_region' => 'US',"
+
+# Path to the config.php file
+config_file = "/var/www/nextcloud/config/config.php"
+
+try:
+    # Run the command to append the line to the file using subprocess
+    command = f"echo {line_to_add} | sudo tee -a {config_file}"
+    subprocess.run(command, shell=True, check=True)
+    print(f"Added the line to {config_file} successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Failed to add the line to {config_file} with error code {e.returncode}.")
+except FileNotFoundError:
+    print("Error: The 'sudo' or 'tee' command was not found.")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+
+import subprocess
+
+try:
+    # Run the command to install the package using subprocess
+    command = "sudo apt install libmagickcore-6.q16-6-extra -y"
+    subprocess.run(command, shell=True, check=True)
+    print("libmagickcore-6.q16-6-extra package installation completed successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Package installation failed with error code {e.returncode}.")
+except FileNotFoundError:
+    print("Error: The 'sudo' or 'apt' command was not found.")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+import subprocess
+
+# The lines to add
+lines_to_add = [
+    "<IfModule mod_headers.c>",
+    "    Header always set Strict-Transport-Security \"max-age=15552000; includeSubDomains\"",
+    "</IfModule>"
+]
+
+# Path to the nextcloud-le-ssl.conf file
+config_file = "/etc/apache2/sites-available/nextcloud-le-ssl.conf"
+
+try:
+    # Combine the lines to add into a single string
+    lines_to_add_str = "\n".join(lines_to_add)
+
+    # Run the command to append the lines to the file using subprocess
+    command = f"echo '{lines_to_add_str}' | sudo tee -a {config_file}"
+    subprocess.run(command, shell=True, check=True)
+    print(f"Added the lines to {config_file} successfully.")
+except subprocess.CalledProcessError as e:
+    print(f"Failed to add the lines to {config_file} with error code {e.returncode}.")
+except FileNotFoundError:
+    print("Error: The 'sudo' or 'tee' command was not found.")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
