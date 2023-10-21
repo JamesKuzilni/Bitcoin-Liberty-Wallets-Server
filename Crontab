@@ -1,0 +1,122 @@
+#!/usr/bin/env python3
+import subprocess
+
+# Define your cloud username and password
+cloud_username = "your_cloud_username"
+cloud_password = "your_cloud_password"
+ipaddress = "cloud_ipaddress"
+
+# Create the ~/.curl-config file with the defined credentials
+curl_config_content = f"-u {cloud_username}:{cloud_password}"
+try:
+    with open("~/.curl-config", "w") as file:
+        file.write(curl_config_content)
+    print("Created ~/.curl-config file.")
+except Exception as e:
+    print(f"Failed to create ~/.curl-config file: {str(e)}")
+
+# Set the file permissions to 600
+try:
+    subprocess.run("chmod 600 ~/.curl-config", shell=True, check=True)
+    print("Set ~/.curl-config file permissions to 600.")
+except subprocess.CalledProcessError as e:
+    print(f"Failed to set file permissions with error code {e.returncode}.")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+
+# Add the specified line to crontab
+cron_line = f"*/1 * * * * curl --config ~/.curl-config -T ~/.lnd http://{ipaddress}/remote.php/dav/files/{cloud_username}/lndbackup/"
+try:
+    subprocess.run(f"(crontab -l; echo '{cron_line}') | crontab -", shell=True, check=True)
+    print("Added the line to crontab.")
+except subprocess.CalledProcessError as e:
+    print(f"Failed to add the line to crontab with error code {e.returncode}.")
+except Exception as e:
+    print(f"An unexpected error occurred: {str(e)}")
+
+
+# Input variables
+channel_backup_path = "/home/humble/.lnd/data/chain/bitcoin/mainnet/channel.backup"
+ipaddress = "cloud_ipaddress"
+nextcloud_username = "your_cloud_username"
+nextcloud_password = "your_cloud_password"
+
+# Script content
+script_content = f"""#!/bin/bash
+
+# Set the path to the channel.backup file
+channel_backup_path="{channel_backup_path}"
+
+# Set the URL of the Nextcloud WebDAV endpoint
+nextcloud_webdav_url="http://{ipaddress}/remote.php/dav/files/{nextcloud_username}/lndbackup/"
+
+# Nextcloud username and password
+nextcloud_username="{nextcloud_username}"
+nextcloud_password="{nextcloud_password}"
+
+# Watch for changes to the channel.backup file
+while true; do
+  inotifywait "$channel_backup_path"
+
+  # If the file has changed and exists, copy it to the Nextcloud backup directory
+  if [[ -f "$channel_backup_path" ]]; then
+    curl -u "$nextcloud_username:$nextcloud_password" -T "$channel_backup_path" "$nextcloud_webdav_url"
+  fi
+done
+"""
+
+# Save the script content to the file
+with open("copy-channel-backup-on-change.sh", "w") as script_file:
+    script_file.write(script_content)
+
+print("The 'copy-channel-backup-on-change.sh' script has been created.")
+
+import subprocess
+
+def create_lndbackup_service(system_username):
+    content = '''[Unit]
+Description=Copy Channel Backup on Change
+
+[Service]
+ExecStart=/home/james/copy-channel-backup-on-change.sh
+Restart=always
+RestartSec=1
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=backup-channels
+User=humble
+Group=humble
+
+[Install]
+WantedBy=multi-user.target
+'''
+    # Write the content to a temporary file
+    temp_file_path = "/tmp/lndbackup.service"
+    with open(temp_file_path, 'w') as file:
+        file.write(content.format(system_username=system_username)
+
+    # Use sudo to move the temporary file to the target directory
+    move_command = ["sudo", "mv", temp_file_path, file_path]
+    subprocess.run(move_command, check=True)
+
+    # Set the correct ownership and permissions for the service file
+    chown_command = ["sudo", "chown", "root:root", file_path]
+    subprocess.run(chown_command, check=True)
+    chmod_command = ["sudo", "chmod", "644", file_path]
+    subprocess.run(chmod_command, check=True)
+
+    # Reload systemd configuration
+    reload_command = ["sudo", "systemctl", "daemon-reload"]
+    subprocess.run(reload_command, check=True)
+
+    # Enable the lndbackup service
+    enable_command = ["sudo", "systemctl", "enable", "bitcoind.service"]
+    subprocess.run(enable_command, check=True)
+
+    # Start the lndbackup service
+    start_command = ["sudo", "systemctl", "start", "lndbackup.service"]
+    subprocess.run(start_command, check=True)
+
+if __name__ == "__main":
+    system_username = "humble"  # Replace with your system username
+    create_lndbackup_service(system_username)
