@@ -38,7 +38,7 @@ def update_and_install_packages():
 # Call the function to update and install the packages
 update_and_install_packages()
 
-chosen_username = "your_chosen_username"  # Replace with the desired username
+chosen_username = "BTCpayusername"  # Replace with the desired username
 
 def create_postgres_user(superuser='n', databases='y', more_roles='n'):
     # Print the default parameter values
