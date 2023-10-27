@@ -448,93 +448,6 @@ except FileNotFoundError:
 except Exception as e:
     print(f"An unexpected error occurred: {str(e)}")
 
-import subprocess
-
-try:
-    # Run the command to install snapd using subprocess
-    command = "sudo apt install snapd -y"
-    subprocess.run(command, shell=True, check=True)
-    print("snapd installation completed successfully.")
-except subprocess.CalledProcessError as e:
-    print(f"snapd installation failed with error code {e.returncode}.")
-except FileNotFoundError:
-    print("Error: The 'sudo' or 'apt' command was not found.")
-except Exception as e:
-    print(f"An unexpected error occurred: {str(e)}")
-
-import subprocess
-
-try:
-    # Run the command to install the core snap using subprocess
-    install_command = "sudo snap install core"
-    subprocess.run(install_command, shell=True, check=True)
-    print("core snap installation completed successfully.")
-
-    # Run the command to refresh the core snap using subprocess
-    refresh_command = "sudo snap refresh core"
-    subprocess.run(refresh_command, shell=True, check=True)
-    print("core snap refresh completed successfully.")
-except subprocess.CalledProcessError as e:
-    print(f"Failed to install or refresh core snap with error code {e.returncode}.")
-except FileNotFoundError:
-    print("Error: The 'sudo' or 'snap' command was not found.")
-except Exception as e:
-    print(f"An unexpected error occurred: {str(e)}")
-
-import subprocess
-
-try:
-    # Run the command to install certbot in classic mode using subprocess
-    command = "sudo snap install --classic certbot"
-    subprocess.run(command, shell=True, check=True)
-    print("certbot snap installation in classic mode completed successfully.")
-except subprocess.CalledProcessError as e:
-    print(f"Failed to install certbot snap with error code {e.returncode}.")
-except FileNotFoundError:
-    print("Error: The 'sudo' or 'snap' command was not found.")
-except Exception as e:
-    print(f"An unexpected error occurred: {str(e)}")
-
-import subprocess
-
-try:
-    # Run the command to create the symbolic link using subprocess
-    command = "sudo ln -s /snap/bin/certbot /usr/bin/certbot"
-    subprocess.run(command, shell=True, check=True)
-    print("Symbolic link created successfully.")
-except subprocess.CalledProcessError as e:
-    print(f"Failed to create the symbolic link with error code {e.returncode}.")
-except FileNotFoundError:
-    print("Error: The 'sudo' or 'ln' command was not found.")
-except Exception as e:
-    print(f"An unexpected error occurred: {str(e)}")
-
-import subprocess
-
-try:
-    # Run the certbot command with the --apache flag using subprocess
-    command = "sudo certbot --apache"
-    subprocess.run(command, shell=True, check=True)
-    print("Certbot command completed successfully with the --apache flag.")
-except subprocess.CalledProcessError as e:
-    print(f"Certbot command with --apache flag failed with error code {e.returncode}.")
-except FileNotFoundError:
-    print("Error: The 'sudo' or 'certbot' command was not found.")
-except Exception as e:
-    print(f"An unexpected error occurred: {str(e)}")
-import subprocess
-
-try:
-    # Run the command to create the symbolic link using subprocess
-    command = "sudo ln -s /snap/bin/certbot /usr/bin/certbot"
-    subprocess.run(command, shell=True, check=True)
-    print("Symbolic link created successfully.")
-except subprocess.CalledProcessError as e:
-    print(f"Failed to create the symbolic link with error code {e.returncode}.")
-except FileNotFoundError:
-    print("Error: The 'sudo' or 'ln' command was not found.")
-except Exception as e:
-    print(f"An unexpected error occurred: {str(e)}")
 
 import subprocess
 
@@ -564,45 +477,6 @@ except FileNotFoundError:
 except Exception as e:
     print(f"An unexpected error occurred: {str(e)}")
 
-import subprocess
-
-# The line to add
-line_to_add = "'memcache.local' => '\\OC\\Memcache\\APCu',"
-
-# Path to the config.php file
-config_file = "/var/www/nextcloud/config/config.php"
-
-try:
-    # Run the command to append the line to the file using subprocess
-    command = f"echo {line_to_add} | sudo tee -a {config_file}"
-    subprocess.run(command, shell=True, check=True)
-    print(f"Added the line to {config_file} successfully.")
-except subprocess.CalledProcessError as e:
-    print(f"Failed to add the line to {config_file} with error code {e.returncode}.")
-except FileNotFoundError:
-    print("Error: The 'sudo' or 'tee' command was not found.")
-except Exception as e:
-    print(f"An unexpected error occurred: {str(e)}")
-
-import subprocess
-
-# The line to add
-line_to_add = "'default_phone_region' => 'US',"
-
-# Path to the config.php file
-config_file = "/var/www/nextcloud/config/config.php"
-
-try:
-    # Run the command to append the line to the file using subprocess
-    command = f"echo {line_to_add} | sudo tee -a {config_file}"
-    subprocess.run(command, shell=True, check=True)
-    print(f"Added the line to {config_file} successfully.")
-except subprocess.CalledProcessError as e:
-    print(f"Failed to add the line to {config_file} with error code {e.returncode}.")
-except FileNotFoundError:
-    print("Error: The 'sudo' or 'tee' command was not found.")
-except Exception as e:
-    print(f"An unexpected error occurred: {str(e)}")
 
 import subprocess
 
@@ -615,31 +489,5 @@ except subprocess.CalledProcessError as e:
     print(f"Package installation failed with error code {e.returncode}.")
 except FileNotFoundError:
     print("Error: The 'sudo' or 'apt' command was not found.")
-except Exception as e:
-    print(f"An unexpected error occurred: {str(e)}")
-import subprocess
-
-# The lines to add
-lines_to_add = [
-    "<IfModule mod_headers.c>",
-    "    Header always set Strict-Transport-Security \"max-age=15552000; includeSubDomains\"",
-    "</IfModule>"
-]
-
-# Path to the nextcloud-le-ssl.conf file
-config_file = "/etc/apache2/sites-available/nextcloud-le-ssl.conf"
-
-try:
-    # Combine the lines to add into a single string
-    lines_to_add_str = "\n".join(lines_to_add)
-
-    # Run the command to append the lines to the file using subprocess
-    command = f"echo '{lines_to_add_str}' | sudo tee -a {config_file}"
-    subprocess.run(command, shell=True, check=True)
-    print(f"Added the lines to {config_file} successfully.")
-except subprocess.CalledProcessError as e:
-    print(f"Failed to add the lines to {config_file} with error code {e.returncode}.")
-except FileNotFoundError:
-    print("Error: The 'sudo' or 'tee' command was not found.")
 except Exception as e:
     print(f"An unexpected error occurred: {str(e)}")
