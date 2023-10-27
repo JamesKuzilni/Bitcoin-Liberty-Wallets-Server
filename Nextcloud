@@ -135,11 +135,6 @@ except pexpect.exceptions.ExceptionPexpect as e:
 except Exception as e:
     print(f"An unexpected error occurred: {str(e)}")
 
-
-import subprocess
-import secrets
-import string
-
 # Generate a random alphanumeric password
 password_length = 12  # You can adjust the length as needed
 alphabet = string.ascii_letters + string.digits
@@ -147,6 +142,12 @@ random_password = ''.join(secrets.choice(alphabet) for _ in range(password_lengt
 
 # Print the generated password
 print(f"Generated MariaDB password: {random_password}")
+
+# Append the generated password to the ~/.Passwords file with a label
+passwords_file = "~/.Passwords"
+
+with open(passwords_file, "a") as file:
+    file.write(f"dbpassword: {random_password}\n")
 
 # Define the SQL commands
 sql_commands = [
