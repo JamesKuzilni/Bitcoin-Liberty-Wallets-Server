@@ -77,6 +77,9 @@ except FileNotFoundError:
     print("Error: The 'sudo' or 'apt' command was not found.")
 except Exception as e:
     print(f"An unexpected error occurred: {str(e)}")
+import string
+import secrets
+import pexpect
 
 # Generate a random alphanumeric password
 password_length = 12  # You can adjust the length as needed
@@ -85,6 +88,12 @@ root_password = ''.join(secrets.choice(alphabet) for _ in range(password_length)
 
 # Print the generated root password
 print(f"Generated MySQL root password: {root_password}")
+
+# Append the generated password to the ~/.Passwords file
+passwords_file = "~/.Passwords"
+
+with open(passwords_file, "a") as file:
+    file.write(f"Generated MySQL root password: {root_password}\n")
 
 # The command to run
 command = "sudo mysql_secure_installation"
