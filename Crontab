@@ -121,6 +121,6 @@ WantedBy=multi-user.target
     subprocess.run(start_command, check=True)
 
 if __name__ == "__main":
-    system_username = "demo"  # Replace with your system username
+    system_username = "humble"  # Replace with your system username
     create_lndbackup_service(system_username)
 
