@@ -72,22 +72,21 @@ with open("copy-channel-backup-on-change.sh", "w") as script_file:
     script_file.write(script_content)
 
 print("The 'copy-channel-backup-on-change.sh' script has been created.")
-
 import subprocess
 
 def create_lndbackup_service(system_username):
-    content = '''[Unit]
+    content = f'''[Unit]
 Description=Copy Channel Backup on Change
 
 [Service]
-ExecStart=/home/james/copy-channel-backup-on-change.sh
+ExecStart=/home/{system_username}/copy-channel-backup-on-change.sh
 Restart=always
 RestartSec=1
 StandardOutput=syslog
 StandardError=syslog
 SyslogIdentifier=backup-channels
-User=humble
-Group=humble
+User={system_username}
+Group={system_username}
 
 [Install]
 WantedBy=multi-user.target
@@ -95,7 +94,9 @@ WantedBy=multi-user.target
     # Write the content to a temporary file
     temp_file_path = "/tmp/lndbackup.service"
     with open(temp_file_path, 'w') as file:
-        file.write(content.format(system_username=system_username)
+        file.write(content)
+
+    file_path = f"/etc/systemd/system/lndbackup.service"
 
     # Use sudo to move the temporary file to the target directory
     move_command = ["sudo", "mv", temp_file_path, file_path]
@@ -112,7 +113,7 @@ WantedBy=multi-user.target
     subprocess.run(reload_command, check=True)
 
     # Enable the lndbackup service
-    enable_command = ["sudo", "systemctl", "enable", "bitcoind.service"]
+    enable_command = ["sudo", "systemctl", "enable", "lndbackup.service"]
     subprocess.run(enable_command, check=True)
 
     # Start the lndbackup service
@@ -120,5 +121,6 @@ WantedBy=multi-user.target
     subprocess.run(start_command, check=True)
 
 if __name__ == "__main":
-    system_username = "humble"  # Replace with your system username
+    system_username = "demo"  # Replace with your system username
     create_lndbackup_service(system_username)
+
