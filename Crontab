@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import subprocess
+import os
 
 # Define your cloud username and password
 cloud_username = "your_cloud_username"
@@ -8,24 +9,25 @@ ipaddress = "cloud_ipaddress"
 
 # Create the ~/.curl-config file with the defined credentials
 curl_config_content = f"-u {cloud_username}:{cloud_password}"
+curl_config_path = os.path.expanduser("~/.curl-config")
 try:
-    with open("~/.curl-config", "w") as file:
+    with open(curl_config_path, "w") as file:
         file.write(curl_config_content)
-    print("Created ~/.curl-config file.")
+    print(f"Created {curl_config_path} file.")
 except Exception as e:
-    print(f"Failed to create ~/.curl-config file: {str(e)}")
+    print(f"Failed to create {curl_config_path} file: {str(e)}")
 
 # Set the file permissions to 600
 try:
-    subprocess.run("chmod 600 ~/.curl-config", shell=True, check=True)
-    print("Set ~/.curl-config file permissions to 600.")
+    subprocess.run(f"chmod 600 {curl_config_path}", shell=True, check=True)
+    print(f"Set {curl_config_path} file permissions to 600.")
 except subprocess.CalledProcessError as e:
     print(f"Failed to set file permissions with error code {e.returncode}.")
 except Exception as e:
     print(f"An unexpected error occurred: {str(e)}")
 
 # Add the specified line to crontab
-cron_line = f"*/1 * * * * curl --config ~/.curl-config -T ~/.lnd http://{ipaddress}/remote.php/dav/files/{cloud_username}/lndbackup/"
+cron_line = f"*/1 * * * * curl --config {curl_config_path} -T ~/.lnd http://{ipaddress}/remote.php/dav/files/{cloud_username}/lndbackup/"
 try:
     subprocess.run(f"(crontab -l; echo '{cron_line}') | crontab -", shell=True, check=True)
     print("Added the line to crontab.")
