@@ -4,8 +4,8 @@ import os
 
 # Define your cloud username and password
 cloud_username = "lndbackup"
-cloud_password = "dU757gE1stzV"
-ipaddress = "192.168.1.33"
+cloud_password = "cloudpassword"
+ipaddress = "cloud_ipaddress"
 
 # Create the ~/.curl-config file with the defined credentials
 curl_config_content = f"-u {cloud_username}:{cloud_password}"
@@ -38,9 +38,9 @@ except Exception as e:
 
 # Input variables
 channel_backup_path = "/home/humble/.lnd/data/chain/bitcoin/mainnet/channel.backup"
-ipaddress = "192.168.1.33"
+ipaddress = "cloud_ipaddress"
 nextcloud_username = "lndbackup"
-nextcloud_password = "dU757gE1stzV"
+nextcloud_password = "cloudpassword"
 
 # Script content
 script_content = f"""#!/bin/bash
