@@ -556,7 +556,7 @@ def run_dojo_onion():
     result = subprocess.run(['sudo', '-E', 'bash', '-c', command], cwd=directory, capture_output=True, text=True)
     
     # Save the result to a file
-    with open('.Passwords', 'w') as password_file:
+    with open('.PasswordsSamourai', 'w') as password_file:
         password_file.write(result.stdout)
 
 # Run the dojo.sh onion command and save the result to a file
