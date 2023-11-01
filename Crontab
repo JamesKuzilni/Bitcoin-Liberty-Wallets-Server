@@ -3,31 +3,30 @@ import subprocess
 import os
 
 # Define your cloud username and password
-cloud_username = "your_cloud_username"
-cloud_password = "your_cloud_password"
-ipaddress = "cloud_ipaddress"
+cloud_username = "lndbackup"
+cloud_password = "dU757gE1stzV"
+ipaddress = "192.168.1.33"
 
 # Create the ~/.curl-config file with the defined credentials
 curl_config_content = f"-u {cloud_username}:{cloud_password}"
-curl_config_path = os.path.expanduser("~/.curl-config")
 try:
-    with open(curl_config_path, "w") as file:
+    with open("/home/humble/.curl-config", "w") as file:
         file.write(curl_config_content)
-    print(f"Created {curl_config_path} file.")
+    print("Created ~/.curl-config file.")
 except Exception as e:
-    print(f"Failed to create {curl_config_path} file: {str(e)}")
+    print(f"Failed to create ~/.curl-config file: {str(e)}")
 
 # Set the file permissions to 600
 try:
-    subprocess.run(f"chmod 600 {curl_config_path}", shell=True, check=True)
-    print(f"Set {curl_config_path} file permissions to 600.")
+    subprocess.run("chmod 600 ~/.curl-config", shell=True, check=True)
+    print("Set ~/.curl-config file permissions to 600.")
 except subprocess.CalledProcessError as e:
     print(f"Failed to set file permissions with error code {e.returncode}.")
 except Exception as e:
     print(f"An unexpected error occurred: {str(e)}")
 
 # Add the specified line to crontab
-cron_line = f"*/1 * * * * curl --config {curl_config_path} -T ~/.lnd http://{ipaddress}/remote.php/dav/files/{cloud_username}/lndbackup/"
+cron_line = f"*/1 * * * * curl --config ~/.curl-config -T ~/.lnd http://{ipaddress}/remote.php/dav/files/{cloud_username}/lndbackup/"
 try:
     subprocess.run(f"(crontab -l; echo '{cron_line}') | crontab -", shell=True, check=True)
     print("Added the line to crontab.")
@@ -39,9 +38,9 @@ except Exception as e:
 
 # Input variables
 channel_backup_path = "/home/humble/.lnd/data/chain/bitcoin/mainnet/channel.backup"
-ipaddress = "cloud_ipaddress"
-nextcloud_username = "your_cloud_username"
-nextcloud_password = "your_cloud_password"
+ipaddress = "192.168.1.33"
+nextcloud_username = "lndbackup"
+nextcloud_password = "dU757gE1stzV"
 
 # Script content
 script_content = f"""#!/bin/bash
@@ -67,11 +66,23 @@ while true; do
 done
 """
 
-# Save the script content to the file
-with open("copy-channel-backup-on-change.sh", "w") as script_file:
+# Save the script content to the hidden file
+hidden_script_path = "/home/humble/.copy-channel-backup-on-change.sh"
+with open(hidden_script_path, "w") as script_file:
     script_file.write(script_content)
 
-print("The 'copy-channel-backup-on-change.sh' script has been created.")
+
+def make_script_executable(script_path):
+    # Use the chmod command to make the script executable
+    subprocess.run(f"chmod +x {script_path}", shell=True, check=True)
+
+if __name__ == "__main__":
+    script_path = "/home/humble/.copy-channel-backup-on-change.sh"  # Replace with the actual path to your script
+    make_script_executable(script_path)
+
+
+import os
+
 import subprocess
 
 def create_lndbackup_service(system_username):
@@ -79,7 +90,7 @@ def create_lndbackup_service(system_username):
 Description=Copy Channel Backup on Change
 
 [Service]
-ExecStart=/home/{system_username}/copy-channel-backup-on-change.sh
+ExecStart=/home/humble/.copy-channel-backup-on-change.sh
 Restart=always
 RestartSec=1
 StandardOutput=syslog
@@ -91,12 +102,14 @@ Group={system_username}
 [Install]
 WantedBy=multi-user.target
 '''
+
+    # Define the file_path variable
+    file_path = "/etc/systemd/system/lndbackup.service"
+
     # Write the content to a temporary file
     temp_file_path = "/tmp/lndbackup.service"
     with open(temp_file_path, 'w') as file:
         file.write(content)
-
-    file_path = f"/etc/systemd/system/lndbackup.service"
 
     # Use sudo to move the temporary file to the target directory
     move_command = ["sudo", "mv", temp_file_path, file_path]
@@ -120,7 +133,6 @@ WantedBy=multi-user.target
     start_command = ["sudo", "systemctl", "start", "lndbackup.service"]
     subprocess.run(start_command, check=True)
 
-if __name__ == "__main":
-    system_username = "humble"  # Replace with your system username
+if __name__ == "__main__":
+    system_username = "humble"  # Replace with the actual system username
     create_lndbackup_service(system_username)
-
