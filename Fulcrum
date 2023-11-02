@@ -197,14 +197,14 @@ WantedBy=multi-user.target
 create_fulcrum_service("humble")
 
 # Define the URL of the Node.js tar.xz file and the target directory
-url = "https://nodejs.org/dist/v18.18.0/node-v18.18.0-linux-x64.tar.xz"
+url = "https://nodejs.org/dist/v21.1.0/node-v21.1.0-linux-x64.tar.xz"
 download_dir = os.path.expanduser("~/Downloads")
 
 # Create the target directory if it doesn't exist
 os.makedirs(download_dir, exist_ok=True)
 
 # Define the local file path for the downloaded tar.xz file
-local_file_path = os.path.join(download_dir, "node-v18.18.0-linux-x64.tar.xz")
+local_file_path = os.path.join(download_dir, "node-v21.1.0-linux-x64.tar.xz")
 
 # Download the Node.js tar.xz file
 response = requests.get(url)
@@ -225,7 +225,7 @@ except tarfile.TarError as e:
     exit(1)
 
 # Define the source and destination directories
-source_dir = os.path.expanduser("~/Downloads/node-v18.18.0-linux-x64")
+source_dir = os.path.expanduser("~/Downloads/node-v21.1.0-linux-x64")
 destination_dir = os.path.expanduser("~")
 
 # Check if the source directory exists
