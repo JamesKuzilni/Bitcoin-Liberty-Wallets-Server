@@ -32,8 +32,8 @@ def update_and_install_packages():
     # Update package lists again
     subprocess.run(["sudo", "apt-get", "update"])
 
-    # Install dotnet-sdk-6.0 package
-    subprocess.run(["sudo", "apt-get", "install", "-y", "dotnet-sdk-6.0"])
+    # Install dotnet-sdk-8.0 package
+    subprocess.run(["sudo", "apt-get", "install", "-y", "dotnet-sdk-8.0"])
 
 # Call the function to update and install the packages
 update_and_install_packages()
@@ -124,9 +124,9 @@ Pin-Priority: 1001
 create_preferences_file()
 
 def install_dotnet_sdk():
-    subprocess.run(["sudo", "apt", "install", "dotnet-sdk-6.0"])
+    subprocess.run(["sudo", "apt", "install", "dotnet-sdk-8.0"])
 
-# Call the function to install the dotnet-sdk-6.0 package
+# Call the function to install the dotnet-sdk-8.0 package
 install_dotnet_sdk()
 
 def build_nbxplorer():
@@ -192,7 +192,7 @@ Requires=bitcoind.service
 After=bitcoind.service
 
 [Service]
-ExecStart=/usr/bin/dotnet "/home/{ubuntu_username}/source/NBXplorer/NBXplorer/bin/Release/net6.0/NBXplorer.dll" -c /home/{ubuntu_username}/.nbxplorer/Main/settings.config
+ExecStart=/usr/bin/dotnet "/home/{ubuntu_username}/source/NBXplorer/NBXplorer/bin/Release/net8.0/NBXplorer.dll" -c /home/{ubuntu_username}/.nbxplorer/Main/settings.config
 User={ubuntu_username}
 Group={ubuntu_username}
 Type=simple
