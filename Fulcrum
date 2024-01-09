@@ -257,7 +257,7 @@ except shutil.Error as e:
 bashrc_path = os.path.expanduser("~/.bashrc")
 
 # Define the line to be added
-line_to_add = 'PATH=$PATH:/home/humble/nodejs/bin\n'
+line_to_add = 'export PATH=$PATH:/home/humble/nodejs/bin\n'
 
 # Check if the .bashrc file exists
 if not os.path.exists(bashrc_path):
