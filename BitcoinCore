@@ -14,7 +14,7 @@ def create_downloads_directory():
 # Call the function to create the Downloads directory if it doesn't exist
 create_downloads_directory()
 
-url = "https://bitcoincore.org/bin/bitcoin-core-25.0/bitcoin-25.0-x86_64-linux-gnu.tar.gz"
+url = "https://bitcoincore.org/bin/bitcoin-core-26.0/bitcoin-26.0-x86_64-linux-gnu.tar.gz"
 download_command = f'wget {url} -P ~/Downloads'
 
 try:
@@ -25,7 +25,7 @@ except subprocess.CalledProcessError as e:
 except Exception as e:
     print(f"Download failed: {str(e)}")
 
-filename = "bitcoin-25.0-x86_64-linux-gnu.tar.gz"
+filename = "bitcoin-26.0-x86_64-linux-gnu.tar.gz"
 download_path = os.path.expanduser(f'~/Downloads/{filename}')
 extracted_dir_parent = os.path.expanduser(f'~/Downloads')
 
@@ -37,7 +37,7 @@ except Exception as e:
     print(f"Extraction failed: {str(e)}")
 
 # Define the command to execute
-command = "sudo install -m 0755 -o root -g root -t /usr/local/bin ~/Downloads/bitcoin-25.0/bin/*"
+command = "sudo install -m 0755 -o root -g root -t /usr/local/bin ~/Downloads/bitcoin-26.0/bin/*"
 
 try:
     # Get the full path to the Downloads directory
