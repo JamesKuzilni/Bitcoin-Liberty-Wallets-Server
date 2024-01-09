@@ -31,8 +31,8 @@ def extract_file(filename):
         tar.extractall(os.path.join(os.path.expanduser('~'), 'Downloads'))
 
 if __name__ == '__main__':
-    url = 'https://github.com/lightninglabs/lightning-terminal/releases/download/v0.10.5-alpha/lightning-terminal-linux-amd64-v0.10.5-alpha.tar.gz'
-    filename = 'lightning-terminal-linux-amd64-v0.10.5-alpha.tar.gz'
+    url = 'https://github.com/lightninglabs/lightning-terminal/releases/download/v0.12.2-alpha/lightning-terminal-linux-amd64-v0.12.2-alpha.tar.gz'
+    filename = 'lightning-terminal-linux-amd64-v0.12.2-alpha.tar.gz'
 
     download_file(url, filename)
     print('The file has been downloaded.')
@@ -47,7 +47,7 @@ def copy_file_with_sudo(source_file, dest_dir):
         print(f'Error: {e}')
 
 if __name__ == '__main__':
-    source_directory = os.path.expanduser('~/Downloads/lightning-terminal-linux-amd64-v0.10.5-alpha')
+    source_directory = os.path.expanduser('~/Downloads/lightning-terminal-linux-amd64-v0.12.2-alpha')
     destination_directory = '/usr/local/bin'  # Use the full path here
 
     # List of files to copy individually
@@ -302,7 +302,7 @@ import os
 import subprocess
 
 # Define the URL of the tar.gz file
-url = "https://github.com/lightninglabs/loop/releases/download/v0.26.3-beta/loop-linux-amd64-v0.26.3-beta.tar.gz"
+url = "https://github.com/lightninglabs/loop/releases/download/v0.26.6-beta/loop-linux-amd64-v0.26.6-beta.tar.gz"
 
 # Define the target directory where you want to save the file
 download_dir = os.path.expanduser("~/Downloads")
@@ -312,7 +312,7 @@ if not os.path.exists(download_dir):
     os.makedirs(download_dir)
 
 # Define the full path to save the downloaded file
-download_path = os.path.join(download_dir, "loop-linux-amd64-v0.26.3-beta.tar.gz")
+download_path = os.path.join(download_dir, "loop-linux-amd64-v0.26.6-beta.tar.gz")
 
 # Use wget to download the file
 try:
@@ -330,7 +330,7 @@ except subprocess.CalledProcessError as e:
     print(f"Error extracting {download_path}: {e}")
     exit(1)
 # Define the source and target paths
-source_path = os.path.expanduser("~/Downloads/loop-linux-amd64-v0.26.3-beta/loopd")
+source_path = os.path.expanduser("~/Downloads/loop-linux-amd64-v0.26.6-beta/loopd")
 target_path = "/usr/local/bin/loopd"
 
 # Check if the source file exists
