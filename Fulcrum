@@ -153,6 +153,8 @@ for file_path in files_to_make_executable:
     else:
         print(f"File {file_path} does not exist.")
 
+import subprocess
+
 def create_fulcrum_service(system_username):
     file_path = "/etc/systemd/system/fulcrum.service"
     content = '''\
@@ -161,14 +163,14 @@ Description=Fulcrum
 After=network.target
 
 [Service]
-ExecStart=/home/humble/fulcrum/Fulcrum /home/humble/fulcrum/fulcrum.conf
-User=humble
+ExecStart=/home/{system_username}/fulcrum/Fulcrum /home/{system_username}/fulcrum/fulcrum.conf
+User={system_username}
 LimitNOFILE=8192
 TimeoutStopSec=30min
 
 [Install]
 WantedBy=multi-user.target
-'''
+'''.format(system_username=system_username)
 
     # Write the content to a temporary file
     temp_file_path = "/tmp/fulcrum.service"
@@ -193,8 +195,13 @@ WantedBy=multi-user.target
     enable_command = ["sudo", "systemctl", "enable", "fulcrum.service"]
     subprocess.run(enable_command, check=True)
 
-# Call the function with the desired system username
-create_fulcrum_service("humble")
+    # Start the fulcrum service
+    start_command = ["sudo", "systemctl", "start", "fulcrum.service"]
+    subprocess.run(start_command, check=True)
+
+if __name__ == "__main__":
+    create_fulcrum_service("humble")
+
 
 # Define the URL of the Node.js tar.xz file and the target directory
 url = "https://nodejs.org/dist/v21.1.0/node-v21.1.0-linux-x64.tar.xz"
