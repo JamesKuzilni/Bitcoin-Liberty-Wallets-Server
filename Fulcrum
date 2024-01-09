@@ -26,8 +26,8 @@ def extract_file(filename):
         tar.extractall(os.path.join(os.path.expanduser('~'), 'Downloads'))
 
 if __name__ == '__main__':
-    url = 'https://github.com/cculianu/Fulcrum/releases/download/v1.9.3/Fulcrum-1.9.3-x86_64-linux.tar.gz'
-    filename = 'Fulcrum-1.9.3-x86_64-linux.tar.gz'
+    url = 'https://github.com/cculianu/Fulcrum/releases/download/v1.9.7/Fulcrum-1.9.7-x86_64-linux.tar.gz'
+    filename = 'Fulcrum-1.9.7-x86_64-linux.tar.gz'
 
     download_file(url, filename)
     print('The file has been downloaded.')
@@ -49,9 +49,9 @@ if __name__ == '__main__':
     create_directories()
 
 def move_files():
-    """Moves the contents of Fulcrum-1.9.1-x86_64-linux directory from ~/Downloads to ~/fulcrum."""
+    """Moves the contents of Fulcrum-1.9.7-x86_64-linux directory from ~/Downloads to ~/fulcrum."""
     home_directory = os.path.expanduser('~')
-    source_directory = os.path.join(home_directory, 'Downloads', 'Fulcrum-1.9.3-x86_64-linux')
+    source_directory = os.path.join(home_directory, 'Downloads', 'Fulcrum-1.9.7-x86_64-linux')
     destination_directory = os.path.join(home_directory, 'fulcrum')
 
     if not os.path.exists(source_directory):
@@ -204,14 +204,14 @@ if __name__ == "__main__":
 
 
 # Define the URL of the Node.js tar.xz file and the target directory
-url = "https://nodejs.org/dist/v21.1.0/node-v21.1.0-linux-x64.tar.xz"
+url = "https://nodejs.org/dist/v21.5.0/node-v21.5.0-linux-x64.tar.xz"
 download_dir = os.path.expanduser("~/Downloads")
 
 # Create the target directory if it doesn't exist
 os.makedirs(download_dir, exist_ok=True)
 
 # Define the local file path for the downloaded tar.xz file
-local_file_path = os.path.join(download_dir, "node-v21.1.0-linux-x64.tar.xz")
+local_file_path = os.path.join(download_dir, "node-v21.5.0-linux-x64.tar.xz")
 
 # Download the Node.js tar.xz file
 response = requests.get(url)
@@ -232,7 +232,7 @@ except tarfile.TarError as e:
     exit(1)
 
 # Define the source and destination directories
-source_dir = os.path.expanduser("~/Downloads/node-v21.1.0-linux-x64")
+source_dir = os.path.expanduser("~/Downloads/node-v21.5.0-linux-x64")
 destination_dir = os.path.expanduser("~")
 
 # Check if the source directory exists
