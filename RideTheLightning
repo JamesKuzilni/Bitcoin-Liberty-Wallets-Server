@@ -8,13 +8,13 @@ import json
 import random
 import string
 
-# Define the command to install npm@10.2.2 globally
-command = ["npm", "install", "-g", "npm@10.2.2"]
+# Define the command to install npm@10.2.5 globally
+command = ["npm", "install", "-g", "npm@10.2.5"]
 
 try:
     # Run the command using subprocess
     subprocess.run(command, check=True, shell=False)
-    print("npm@10.2.2 has been successfully installed globally.")
+    print("npm@10.2.5 has been successfully installed globally.")
 except subprocess.CalledProcessError as e:
     print(f"Error: {e}")
 
@@ -44,8 +44,8 @@ def download_and_extract(url, filename):
         print('Extraction complete.')
 
 if __name__ == '__main__':
-    url = 'https://github.com/Ride-The-Lightning/RTL/archive/refs/tags/v0.14.1.tar.gz'
-    filename = 'RTL-0.14.1.tar.gz'
+    url = 'https://github.com/Ride-The-Lightning/RTL/archive/refs/tags/v0.15.0.tar.gz'
+    filename = 'RTL-0.15.0.tar.gz'
 
     download_and_extract(url, filename)
 
@@ -62,7 +62,7 @@ def move_and_rename_directory(source_dir, destination_dir, new_name):
         print(f'Error: {e}')
 
 if __name__ == '__main__':
-    source_name = 'RTL-0.14.1'
+    source_name = 'RTL-0.15.0'
     destination_dir = os.path.expanduser('~')
     new_name = 'RTL'
 
