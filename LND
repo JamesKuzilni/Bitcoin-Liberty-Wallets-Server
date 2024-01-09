@@ -68,14 +68,14 @@ def extract_and_install(filename, target_directory):
         print(f'Installation failed: {e}')
 
 if __name__ == "__main__":
-    url = "https://github.com/lightningnetwork/lnd/releases/download/v0.17.0-beta/lnd-linux-amd64-v0.17.0-beta.tar.gz"
-    filename = "lnd-linux-amd64-v0.16.4-beta.tar.gz"
+    url = "https://github.com/lightningnetwork/lnd/releases/download/v0.17.3-beta/lnd-linux-amd64-v0.17.3-beta.tar.gz"
+    filename = "lnd-linux-amd64-v0.17.3-beta.tar.gz"
     target_directory = "/usr/local/bin"
 
     download_file(url, filename)
     extract_and_install(filename, target_directory)
 
-source_dir = os.path.expanduser("~/Downloads/lnd-linux-amd64-v0.17.0-beta/")
+source_dir = os.path.expanduser("~/Downloads/lnd-linux-amd64-v0.17.3-beta/")
 
 # Specify the source paths for the files
 source_lncli = os.path.join(source_dir, "lncli")
