@@ -178,3 +178,57 @@ try:
     print("Cloudflared service installed successfully.")
 except subprocess.CalledProcessError as e:
     print(f"Error running 'sudo cloudflared service install': {e}")
+
+import subprocess
+
+def create_cloudflared_service(system_username):
+    file_path = "/etc/systemd/system/cloudflared.service"
+    content = f'''[Unit]
+Description=Cloudflared Tunnel for BTCPayServer
+After=network.target
+
+[Service]
+User={system_username}
+Group={system_username}
+WorkingDirectory=/home/{system_username}/
+ExecStart=/usr/bin/cloudflared tunnel run btcpayserver
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+'''
+
+    # Write the content to a temporary file
+    temp_file_path = "/tmp/cloudflared.service"
+    with open(temp_file_path, 'w') as file:
+        file.write(content)
+
+    # Use sudo to move the temporary file to the target directory
+    move_command = ["sudo", "mv", temp_file_path, file_path]
+    subprocess.run(move_command, check=True)
+
+    # Set the correct ownership and permissions for the service file
+    chown_command = ["sudo", "chown", "root:root", file_path]
+    subprocess.run(chown_command, check=True)
+    chmod_command = ["sudo", "chmod", "644", file_path]
+    subprocess.run(chmod_command, check=True)
+
+    # Reload systemd configuration
+    reload_command = ["sudo", "systemctl", "daemon-reload"]
+    subprocess.run(reload_command, check=True)
+
+    # Enable the cloudflared service
+    enable_command = ["sudo", "systemctl", "enable", "cloudflared.service"]
+    subprocess.run(enable_command, check=True)
+
+    # Start the cloudflared service
+    start_command = ["sudo", "systemctl", "start", "cloudflared.service"]
+    subprocess.run(start_command, check=True)
+
+def main():
+    system_username = 'humble'  # Replace with the desired system username
+    create_cloudflared_service(system_username)
+
+if __name__ == "__main__":
+    main()
+
