@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
 import subprocess
-import os
 
-# Define your cloud username and password
+# Define cloud credentials
 cloud_username = "lndbackup"
 cloud_password = "cloudpassword"
-ipaddress = "cloud_ipaddress"
 
-# Create the ~/.curl-config file with the defined credentials
+# Create ~/.curl-config file with credentials
 curl_config_content = f"-u {cloud_username}:{cloud_password}"
 try:
     with open("/home/humble/.curl-config", "w") as file:
@@ -18,20 +16,26 @@ except Exception as e:
 
 # Set the file permissions to 600
 try:
-    subprocess.run("chmod 600 ~/.curl-config", shell=True, check=True)
+    subprocess.run("chmod 600 /home/humble/.curl-config", shell=True, check=True)
     print("Set ~/.curl-config file permissions to 600.")
 except subprocess.CalledProcessError as e:
     print(f"Failed to set file permissions with error code {e.returncode}.")
 except Exception as e:
     print(f"An unexpected error occurred: {str(e)}")
 
-# Add the specified line to crontab
-cron_line = f"*/1 * * * * curl --config ~/.curl-config -T ~/.lnd http://{ipaddress}/remote.php/dav/files/{cloud_username}/lndbackup/"
+# Set up crontab for tar and curl commands
+cron_commands = [
+    '*/1 * * * * tar -czf /tmp/lndbackup.tar.gz -C /home/humble/.lnd/',
+    '*/1 * * * * curl --config /home/humble/.curl-config -T /tmp/lndbackup.tar.gz http://{ipaddress}/remote.php/dav/files/lndbackup/lndbackup/'
+]
+
+# Join the commands and set up crontab
+cron_content = '\n'.join(cron_commands)
 try:
-    subprocess.run(f"(crontab -l; echo '{cron_line}') | crontab -", shell=True, check=True)
-    print("Added the line to crontab.")
+    subprocess.run(f'(crontab -l ; echo "{cron_content}") | crontab -', shell=True, check=True)
+    print("Crontab successfully updated.")
 except subprocess.CalledProcessError as e:
-    print(f"Failed to add the line to crontab with error code {e.returncode}.")
+    print(f"Failed to update crontab with error code {e.returncode}.")
 except Exception as e:
     print(f"An unexpected error occurred: {str(e)}")
 
