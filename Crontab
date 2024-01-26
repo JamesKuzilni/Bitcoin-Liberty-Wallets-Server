@@ -25,7 +25,7 @@ except Exception as e:
 
 # Set up crontab for tar and curl commands
 cron_commands = [
-    '*/1 * * * * tar -czf /tmp/lndbackup.tar.gz -C /home/humble/.lnd/',
+    '*/1 * * * * tar -czf /tmp/lndbackup.tar.gz -C /home/humble/.lnd/ .',
     '*/1 * * * * curl --config /home/humble/.curl-config -T /tmp/lndbackup.tar.gz http://{ipaddress}/remote.php/dav/files/lndbackup/lndbackup/'
 ]
 
