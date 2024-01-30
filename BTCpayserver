@@ -6,6 +6,84 @@ import subprocess
 import requests
 import shutil
 
+import subprocess
+
+def run_apt_update():
+    update_command = ["sudo", "apt", "update"]
+
+    try:
+        subprocess.run(update_command, check=True)
+        print("APT package list updated successfully.")
+    except subprocess.CalledProcessError as e:
+        print(f"An error occurred: {e}")
+        
+if __name__ == "__main__":
+    run_apt_update()
+import subprocess
+
+def add_postgres_repository():
+    command = 'sudo sh -c \'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list\''
+
+    try:
+        subprocess.run(command, shell=True, check=True, executable='/bin/bash')
+        print("PostgreSQL repository added successfully.")
+    except subprocess.CalledProcessError as e:
+        print(f"An error occurred: {e}")
+
+if __name__ == "__main__":
+    add_postgres_repository()
+import subprocess
+
+def add_postgres_key():
+    command = 'wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -'
+
+    try:
+        subprocess.run(command, shell=True, check=True, executable='/bin/bash')
+        print("PostgreSQL key added successfully.")
+    except subprocess.CalledProcessError as e:
+        print(f"An error occurred: {e}")
+
+if __name__ == "__main__":
+    add_postgres_key()
+
+import subprocess
+
+def apt_update():
+    command = 'sudo apt update'
+
+    try:
+        subprocess.run(command, shell=True, check=True, executable='/bin/bash')
+        print("APT package list updated successfully.")
+    except subprocess.CalledProcessError as e:
+        print(f"An error occurred: {e}")
+
+if __name__ == "__main__":
+    apt_update()
+import subprocess
+
+def apt_update():
+    command = 'sudo apt update'
+
+    try:
+        subprocess.run(command, shell=True, check=True, executable='/bin/bash')
+        print("APT package list updated successfully.")
+    except subprocess.CalledProcessError as e:
+        print(f"An error occurred: {e}")
+
+if __name__ == "__main__":
+    apt_update()
+
+import subprocess
+
+def install_postgresql():
+    command = 'sudo apt install postgresql-16 postgresql-client-16'
+
+    try:
+        subprocess.run(command, shell=True, check=True, executable='/bin/bash')
+        print("PostgreSQL 16 and PostgreSQL client 16 installed successfully.")
+    except subprocess.CalledProcessError as e:
+        print(f"An error occurred: {e}")
+
 def download_and_install_package():
     url = "https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb"
     download_dir = os.path.expanduser('~/Downloads')
@@ -329,83 +407,7 @@ def start_btcpayserver_service():
 # Call the function to start the btcpayserver.service
 start_btcpayserver_service()
 
-import subprocess
 
-def run_apt_update():
-    update_command = ["sudo", "apt", "update"]
-
-    try:
-        subprocess.run(update_command, check=True)
-        print("APT package list updated successfully.")
-    except subprocess.CalledProcessError as e:
-        print(f"An error occurred: {e}")
-        
-if __name__ == "__main__":
-    run_apt_update()
-import subprocess
-
-def add_postgres_repository():
-    command = 'sudo sh -c \'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list\''
-
-    try:
-        subprocess.run(command, shell=True, check=True, executable='/bin/bash')
-        print("PostgreSQL repository added successfully.")
-    except subprocess.CalledProcessError as e:
-        print(f"An error occurred: {e}")
-
-if __name__ == "__main__":
-    add_postgres_repository()
-import subprocess
-
-def add_postgres_key():
-    command = 'wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -'
-
-    try:
-        subprocess.run(command, shell=True, check=True, executable='/bin/bash')
-        print("PostgreSQL key added successfully.")
-    except subprocess.CalledProcessError as e:
-        print(f"An error occurred: {e}")
-
-if __name__ == "__main__":
-    add_postgres_key()
-
-import subprocess
-
-def apt_update():
-    command = 'sudo apt update'
-
-    try:
-        subprocess.run(command, shell=True, check=True, executable='/bin/bash')
-        print("APT package list updated successfully.")
-    except subprocess.CalledProcessError as e:
-        print(f"An error occurred: {e}")
-
-if __name__ == "__main__":
-    apt_update()
-import subprocess
-
-def apt_update():
-    command = 'sudo apt update'
-
-    try:
-        subprocess.run(command, shell=True, check=True, executable='/bin/bash')
-        print("APT package list updated successfully.")
-    except subprocess.CalledProcessError as e:
-        print(f"An error occurred: {e}")
-
-if __name__ == "__main__":
-    apt_update()
-
-import subprocess
-
-def install_postgresql():
-    command = 'sudo apt install postgresql-16 postgresql-client-16'
-
-    try:
-        subprocess.run(command, shell=True, check=True, executable='/bin/bash')
-        print("PostgreSQL 16 and PostgreSQL client 16 installed successfully.")
-    except subprocess.CalledProcessError as e:
-        print(f"An error occurred: {e}")
 
 if __name__ == "__main__":
     install_postgresql()
