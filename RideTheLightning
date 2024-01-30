@@ -8,13 +8,13 @@ import json
 import random
 import string
 
-# Define the command to install npm@10.2.5 globally
-command = ["npm", "install", "-g", "npm@10.2.5"]
+# Define the command to install npm@10.4.0 globally
+command = ["npm", "install", "-g", "npm@10.4.0"]
 
 try:
     # Run the command using subprocess
     subprocess.run(command, check=True, shell=False)
-    print("npm@10.2.5 has been successfully installed globally.")
+    print("npm@10.4.0 has been successfully installed globally.")
 except subprocess.CalledProcessError as e:
     print(f"Error: {e}")
 
