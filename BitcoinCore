@@ -183,33 +183,6 @@ with open(file_path, 'w') as file:
 
 print("File updated successfully.")
 
-
-
-
-def main():
-    # Print the instructions
-    print("Type: sudo systemctl status bitcoind.service")
-    print("Check for active and if active type done.")
-
-    # Check the status of the bitcoind service
-    status = os.system("sudo systemctl status bitcoind.service")
-
-    # If the service is active, print "done"
-    if status == 0:
-        print("done")
-        sys.exit()
-
-    # If the service is not active or there is an error, prompt the user to check and input "done"
-    else:
-        user_input = input("Please check the bitcoin.conf file location, make sure 'rpcusername' is typed after 'rpcauth=' and before the colon. Then type 'done' to continue: ")
-        if user_input.lower() != "done":
-            print("Invalid input. Exiting...")
-            sys.exit()
-
-    # Continue with creating and starting the bitcoind service
-    system_username = "humble"
-    create_bitcoind_service(system_username)
-
 def create_bitcoind_service(system_username):
     file_path = "/etc/systemd/system/bitcoind.service"
     content = '''\
