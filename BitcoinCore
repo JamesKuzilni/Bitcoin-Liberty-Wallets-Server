@@ -139,7 +139,7 @@ else:
 import re
 
 # Specify the file path
-file_path = "~/.bitcoin/bitcoin.conf"
+file_path = "/home/humble/.bitcoin/bitcoin.conf"
 
 # Read the content of the file
 with open(file_path, 'r') as file:
