@@ -183,6 +183,10 @@ with open(file_path, 'w') as file:
 
 print("File updated successfully.")
 
+def main():
+    system_username = "humble"
+    create_bitcoind_service(system_username)
+
 def create_bitcoind_service(system_username):
     file_path = "/etc/systemd/system/bitcoind.service"
     content = '''\
