@@ -51,24 +51,6 @@ except subprocess.CalledProcessError as e:
 except Exception as e:
     print(f"An error occurred: {e}")
 
-# Assuming bitcoind is in your PATH after installation, you can start it like this:
-try:
-    # Start bitcoind in the background with the -daemon flag
-    subprocess.Popen(['bitcoind', '-daemon'])
-    print('Bitcoin Core (bitcoind) is starting in the background.')
-except Exception as e:
-    print(f'An error occurred: {e}')
-
-
-# Set the duration of the timer in seconds
-duration = 10
-
-print(f"Starting {duration}-second timer...")
-
-# Sleep for the specified duration
-time.sleep(duration)
-
-print("Timer finished!")
 
 def create_bitcoin_conf_file():
   """Creates a bitcoin.conf file in the ~/.bitcoin directory."""
@@ -93,14 +75,7 @@ def create_bitcoin_conf_file():
 if __name__ == '__main__':
   create_bitcoin_conf_file()
 
-def stop_bitcoincore():
-  """Stops Bitcoin Core."""
-  command = "bitcoin-cli stop"
-  process = subprocess.Popen(command, shell=True)
-  process.wait()
 
-if __name__ == "__main__":
-  stop_bitcoincore()
 def download_file(url, filename):
     """Downloads a file from the specified URL to the specified filename."""
     downloads_directory = os.path.join(os.path.expanduser('~'), 'Downloads')
@@ -160,6 +135,29 @@ if not os.path.exists(file_path):
     print(f"Created the file: {file_path}")
 else:
     print(f"The file already exists: {file_path}")
+
+import re
+
+# Specify the file path
+file_path = "~/.bitcoin/bitcoin.conf"
+
+# Read the content of the file
+with open(file_path, 'r') as file:
+    original_config = file.read()
+
+# Pattern to match the lines to be removed
+pattern = re.compile(r'String to be appended to bitcoin.conf:[^\n]*\n|Your password:[^\n]*\n|rpc_password[^\n]*\n')
+
+# Remove the matched pattern from the original configuration
+modified_config = re.sub(pattern, '', original_config)
+
+# Write the modified content back to the file
+with open(file_path, 'w') as file:
+    file.write(modified_config)
+
+print("File updated successfully.")
+
+
 
 
 def main():
